@@ -5,8 +5,11 @@ public class ConvertToCSV{
   }
   public static void main(String[] args){
     Extract extract = new Extract();
-    for(char c:getChars()){
-      System.out.println("Char:" + c + "English:" + extract.getEnglish(""+c));
+    char[] charArray=getChars();
+    for(int i=0;i<charArray.length;i++){
+      char c=charArray[i];
+      System.out.println(i+","+c + "," + extract.getEnglish(""+c)
+                                                  .replaceAll(",",";"));
     }
   }
 

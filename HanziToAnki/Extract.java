@@ -29,8 +29,8 @@ import java.io.File;
   Capitals are causing issues too...
 */
 public class Extract{
-  public static List<Word> list = new ArrayList<Word>();
-  public static class Word{
+  public List<Word> list = new ArrayList<Word>();
+  public  class Word{
     //yes, these should be private
     public String trad,simp,pinyin,pinTones,def;
     public String getFileOutput(){
@@ -42,7 +42,7 @@ public class Extract{
     }
   }
 
-  public static void preProcess(){
+  public  void preProcess(){
     //will want to uncomment the first 31 lines code for this :/
     for (Word w:list) System.out.println(w.getSpecialOutput());
     //then run the following on this output:| sort | cut -d ' ' -f2- > dict
@@ -50,7 +50,7 @@ public class Extract{
   }
 
   //may want to be a different type
-  public static List<Word> findMatches(int index, String pinyin){
+  public  List<Word> findMatches(int index, String pinyin){
     //go back and forth until no matches, storing/printing all the matches as you go along
     List<Word> matches = new ArrayList<Word>();
     matches.add(list.get(index));
@@ -76,7 +76,7 @@ public class Extract{
     return matches;
   }
 
-  public static List<Word> getWordPin(String pinyin){
+  public  List<Word> getWordPin(String pinyin){
     int left=0;
     int right=list.size() -1;
     do{
@@ -102,12 +102,12 @@ public class Extract{
     return null;
   }
   /*TODO:Move stuff here*/
-  public static void populateArray(){}
-  public static char[] getChars(){
+  public  void populateArray(){}
+  public  char[] getChars(){
     //could read from a file, or pass in this String(or other type) from constructor
     return "这是一些汉字".toCharArray();
   }
-  public static String getEnglish(String chineseWord){
+  public  String getEnglish(String chineseWord){
     for (Word word : list){
       if(word.simp.equals(chineseWord) || word.trad.equals(chineseWord)){
         return word.def;
@@ -115,7 +115,7 @@ public class Extract{
     }
     return "Chinese word not found";
   }
-  public static void main(String[] args){
+  public Extract(){
       //try (BufferedReader br = new BufferedReader(new FileReader(new File("cedict_ts.u8")))) {
       try (BufferedReader br = new BufferedReader(new FileReader(new File("dict")))) {
       String line;
@@ -145,9 +145,9 @@ public class Extract{
     //preProcess();
 
     //For purposes of HanziToAnki, need the following
-    for(char c:getChars()){
+/*    for(char c:getChars()){
       System.out.println("Char:" + c + "English:" + getEnglish(""+c));
-    }
+    }*/
   }
   
 }
