@@ -1,5 +1,6 @@
 *.class
 *.csv
+*.txt
 #vim stuff
 *.swp
 *.swo
