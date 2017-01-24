@@ -1,4 +1,7 @@
 public class ConvertToCSV{
+  /*todo:
+    obviously any semicolons will be lost, is this an issue?
+  */
   public static char[] getChars(){
     //could read from a file, or pass in this String(or other type) from constructor
     return "这是一些汉字".toCharArray();
@@ -8,8 +11,8 @@ public class ConvertToCSV{
     char[] charArray=getChars();
     for(int i=0;i<charArray.length;i++){
       char c=charArray[i];
-      System.out.println(i+","+c + "," + extract.getEnglish(""+c)
-                                                  .replaceAll(",",";"));
+      System.out.println(i+";"+c + ";" + extract.getEnglish(""+c)
+                                                  .replaceAll(";",","));
     }
   }
 

@@ -4,3 +4,7 @@ then compare chars with the Open Source CEDICT dictionary, and extract the Engli
 Then put into some CSV format which (I think) can be imported into Anki
 see http://superuser.com/questions/698902/can-i-create-an-anki-deck-from-a-csv-file
   you can actually create an apkg from Python
+
+
+NOTES on importing into Anki:
+It seems that the import failed unless I created a new note type for the card (I have no idea why really...)
