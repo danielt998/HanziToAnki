@@ -115,6 +115,15 @@ public class Extract{
     }
     return "Chinese word not found";
   }
+  public  String getPinyinWithTones(String chineseWord){
+    for (Word word : list){
+      if(word.simp.equals(chineseWord) || word.trad.equals(chineseWord)){
+        return word.pinTones;
+      }
+    }
+    return "Chinese word not found";
+  }
+
   public Extract(){
       //try (BufferedReader br = new BufferedReader(new FileReader(new File("cedict_ts.u8")))) {
       try (BufferedReader br = new BufferedReader(new FileReader(new File("dict")))) {
