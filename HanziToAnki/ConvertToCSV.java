@@ -43,7 +43,7 @@ public class ConvertToCSV{
   }
 
   public static void printUsage(){
-    System.out.println("Usage: java ConvertToCSV [-f] filename");
+    System.out.println("Usage: java ConvertToCSV [-f] [-w] filename");
     System.out.println("arguments:");
     System.out.println("\t-w --word-list:\tRead from an input file containing a list of words, separated"+
                         " by line breaks. Without this flag, individual characters are extracted.");
