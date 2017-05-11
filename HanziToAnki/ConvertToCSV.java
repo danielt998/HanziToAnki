@@ -102,7 +102,6 @@ public class ConvertToCSV{
             System.out.println(i+";"+ wordTwoChars + ";" + extract.getEnglish(wordTwoChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
-            i++;
           }
         }
         if(i+2<charArray.length){
@@ -111,8 +110,10 @@ public class ConvertToCSV{
             System.out.println(i+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
-            i++;
+            i+=2;
           }
+        }else if(wordUsed){ //that is, a two char word exists
+          i++;
         }
 
         if(!wordUsed){//iff character is not used as part of any other word, we print it
