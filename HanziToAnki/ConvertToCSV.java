@@ -99,16 +99,15 @@ public class ConvertToCSV{
         boolean wordUsed=false;
         if(i+1<charArray.length){
           String wordTwoChars= word + charArray[i+1];
-          if(!extract.getEnglish(word).equals("Chinese word not found")){        
+          if(!extract.getEnglish(wordTwoChars).equals("Chinese word not found")){        
             System.out.println(i+";"+ wordTwoChars + ";" + extract.getEnglish(wordTwoChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
           }
         }
         if(i+2<charArray.length){
- System.out.println("i:"+i+"charArray.length:"+charArray.length);
           String wordThreeChars= word + charArray[i+1] + charArray[i+2];
-          if(!extract.getEnglish(word).equals("Chinese word not found")){        
+          if(!extract.getEnglish(wordThreeChars).equals("Chinese word not found")){        
             System.out.println(i+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
