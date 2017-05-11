@@ -42,14 +42,16 @@ public class ConvertToCSV{
     return lines.toArray(new String[0]);
   }
 
-  /*last argument is file name, others are all modifiers:
-   * -f:file containing words separated by spaces, otherwise defaults to individual chars
-   */
   public static void printUsage(){
     System.out.println("Usage: java ConvertToCSV [-f] filename");
     System.out.println("arguments:");
-    System.out.println("\t-f:\tRead from an input file containing a list of words, separated"+
+    System.out.println("\t-w --word-list:\tRead from an input file containing a list of words, separated"+
                         " by line breaks. Without this flag, individual characters are extracted.");
+    System.out.println("\t-a --all-words:\tLooks up all possible two and three letter combinations "
+                    + "and returns all those that match. This may later become default behaviour."
+                    + "Note that this cannot be used in conjunction with the -w flag as this would"
+                    + "be nonsensical.");//variable number of max char look aheads is also possible
+                                         //and min? e.g. 1
   }
   
   public static void main(String[] args){
@@ -58,11 +60,14 @@ public class ConvertToCSV{
       return;
     }
     boolean useWordList=false;
+    boolean allWords=false;
     String filename = args[args.length-1];
     for(int argno=0;argno<args.length-1;argno++){
       //flag handling
-      if(args[argno].equals("-f")){
+      if(args[argno].equals("-w")||args[argno].equals("--word-list")){
         useWordList=true;
+      }else if(args[argno].equals("-a")||args[argno].equals("--all-words")){
+        allWords=true;
       }else{
         System.out.println(
                        "An unrecognised flag was used, please see below for usage information:\n");
@@ -81,6 +86,42 @@ public class ConvertToCSV{
                                                   .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
 
       }
+    }else if(allWords){
+      //TODO
+      //should be similar to below, but reads ahead one and two characters
+      //also need to make sure that is nothing is found, nothing is returned
+      //For now, this will not return single characters if they can exist as the first character
+      //of any 'word'
+      Extract extract = new Extract();
+      char[] charArray=getCharsFromFile(filename);
+      for(int i=0;i<charArray.length;i++){
+        String word=""+charArray[i];
+        boolean wordUsed=false;
+        if(i+1<charArray.length){
+          String wordTwoChars= word + charArray[i+1];
+          if(!extract.getEnglish(word).equals("Chinese word not found")){        
+            System.out.println(i+";"+ wordTwoChars + ";" + extract.getEnglish(wordTwoChars)
+                                                  .replaceAll(";",","));
+            wordUsed=true;
+          }
+        }
+        if(i+2<charArray.length){
+ System.out.println("i:"+i+"charArray.length:"+charArray.length);
+          String wordThreeChars= word + charArray[i+1] + charArray[i+2];
+          if(!extract.getEnglish(word).equals("Chinese word not found")){        
+            System.out.println(i+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
+                                                  .replaceAll(";",","));
+            wordUsed=true;
+          }
+        }
+
+        if(!wordUsed){//iff character is not used as part of any other word, we print it
+          //TODO:onsider whether this should be the behaviour and how arguments might be restructured
+          System.out.println(i+";"+ word + ";" + extract.getEnglish(word)
+                                                  .replaceAll(";",","));
+        }
+      }
+
     }else{
       Extract extract = new Extract();
       //char[] charArray=getChars();
