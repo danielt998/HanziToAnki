@@ -90,8 +90,7 @@ public class ConvertToCSV{
       //TODO
       //should be similar to below, but reads ahead one and two characters
       //also need to make sure that is nothing is found, nothing is returned
-      //For now, this will not return single characters if they can exist as the first character
-      //of any 'word'
+      //For now, this will not return single characters if they can exist as part of any 'word'
       Extract extract = new Extract();
       char[] charArray=getCharsFromFile(filename);
       for(int i=0;i<charArray.length;i++){
@@ -103,6 +102,7 @@ public class ConvertToCSV{
             System.out.println(i+";"+ wordTwoChars + ";" + extract.getEnglish(wordTwoChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
+            i++;
           }
         }
         if(i+2<charArray.length){
@@ -111,6 +111,7 @@ public class ConvertToCSV{
             System.out.println(i+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
+            i++;
           }
         }
 
