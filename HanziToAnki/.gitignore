@@ -4,4 +4,4 @@
 #vim stuff
 *.swp
 *.swo
-.~lock
+.~lock*
