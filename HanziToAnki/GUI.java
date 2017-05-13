@@ -1,10 +1,14 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 public class GUI extends JFrame implements ActionListener{
   public JTextArea textField;
   public JTextField outputName=new JTextField();
   public JButton createDeck;
 
+  public JRadioButton theDefault;
+  public JRadioButton singleChar;
+  public JRadioButton wordList;
   public static void main(String[] args){
     GUI gui=new GUI();
     gui.setVisible(true);
@@ -27,9 +31,9 @@ public class GUI extends JFrame implements ActionListener{
     textField=new JTextArea(10,80);
     panel.add(textField);
 
-    JRadioButton theDefault=new JRadioButton("Extract one,two and three letter words");
-    JRadioButton singleChar=new JRadioButton("Extract into single characters");
-    JRadioButton wordList=new JRadioButton(
+    theDefault=new JRadioButton("Extract one,two and three letter words");
+    singleChar=new JRadioButton("Extract into single characters");
+    wordList=new JRadioButton(
                     "Each line contains a single word, extract these words individually");
     ButtonGroup group=new ButtonGroup();
     group.add(theDefault);
@@ -40,15 +44,17 @@ public class GUI extends JFrame implements ActionListener{
     panel.add(singleChar);
     panel.add(wordList);
 
-    panel.add(new JTextField("Please enter a file name (no extension):");
-    panel.add outputName();
+    panel.add(new JTextField("Please enter a file name (no extension):"));
+    panel.add(outputName);
     createDeck=new JButton("Create Deck");
     panel.add(createDeck);
     createDeck.addActionListener(this);
     pack();
   }
   public void actionPerformed(ActionEvent e){
-    //for now assume that createDeck was pressed
     //TODO:do stuff based on main method of Main class, also need to write something to output to a file
+    if(e.getSource()==createDeck){
+      Main.produceDeck(textField.getText().split("\\r?\\n"),wordList.isSelected(),theDefault.isSelected(),outputName.getText()+".csv");
+    }
   }
 }

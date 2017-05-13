@@ -50,6 +50,14 @@ outerLoop:
     return lines.toArray(new String[0]);
   }
 
+  private static char[] stringArrToCharArr(String[] stringArr){
+    StringBuilder builder=new StringBuilder();
+    for(String s : stringArr){
+      builder.append(s);
+    }
+    return builder.toString().toCharArray();
+  }
+
   public static void printUsage(){
     System.out.println("Usage: java Main [OPTIONS] filename");
     System.out.println("options:");
@@ -65,6 +73,43 @@ outerLoop:
     System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
   }
   
+  public static void writeStringListToFile(List<String> list, String outputFileName){
+    BufferedWriter outputWriter=null;
+    try{
+      outputWriter=new BufferedWriter(new FileWriter(outputFileName));
+      for(String line:list){
+        outputWriter.write(line+"\n");
+      }
+    }catch(IOException e){
+      e.printStackTrace();
+    }finally{
+      try{
+        outputWriter.close();
+      }catch(IOException e){
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public static void produceDeck(String[] lines, boolean useWordList, boolean allWords,
+                                                                    String outputFileName){
+   List<String> outputStringList;
+    if(useWordList){
+      outputStringList=getAnkiOutputWordListFromStringArr(lines);
+    }else if(allWords){
+      char[] charArray=stringArrToCharArr(lines);
+      outputStringList=getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
+    }else{
+      char[] charArray=stringArrToCharArr(lines);
+      outputStringList=getAnkiOutputFromSingleCharsWithCharArr(charArray);
+    }
+    writeStringListToFile(outputStringList,outputFileName); 
+  }
+
+  public void produceDeck(String filename, boolean useWordList, boolean allWords, String outputFileName){
+
+  }
+
   public static void main(String[] args){
     if(args.length==0||args[0].equals("-h")){
       printUsage();
@@ -105,24 +150,32 @@ outerLoop:
   }
 
   private static List<String> getAnkiOutputWordList(String filename){
-      List<String> output=new ArrayList<String>();
-      Extract extract = new Extract();
-      String[] stringArr=getWordsFromFile(filename,true);
-      for(int i=0;i<stringArr.length;i++){
-        String s=stringArr[i];
-        output.add(i+";"+s + ";" + extract.getEnglish(s)
-                                         .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
-      }
-      return output;
+    List<String> output=new ArrayList<String>();
+    String[] stringArr=getWordsFromFile(filename,true);
+    return getAnkiOutputWordListFromStringArr(stringArr);
+  }
+
+  private static List<String> getAnkiOutputWordListFromStringArr(String[] stringArr){
+    Extract extract = new Extract();
+    List<String> output=new ArrayList<String>();
+    for(int i=0;i<stringArr.length;i++){
+      String s=stringArr[i];
+      output.add(i+";"+s + ";" + extract.getEnglish(s)
+                                       .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
+    }
+    return output;
   }
 
   private static List<String> getAnkiOutputForOneTwoThreeCharWords(String filename){
+      char[] charArray=getCharsFromFile(filename);
+      return getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
+  }
+  private static List<String> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[]  charArray){
       List<String> output=new ArrayList<String>();
       //should be similar to below, but reads ahead one and two characters
       //also need to make sure that is nothing is found, nothing is returned
       //For now, this will not return single characters if they can exist as part of any 'word'
       Extract extract = new Extract();
-      char[] charArray=getCharsFromFile(filename);
       Set<Word> words=new HashSet<Word>();
       for(int i=0;i<charArray.length;i++){
         String word=""+charArray[i];
@@ -159,16 +212,20 @@ outerLoop:
     return output;
   }
 
-  private static List<String> getAnkiOutputFromSingleChars(String filename){
-      List<String> output=new ArrayList<String>();
-      Extract extract = new Extract();
-      char[] charArray=getCharsFromFile(filename);
-      for(int i=0;i<charArray.length;i++){
-        char c=charArray[i];
-        Word word=extract.getWordFromChinese(c);
-        output.add(i+";"+word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()
-                                  + " - " + word.getDefinition().replaceAll(";",","));
-      }
+  private static List<String> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray){
+    Extract extract = new Extract();
+    List<String> output=new ArrayList<String>();
+    for(int i=0;i<charArray.length;i++){
+      char c=charArray[i];
+      Word word=extract.getWordFromChinese(c);
+      output.add(i+";"+word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()
+                                + " - " + word.getDefinition().replaceAll(";",","));
+    }
     return output;
+  }
+
+  private static List<String> getAnkiOutputFromSingleChars(String filename){
+      char[] charArray=getCharsFromFile(filename);
+      return getAnkiOutputFromSingleCharsWithCharArr(charArray);
   }
 }
