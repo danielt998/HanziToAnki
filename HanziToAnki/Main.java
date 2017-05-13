@@ -2,6 +2,8 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 public class Main{
   public static char[] getCharsFromFile(String fileName){
     String acc="";//TODO:StringBuilder?
@@ -24,12 +26,21 @@ public class Main{
     return chineseCharsOnly.toCharArray();
   }
 
-  private static String[] getWordsFromFile(String filename){
+  private static String[] getWordsFromFile(String filename,boolean removeDupes){
     List<String> lines = new ArrayList<String>();
     try{
       Scanner sc = new Scanner(new File(filename));
+outerLoop:
       while (sc.hasNextLine()) {
-              lines.add(sc.nextLine());
+        String nextLine=sc.nextLine();
+        if(removeDupes){
+          for(String line:lines){
+            if(line.equals(nextLine)){
+              continue outerLoop;
+            }
+          }
+        }
+        lines.add(nextLine);
       }
     }catch(Exception e){}
     return lines.toArray(new String[0]);
@@ -79,7 +90,7 @@ public class Main{
 
     if(useWordList){
       Extract extract = new Extract();
-      String[] stringArr=getWordsFromFile(filename);
+      String[] stringArr=getWordsFromFile(filename,true);
       for(int i=0;i<stringArr.length;i++){
         String s=stringArr[i];
         System.out.println(i+";"+s + ";" + extract.getEnglish(s)
@@ -93,34 +104,40 @@ public class Main{
       //For now, this will not return single characters if they can exist as part of any 'word'
       Extract extract = new Extract();
       char[] charArray=getCharsFromFile(filename);
+      Set<Word> words=new HashSet<Word>();
       for(int i=0;i<charArray.length;i++){
         String word=""+charArray[i];
         boolean wordUsed=false;
         if(i+1<charArray.length){
-          String wordTwoChars= word + charArray[i+1];
-          if(!extract.getEnglish(wordTwoChars).equals("Chinese word not found")){        
-            System.out.println(i+";"+ wordTwoChars + ";" + extract.getEnglish(wordTwoChars)
-                                                  .replaceAll(";",","));
+          Word wordTwoChars= extract.getWordFromChinese(word + charArray[i+1]);
+          if(wordTwoChars!=null){        
+            words.add(wordTwoChars);
             wordUsed=true;
             i++;
           }
         }
         if(i+2-1<charArray.length){
-          String wordThreeChars= word + charArray[i+1-1] + charArray[i+2-1];
-          if(!extract.getEnglish(wordThreeChars).equals("Chinese word not found")){        
-            System.out.println(i-1+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
-                                                  .replaceAll(";",","));
+          Word wordThreeChars= extract.getWordFromChinese(word+charArray[i+1-1]+charArray[i+2-1]);
+          if(wordThreeChars!=null){
+            words.add(wordThreeChars);
             wordUsed=true;
             i++;
           }
         }
         if(!wordUsed){//iff character is not used as part of any other word, we print it
           //TODO:onsider whether this should be the behaviour and how arguments might be restructured
-          System.out.println(i+";"+ word + ";" + extract.getEnglish(word)
-                                                  .replaceAll(";",","));
+          Word wordSingleChar=extract.getWordFromChinese(word);
+          if(wordSingleChar!=null){
+            words.add(wordSingleChar);
+          }
         }
       }
-
+      int i=0;
+      for(Word word:words){
+//        Word word=words.get(i);
+        System.out.println(i++ +";"+ word.getSimplifiedChinese() + ";" + word.getDefinition()
+                                                .replaceAll(";",","));
+      }
     }else{
       Extract extract = new Extract();
       char[] charArray=getCharsFromFile(filename);

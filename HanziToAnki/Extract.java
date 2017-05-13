@@ -92,7 +92,7 @@ public class Extract{
     //empty.trad = empty.simp=empty.pinyin=empty.pinTones=empty.def="The word was not found";
     return null;
   }
-  /*TODO:Move stuff here*/
+
   private static List<Word> readInDictionary(String filename){
     List<Word> wordList=new ArrayList<Word>();
     try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
@@ -114,6 +114,16 @@ public class Extract{
       e.printStackTrace();
     }
     return wordList;
+  }
+
+  public Word getWordFromChinese(String chineseWord){
+    for (Word word : dictionary){
+      if(word.getSimplifiedChinese().equals(chineseWord)
+                      || word.getTraditionalChinese().equals(chineseWord)){
+        return word;
+      }
+    }
+    return null;
   }
 
   public String getEnglish(String chineseWord){
