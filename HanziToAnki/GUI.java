@@ -1,8 +1,10 @@
 import java.awt.*;
 import javax.swing.*;
-public class GUI extends JFrame{
+public class GUI extends JFrame implements ActionListener{
   public JTextArea textField;
+  public JTextField outputName=new JTextField();
   public JButton createDeck;
+
   public static void main(String[] args){
     GUI gui=new GUI();
     gui.setVisible(true);
@@ -27,7 +29,8 @@ public class GUI extends JFrame{
 
     JRadioButton theDefault=new JRadioButton("Extract one,two and three letter words");
     JRadioButton singleChar=new JRadioButton("Extract into single characters");
-    JRadioButton wordList=new JRadioButton("Each line contains a single word, extract these words individually");
+    JRadioButton wordList=new JRadioButton(
+                    "Each line contains a single word, extract these words individually");
     ButtonGroup group=new ButtonGroup();
     group.add(theDefault);
     group.add(singleChar);
@@ -37,8 +40,15 @@ public class GUI extends JFrame{
     panel.add(singleChar);
     panel.add(wordList);
 
+    panel.add(new JTextField("Please enter a file name (no extension):");
+    panel.add outputName();
     createDeck=new JButton("Create Deck");
     panel.add(createDeck);
+    createDeck.addActionListener(this);
     pack();
+  }
+  public void actionPerformed(ActionEvent e){
+    //for now assume that createDeck was pressed
+    //TODO:do stuff based on main method of Main class, also need to write something to output to a file
   }
 }
