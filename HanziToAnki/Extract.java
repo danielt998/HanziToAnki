@@ -29,35 +29,26 @@ import java.io.File;
   Capitals are causing issues too...
 */
 public class Extract{
-  public List<Word> list = new ArrayList<Word>();
-  public  class Word{
-    //yes, these should be private
-    public String trad,simp,pinyin,pinTones,def;
-    public String getFileOutput(){
-      return trad + ' ' + simp + ' ' + '[' + pinTones + ']' + ' '+ '/' + def;
-    }
-    //this allows us to run the sort command to sort the data ;)
-    public String getSpecialOutput(){
-      return pinyin+ ' ' + trad + ' ' + simp + ' ' + '[' + pinTones + ']' + ' '+ '/' + def;
-    }
-  }
+  private static final String DEFAULT_DICTIONARY_FILENAME="dict";
 
-  public  void preProcess(){
+  public List<Word> dictionary = new ArrayList<Word>();
+
+  public void preProcess(){
     //will want to uncomment the first 31 lines code for this :/
-    for (Word w:list) System.out.println(w.getSpecialOutput());
+    for (Word w:dictionary) System.out.println(w.getSpecialOutput());
     //then run the following on this output:| sort | cut -d ' ' -f2- > dict
 
   }
 
   //may want to be a different type
-  public  List<Word> findMatches(int index, String pinyin){
+  public List<Word> findMatches(int index, String pinyin){
     //go back and forth until no matches, storing/printing all the matches as you go along
     List<Word> matches = new ArrayList<Word>();
-    matches.add(list.get(index));
+    matches.add(dictionary.get(index));
     //traverse in reverse order first
     for (int i=index-1;i >0;i--){
-      Word tmp = list.get(i);
-      if(tmp.pinyin.startsWith(pinyin)){
+      Word tmp = dictionary.get(i);
+      if(tmp.getPinyinNoTones().startsWith(pinyin)){
         matches.add(tmp);
       } else {
         break;
@@ -65,9 +56,9 @@ public class Extract{
     }
 
     //then forwards
-    for (int i=index+1;i<list.size();i++){
-      Word tmp = list.get(i);
-      if(tmp.pinyin.startsWith(pinyin)){
+    for (int i=index+1;i<dictionary.size();i++){
+      Word tmp = dictionary.get(i);
+      if(tmp.getPinyinNoTones().startsWith(pinyin)){
         matches.add(tmp);
       } else {
         break;
@@ -76,21 +67,21 @@ public class Extract{
     return matches;
   }
 
-  public  List<Word> getWordPin(String pinyin){
+  public List<Word> getWordPin(String pinyin){
     int left=0;
-    int right=list.size() -1;
+    int right=dictionary.size() -1;
     do{
       int mid = left + (right - left) /2;
 
-      Word midWord=list.get(mid);
-      String midPin = midWord.pinyin;
+      Word midWord=dictionary.get(mid);
+      String midPin = midWord.getPinyinNoTones();
       if(midPin.startsWith(pinyin)){ //that is compare ==0 (more or less...)
         return findMatches(mid,pinyin);
       } else if(pinyin.compareTo(midPin) < 0){
-        System.out.println(midWord.pinTones + ":<0");
+        System.out.println(midWord.getPinyinWithTones() + ":<0");
         right = mid - 1;
       }else if (pinyin.compareTo(midPin) > 0){
-        System.out.println(midWord.pinTones + ":>0");
+        System.out.println(midWord.getPinyinWithTones() + ":>0");
         left = mid + 1;//make more efficient by only running compareTo once
       } /*else {
         return midWord;
@@ -102,61 +93,50 @@ public class Extract{
     return null;
   }
   /*TODO:Move stuff here*/
-  public  void populateArray(){}
-  public  char[] getChars(){
-    //could read from a file, or pass in this String(or other type) from constructor
-    return "这是一些汉字".toCharArray();
-  }
-  public  String getEnglish(String chineseWord){
-    for (Word word : list){
-      if(word.simp.equals(chineseWord) || word.trad.equals(chineseWord)){
-        return word.def;
-      }
-    }
-    return "Chinese word not found";
-  }
-  public  String getPinyinWithTones(String chineseWord){
-    for (Word word : list){
-      if(word.simp.equals(chineseWord) || word.trad.equals(chineseWord)){
-        return word.pinTones;
-      }
-    }
-    return "Chinese word not found";
-  }
-
-  public Extract(){
-      //try (BufferedReader br = new BufferedReader(new FileReader(new File("cedict_ts.u8")))) {
-      try (BufferedReader br = new BufferedReader(new FileReader(new File("dict")))) {
+  private static List<Word> readInDictionary(String filename){
+    List<Word> wordList=new ArrayList<Word>();
+    try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
       String line;
-      for (int i=0;i<30 && (line = br.readLine()) != null;i++)
-        ;//ignore first 31 lines
       while ((line = br.readLine()) != null) {
         Word word = new Word();
         String[] str=line.split(" /");
-        word.def=str[1];
+        word.setDefinition(str[1]);
         String[] rem=str[0].split("\\[");
-        word.pinyin=rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();;
-        word.pinTones=rem[1].replaceAll("[\\[\\]]","").toLowerCase();//.replaceAll("\\]","");
+        word.setPinyinNoTones(rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase());
+        word.setPinyinWithTones(rem[1].replaceAll("[\\[\\]]","").toLowerCase());
 
         String[] remRem=rem[0].split(" ");
-        word.trad=remRem[0];
-        word.simp=remRem[1];
-        list.add(word);
+        word.setTraditionalChinese(remRem[0]);
+        word.setSimplifiedChinese(remRem[1]);
+        wordList.add(word);
       }
     } catch (Exception e){
       e.printStackTrace();
     }
-    //System.out.println(list.get(0).pinyin+ ":" + list.get(0).simp +":"+list.get(0).pinTones + ":" );
-/*    for (Word w: getWordPin("ai")){
-      System.out.println(w.pinTones);
-    }
-*/
-    //preProcess();
+    return wordList;
+  }
 
-    //For purposes of HanziToAnki, need the following
-/*    for(char c:getChars()){
-      System.out.println("Char:" + c + "English:" + getEnglish(""+c));
-    }*/
+  public String getEnglish(String chineseWord){
+    for (Word word : dictionary){
+      if(word.getSimplifiedChinese().equals(chineseWord)
+                      || word.getTraditionalChinese().equals(chineseWord)){
+        return word.getDefinition();
+      }
+    }
+    return "Chinese word not found";
+  }
+
+  public String getPinyinWithTones(String chineseWord){
+    for (Word word : dictionary){
+      if(word.getSimplifiedChinese().equals(chineseWord)
+                      || word.getTraditionalChinese().equals(chineseWord)){
+        return word.getPinyinWithTones();
+      }
+    }
+    return "Chinese word not found";
+  }
+  public Extract(){
+    dictionary=readInDictionary(DEFAULT_DICTIONARY_FILENAME);
   }
   
 }

@@ -8,3 +8,6 @@ see http://superuser.com/questions/698902/can-i-create-an-anki-deck-from-a-csv-f
 
 NOTES on importing into Anki:
 It seems that the import failed unless I created a new note type for the card (I have no idea why really...)
+
+
+The dictionary file is modified (I think) by removing the first 31 lines and then sorting alphabetically by pinyin
