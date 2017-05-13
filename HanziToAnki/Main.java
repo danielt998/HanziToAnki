@@ -2,16 +2,9 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
-public class ConvertToCSV{
-  /*todo:
-    obviously any semicolons will be lost, is this an issue?
-  */
-  public static char[] getChars(){
-    //could read from a file, or pass in this String(or other type) from constructor
-    return "这是一些汉字".toCharArray();
-  }
+public class Main{
   public static char[] getCharsFromFile(String fileName){
-    String acc="";//StringBuilder?
+    String acc="";//TODO:StringBuilder?
     try{
       FileReader fileReader = new FileReader(fileName);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -43,15 +36,18 @@ public class ConvertToCSV{
   }
 
   public static void printUsage(){
-    System.out.println("Usage: java ConvertToCSV [-f] [-w] filename");
-    System.out.println("arguments:");
-    System.out.println("\t-w --word-list:\tRead from an input file containing a list of words, separated"+
-                        " by line breaks. Without this flag, individual characters are extracted.");
-    System.out.println("\t-a --all-words:\tLooks up all possible two and three letter combinations "
-                    + "and returns all those that match. This may later become default behaviour."
-                    + "Note that this cannot be used in conjunction with the -w flag as this would"
-                    + "be nonsensical.");//variable number of max char look aheads is also possible
+    System.out.println("Usage: java Main [OPTIONS] filename");
+    System.out.println("options:");
+    System.out.println(
+               "\t-w --word-list:\tRead from an input file containing a list of words, separated"+
+               " by line breaks. Without this flag, individual characters are extracted.");
+/*    System.out.println("\t-a --all-words:\tLooks up all possible two and three letter combinations"
+                    + " and returns all those that match. This may later become default behaviour."
+                    + " Note that this cannot be used in conjunction with the -w flag as this would"
+                    + " be nonsensical.");//variable number of max char look aheads is also possible
                                          //and min? e.g. 1
+*/
+    System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
   }
   
   public static void main(String[] args){
@@ -60,14 +56,18 @@ public class ConvertToCSV{
       return;
     }
     boolean useWordList=false;
-    boolean allWords=false;
+    boolean allWords=true;
     String filename = args[args.length-1];
     for(int argno=0;argno<args.length-1;argno++){
       //flag handling
       if(args[argno].equals("-w")||args[argno].equals("--word-list")){
         useWordList=true;
-      }else if(args[argno].equals("-a")||args[argno].equals("--all-words")){
-        allWords=true;
+        allWords=false;
+      }else if(args[argno].equals("-s")||args[argno].equals("--single-characters")){
+        allWords=false;
+        useWordList=false;
+//      }else if(args[argno].equals("-a")||args[argno].equals("--all-words")){
+//        allWords=true;
       }else{
         System.out.println(
                        "An unrecognised flag was used, please see below for usage information:\n");
@@ -102,20 +102,18 @@ public class ConvertToCSV{
             System.out.println(i+";"+ wordTwoChars + ";" + extract.getEnglish(wordTwoChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
+            i++;
           }
         }
-        if(i+2<charArray.length){
-          String wordThreeChars= word + charArray[i+1] + charArray[i+2];
+        if(i+2-1<charArray.length){
+          String wordThreeChars= word + charArray[i+1-1] + charArray[i+2-1];
           if(!extract.getEnglish(wordThreeChars).equals("Chinese word not found")){        
-            System.out.println(i+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
+            System.out.println(i-1+";"+ wordThreeChars + ";" + extract.getEnglish(wordThreeChars)
                                                   .replaceAll(";",","));
             wordUsed=true;
-            i+=2;
+            i++;
           }
-        }else if(wordUsed){ //that is, a two char word exists
-          i++;
         }
-
         if(!wordUsed){//iff character is not used as part of any other word, we print it
           //TODO:onsider whether this should be the behaviour and how arguments might be restructured
           System.out.println(i+";"+ word + ";" + extract.getEnglish(word)
@@ -125,7 +123,6 @@ public class ConvertToCSV{
 
     }else{
       Extract extract = new Extract();
-      //char[] charArray=getChars();
       char[] charArray=getCharsFromFile(filename);
       for(int i=0;i<charArray.length;i++){
         char c=charArray[i];
