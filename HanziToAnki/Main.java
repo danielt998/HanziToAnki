@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+/*TODO:
+ *  move more of the code to use HashSets, some of it still allows duplicates
+ *  move stuff out of the main method and find some way to make it a little more generic
+ */
 public class Main{
   public static char[] getCharsFromFile(String fileName){
     String acc="";//TODO:StringBuilder?
@@ -77,8 +81,6 @@ outerLoop:
       }else if(args[argno].equals("-s")||args[argno].equals("--single-characters")){
         allWords=false;
         useWordList=false;
-//      }else if(args[argno].equals("-a")||args[argno].equals("--all-words")){
-//        allWords=true;
       }else{
         System.out.println(
                        "An unrecognised flag was used, please see below for usage information:\n");
@@ -88,17 +90,34 @@ outerLoop:
       //handle other flags..., create a separate class if args get too numerous
     }
 
+    List<String> outputStringList;
     if(useWordList){
+      outputStringList=getAnkiOutputWordList(filename);
+    }else if(allWords){
+      outputStringList=getAnkiOutputForOneTwoThreeCharWords(filename);
+    }else{
+      outputStringList=getAnkiOutputFromSingleChars(filename);
+    }
+
+    for(String s:outputStringList){
+      System.out.println(s);
+    }
+  }
+
+  private static List<String> getAnkiOutputWordList(String filename){
+      List<String> output=new ArrayList<String>();
       Extract extract = new Extract();
       String[] stringArr=getWordsFromFile(filename,true);
       for(int i=0;i<stringArr.length;i++){
         String s=stringArr[i];
-        System.out.println(i+";"+s + ";" + extract.getEnglish(s)
-                                                  .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
-
+        output.add(i+";"+s + ";" + extract.getEnglish(s)
+                                         .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
       }
-    }else if(allWords){
-      //TODO
+      return output;
+  }
+
+  private static List<String> getAnkiOutputForOneTwoThreeCharWords(String filename){
+      List<String> output=new ArrayList<String>();
       //should be similar to below, but reads ahead one and two characters
       //also need to make sure that is nothing is found, nothing is returned
       //For now, this will not return single characters if they can exist as part of any 'word'
@@ -134,18 +153,21 @@ outerLoop:
       }
       int i=0;
       for(Word word:words){
-//        Word word=words.get(i);
-        System.out.println(i++ +";"+ word.getSimplifiedChinese() + ";" + word.getDefinition()
+        output.add(i++ +";"+ word.getSimplifiedChinese() + ";" + word.getDefinition()
                                                 .replaceAll(";",","));
-      }
-    }else{
+      } 
+    return output;
+  }
+
+  private static List<String> getAnkiOutputFromSingleChars(String filename){
+      List<String> output=new ArrayList<String>();
       Extract extract = new Extract();
       char[] charArray=getCharsFromFile(filename);
       for(int i=0;i<charArray.length;i++){
         char c=charArray[i];
-        System.out.println(i+";"+c + ";" + extract.getEnglish(""+c)
+        output.add(i+";"+c + ";" + extract.getEnglish(""+c)
                                                   .replaceAll(";",","));
       }
-    }//else
+    return output;
   }
 }
