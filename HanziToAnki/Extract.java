@@ -116,6 +116,10 @@ public class Extract{
     return wordList;
   }
 
+  public Word getWordFromChinese(char c){
+    return getWordFromChinese(""+c);
+  }
+
   public Word getWordFromChinese(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)

@@ -153,8 +153,8 @@ outerLoop:
       }
       int i=0;
       for(Word word:words){
-        output.add(i++ +";"+ word.getSimplifiedChinese() + ";" + word.getDefinition()
-                                                .replaceAll(";",","));
+        output.add(i++ +";"+ word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()+" - "
+                                                  + word.getDefinition().replaceAll(";",","));
       } 
     return output;
   }
@@ -165,8 +165,9 @@ outerLoop:
       char[] charArray=getCharsFromFile(filename);
       for(int i=0;i<charArray.length;i++){
         char c=charArray[i];
-        output.add(i+";"+c + ";" + extract.getEnglish(""+c)
-                                                  .replaceAll(";",","));
+        Word word=extract.getWordFromChinese(c);
+        output.add(i+";"+word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()
+                                  + " - " + word.getDefinition().replaceAll(";",","));
       }
     return output;
   }
