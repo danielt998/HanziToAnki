@@ -1,5 +1,11 @@
 public class Word{
-  //yes, these should be private
+  public Word(String givenTrad, String givenSimp,String givenPinyin, String givenPinTones, String givenDef){
+    trad=givenTrad;
+    simp=givenSimp;
+    pinyin=givenPinyin;
+    pinTones=givenPinTones;
+    def=givenDef;
+  }
   private String trad,simp,pinyin,pinTones,def;
 
   public String getTraditionalChinese(){

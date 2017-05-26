@@ -31,7 +31,8 @@ public class GUI extends JFrame implements ActionListener{
     textField=new JTextArea(10,80);
     panel.add(textField);
 
-    theDefault=new JRadioButton("Extract one,two and three letter words");
+    theDefault=new JRadioButton("Extract one,two and three letter words, ignoring single character"
+                                +" words if they exist as part of another word in the text");
     singleChar=new JRadioButton("Extract into single characters");
     wordList=new JRadioButton(
                     "Each line contains a single word, extract these words individually");
@@ -52,7 +53,6 @@ public class GUI extends JFrame implements ActionListener{
     pack();
   }
   public void actionPerformed(ActionEvent e){
-    //TODO:do stuff based on main method of Main class, also need to write something to output to a file
     if(e.getSource()==createDeck){
       Main.produceDeck(textField.getText().split("\\r?\\n"),wordList.isSelected(),theDefault.isSelected(),outputName.getText()+".csv");
     }
