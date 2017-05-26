@@ -165,8 +165,7 @@ outerLoop:
 //      output.add(i+";"+s + ";" + extract.getEnglish(s)
 //                                       .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
     }
-    DeckFactory deckFactory = new DeckFactory();
-    return deckFactory.generateDeck(words).getLines();
+    return DeckFactory.generateDeck(words).getLines();
     //return output;
   }
 
@@ -209,8 +208,7 @@ outerLoop:
         }
       }
       int i=0;
-      DeckFactory deckFactory = new DeckFactory();
-      output=deckFactory.generateDeck(words).getLines();
+      output=DeckFactory.generateDeck(words).getLines();
       /*
       for(Word word:words){
         output.add(i++ +";"+ word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()+" - "
@@ -231,8 +229,7 @@ outerLoop:
                                 + " - " + word.getDefinition().replaceAll(";",","));
                                 */
     }
-    DeckFactory deckFactory = new DeckFactory();
-    return deckFactory.generateDeck(words).getLines();
+    return DeckFactory.generateDeck(words).getLines();
     //return output;
   }
 
