@@ -31,9 +31,9 @@ import java.io.File;
 public class Extract{
   private static final String DEFAULT_DICTIONARY_FILENAME="dict";
 
-  public List<Word> dictionary = new ArrayList<Word>();
+  public static List<Word> dictionary = new ArrayList<Word>();
 
-  public void preProcess(){
+  public static void preProcess(){
     //will want to uncomment the first 31 lines code for this :/
     for (Word w:dictionary) System.out.println(w.getSpecialOutput());
     //then run the following on this output:| sort | cut -d ' ' -f2- > dict
@@ -41,7 +41,7 @@ public class Extract{
   }
 
   //may want to be a different type
-  public List<Word> findMatches(int index, String pinyin){
+  public static List<Word> findMatches(int index, String pinyin){
     //go back and forth until no matches, storing/printing all the matches as you go along
     List<Word> matches = new ArrayList<Word>();
     matches.add(dictionary.get(index));
@@ -67,7 +67,7 @@ public class Extract{
     return matches;
   }
 
-  public List<Word> getWordPin(String pinyin){
+  public static List<Word> getWordPin(String pinyin){
     int left=0;
     int right=dictionary.size() -1;
     do{
@@ -116,11 +116,11 @@ public class Extract{
     return wordList;
   }
 
-  public Word getWordFromChinese(char c){
+  public static Word getWordFromChinese(char c){
     return getWordFromChinese(""+c);
   }
 
-  public Word getWordFromChinese(String chineseWord){
+  public static Word getWordFromChinese(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
                       || word.getTraditionalChinese().equals(chineseWord)){
@@ -130,7 +130,7 @@ public class Extract{
     return null;
   }
 
-  public String getEnglish(String chineseWord){
+  public static String getEnglish(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
                       || word.getTraditionalChinese().equals(chineseWord)){
@@ -140,7 +140,7 @@ public class Extract{
     return "Chinese word not found";
   }
 
-  public String getPinyinWithTones(String chineseWord){
+  public static String getPinyinWithTones(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
                       || word.getTraditionalChinese().equals(chineseWord)){
@@ -149,7 +149,7 @@ public class Extract{
     }
     return "Chinese word not found";
   }
-  public Extract(){
+  public static void readInDictionary(){
     dictionary=readInDictionary(DEFAULT_DICTIONARY_FILENAME);
   }
   

@@ -30,26 +30,6 @@ public class Main{
     return chineseCharsOnly.toCharArray();
   }
 
-  private static String[] getWordsFromFile(String filename,boolean removeDupes){
-    List<String> lines = new ArrayList<String>();
-    try{
-      Scanner sc = new Scanner(new File(filename));
-outerLoop:
-      while (sc.hasNextLine()) {
-        String nextLine=sc.nextLine();
-        if(removeDupes){
-          for(String line:lines){
-            if(line.equals(nextLine)){
-              continue outerLoop;
-            }
-          }
-        }
-        lines.add(nextLine);
-      }
-    }catch(Exception e){}
-    return lines.toArray(new String[0]);
-  }
-
   private static char[] stringArrToCharArr(String[] stringArr){
     StringBuilder builder=new StringBuilder();
     for(String s : stringArr){
@@ -64,35 +44,13 @@ outerLoop:
     System.out.println(
                "\t-w --word-list:\tRead from an input file containing a list of words, separated"+
                " by line breaks. Without this flag, individual characters are extracted.");
-/*    System.out.println("\t-a --all-words:\tLooks up all possible two and three letter combinations"
-                    + " and returns all those that match. This may later become default behaviour."
-                    + " Note that this cannot be used in conjunction with the -w flag as this would"
-                    + " be nonsensical.");//variable number of max char look aheads is also possible
-                                         //and min? e.g. 1
-*/
     System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
   }
-  
-  public static void writeStringListToFile(List<String> list, String outputFileName){
-    BufferedWriter outputWriter=null;
-    try{
-      outputWriter=new BufferedWriter(new FileWriter(outputFileName));
-      for(String line:list){
-        outputWriter.write(line+"\n");
-      }
-    }catch(IOException e){
-      e.printStackTrace();
-    }finally{
-      try{
-        outputWriter.close();
-      }catch(IOException e){
-        e.printStackTrace();
-      }
-    }
-  }
 
+  //TODO:resurrect this code(basically copy what is now done in main and call this from main
   public static void produceDeck(String[] lines, boolean useWordList, boolean allWords,
                                                                     String outputFileName){
+         /*
    List<String> outputStringList;
     if(useWordList){
       outputStringList=getAnkiOutputWordListFromStringArr(lines);
@@ -104,6 +62,7 @@ outerLoop:
       outputStringList=getAnkiOutputFromSingleCharsWithCharArr(charArray);
     }
     writeStringListToFile(outputStringList,outputFileName); 
+    */
   }
 
   public void produceDeck(String filename, boolean useWordList, boolean allWords, String outputFileName){
@@ -115,6 +74,7 @@ outerLoop:
       printUsage();
       return;
     }
+    Extract.readInDictionary();
     boolean useWordList=false;
     boolean allWords=true;
     String filename = args[args.length-1];
@@ -135,56 +95,32 @@ outerLoop:
       //handle other flags..., create a separate class if args get too numerous
     }
 
-    List<String> outputStringList;
+    Set<Word> words = new HashSet();
     if(useWordList){
-      outputStringList=getAnkiOutputWordList(filename);
+      words.addAll(VocabularyImporter.getWordsFromNewlineSeparatedFile(filename));
     }else if(allWords){
-      outputStringList=getAnkiOutputForOneTwoThreeCharWords(filename);
+      words.addAll(getAnkiOutputForOneTwoThreeCharWords(filename));
     }else{
-      outputStringList=getAnkiOutputFromSingleChars(filename);
+      words.addAll(getAnkiOutputFromSingleChars(filename));
     }
 
-    for(String s:outputStringList){
-      System.out.println(s);
-    }
-  }
 
-  private static List<String> getAnkiOutputWordList(String filename){
-    List<String> output=new ArrayList<String>();
-    String[] stringArr=getWordsFromFile(filename,true);
-    return getAnkiOutputWordListFromStringArr(stringArr);
+    List<String> lines=DeckFactory.generateDeck(words).getLines();
+    for(String line:lines){//
+      System.out.println(line);//
+    }//
   }
-
-  private static List<String> getAnkiOutputWordListFromStringArr(String[] stringArr){
-    Extract extract = new Extract();
-    List<String> output=new ArrayList<String>();
-    Set<Word> words= new HashSet<Word>();
-    for(int i=0;i<stringArr.length;i++){
-      String s=stringArr[i];
-      words.add(extract.getWordFromChinese(s));
-//      output.add(i+";"+s + ";" + extract.getEnglish(s)
-//                                       .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
-    }
-    return DeckFactory.generateDeck(words).getLines();
-    //return output;
-  }
-
-  private static List<String> getAnkiOutputForOneTwoThreeCharWords(String filename){
+  private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(String filename){
       char[] charArray=getCharsFromFile(filename);
       return getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
   }
-  private static List<String> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[]  charArray){
-      List<String> output=new ArrayList<String>();
-      //should be similar to below, but reads ahead one and two characters
-      //also need to make sure that is nothing is found, nothing is returned
-      //For now, this will not return single characters if they can exist as part of any 'word'
-      Extract extract = new Extract();
+  private static Set<Word> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[]  charArray){
       Set<Word> words=new HashSet<Word>();
       for(int i=0;i<charArray.length;i++){
         String word=""+charArray[i];
         boolean wordUsed=false;
         if(i+1<charArray.length){
-          Word wordTwoChars= extract.getWordFromChinese(word + charArray[i+1]);
+          Word wordTwoChars= Extract.getWordFromChinese(word + charArray[i+1]);
           if(wordTwoChars!=null){        
             words.add(wordTwoChars);
             wordUsed=true;
@@ -192,7 +128,7 @@ outerLoop:
           }
         }
         if(i+2-1<charArray.length){
-          Word wordThreeChars= extract.getWordFromChinese(word+charArray[i+1-1]+charArray[i+2-1]);
+          Word wordThreeChars= Extract.getWordFromChinese(word+charArray[i+1-1]+charArray[i+2-1]);
           if(wordThreeChars!=null){
             words.add(wordThreeChars);
             wordUsed=true;
@@ -201,40 +137,27 @@ outerLoop:
         }
         if(!wordUsed){//iff character is not used as part of any other word, we print it
           //TODO:onsider whether this should be the behaviour and how arguments might be restructured
-          Word wordSingleChar=extract.getWordFromChinese(word);
+          Word wordSingleChar=Extract.getWordFromChinese(word);
           if(wordSingleChar!=null){
             words.add(wordSingleChar);
           }
         }
       }
       int i=0;
-      output=DeckFactory.generateDeck(words).getLines();
-      /*
-      for(Word word:words){
-        output.add(i++ +";"+ word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()+" - "
-                                                  + word.getDefinition().replaceAll(";",","));
-      }*/
-    return output;
+    return words;
   }
 
-  private static List<String> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray){
-    Extract extract = new Extract();
+  private static Set<Word> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray){
     Set<Word> words=new HashSet<Word>();
-    //List<String> output=new ArrayList<String>();
     for(int i=0;i<charArray.length;i++){
       char c=charArray[i];
-      Word word=extract.getWordFromChinese(c);
+      Word word=Extract.getWordFromChinese(c);
       words.add(word);
-/*      output.add(i+";"+word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()
-                                + " - " + word.getDefinition().replaceAll(";",","));
-                                */
     }
-    return DeckFactory.generateDeck(words).getLines();
-    //return output;
+    return words;
   }
-
-  private static List<String> getAnkiOutputFromSingleChars(String filename){
-      char[] charArray=getCharsFromFile(filename);
-      return getAnkiOutputFromSingleCharsWithCharArr(charArray);
+  private static Set<Word> getAnkiOutputFromSingleChars(String filename){
+    char[] charArray=getCharsFromFile(filename);
+    return getAnkiOutputFromSingleCharsWithCharArr(charArray);
   }
 }
