@@ -1,4 +1,5 @@
 public class Word{
+  public Word(){}
   public Word(String givenTrad, String givenSimp,String givenPinyin, String givenPinTones, String givenDef){
     trad=givenTrad;
     simp=givenSimp;

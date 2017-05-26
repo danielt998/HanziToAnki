@@ -158,12 +158,16 @@ outerLoop:
   private static List<String> getAnkiOutputWordListFromStringArr(String[] stringArr){
     Extract extract = new Extract();
     List<String> output=new ArrayList<String>();
+    Set<Word> words= new HashSet<Word>();
     for(int i=0;i<stringArr.length;i++){
       String s=stringArr[i];
-      output.add(i+";"+s + ";" + extract.getEnglish(s)
-                                       .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
+      words.add(extract.getWordFromChinese(s));
+//      output.add(i+";"+s + ";" + extract.getEnglish(s)
+//                                       .replaceAll(";",",")+"-"+extract.getPinyinWithTones(s));
     }
-    return output;
+    DeckFactory deckFactory = new DeckFactory();
+    return deckFactory.generateDeck(words).getLines();
+    //return output;
   }
 
   private static List<String> getAnkiOutputForOneTwoThreeCharWords(String filename){
@@ -205,23 +209,31 @@ outerLoop:
         }
       }
       int i=0;
+      DeckFactory deckFactory = new DeckFactory();
+      output=deckFactory.generateDeck(words).getLines();
+      /*
       for(Word word:words){
         output.add(i++ +";"+ word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()+" - "
                                                   + word.getDefinition().replaceAll(";",","));
-      } 
+      }*/
     return output;
   }
 
   private static List<String> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray){
     Extract extract = new Extract();
-    List<String> output=new ArrayList<String>();
+    Set<Word> words=new HashSet<Word>();
+    //List<String> output=new ArrayList<String>();
     for(int i=0;i<charArray.length;i++){
       char c=charArray[i];
       Word word=extract.getWordFromChinese(c);
-      output.add(i+";"+word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()
+      words.add(word);
+/*      output.add(i+";"+word.getSimplifiedChinese() + ";" +word.getPinyinWithTones()
                                 + " - " + word.getDefinition().replaceAll(";",","));
+                                */
     }
-    return output;
+    DeckFactory deckFactory = new DeckFactory();
+    return deckFactory.generateDeck(words).getLines();
+    //return output;
   }
 
   private static List<String> getAnkiOutputFromSingleChars(String filename){

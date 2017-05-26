@@ -1,11 +1,14 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.AbstractCollection;
 import java.lang.Character;
+import java.util.Set;
+import java.util.HashSet;
 
 public class DeckFactory{
-  private final String DELIMITER=";";
+  private final String DELIMITER="\t";
   private final String CLOSING_HTML_TAG="</span>";
-  public Deck generateDeck(List<Word> words){
+  public Deck generateDeck(Set<Word> words){
     Deck deck=new Deck();
     for(Word word:words){
       deck.addLine(getSimp(word)+DELIMITER+getDefinition(word)+DELIMITER+getPinyinWithHTML(word)
@@ -13,7 +16,6 @@ public class DeckFactory{
     }
     return deck;
   }
-
 
   private String getSimp(Word word){
     return word.getSimplifiedChinese();
@@ -111,7 +113,7 @@ public class DeckFactory{
     return "";
   }
   public static void main(String[] args){
-    List<Word> list=new ArrayList<Word>();
+    Set<Word> list=new HashSet<Word>();
     list.add(new Word("阿巴拉契亞","阿巴拉契亚","Aqiya", "A1 ba1 la1 qi4 ya4", "Some definition"));
     list.add(new Word("m","阿巴拉契亚","Aqiya", "A1 ba1 la1 qi4 ya4", "Some definition"));
     DeckFactory fact=new DeckFactory();
