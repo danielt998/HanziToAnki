@@ -42,9 +42,11 @@ public class Main{
     System.out.println("Usage: java Main [OPTIONS] filename");
     System.out.println("options:");
     System.out.println(
-               "\t-w --word-list:\tRead from an input file containing a list of words, separated"+
-               " by line breaks. Without this flag, individual characters are extracted.");
+               "\t-w --word-list:\tRead from an input file containing a list of words, separated"
+               + " by line breaks. Without this flag, individual characters are extracted.");
     System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
+    System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
+                                                                              + " the given one.");
   }
 
   //TODO:resurrect this code(basically copy what is now done in main and call this from main
@@ -78,6 +80,7 @@ public class Main{
     boolean useWordList=false;
     boolean allWords=true;
     String filename = args[args.length-1];
+    int hskLevelToExtract=0;
     for(int argno=0;argno<args.length-1;argno++){
       //flag handling
       if(args[argno].equals("-w")||args[argno].equals("--word-list")){
@@ -86,6 +89,8 @@ public class Main{
       }else if(args[argno].equals("-s")||args[argno].equals("--single-characters")){
         allWords=false;
         useWordList=false;
+      }else if(args[argno].equals("-hsk")){
+        hskLevelToExtract=Integer.parseInt(args[++argno]);
       }else{
         System.out.println(
                        "An unrecognised flag was used, please see below for usage information:\n");
@@ -104,6 +109,7 @@ public class Main{
       words.addAll(getAnkiOutputFromSingleChars(filename));
     }
 
+    words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(hskLevelToExtract));
 
     List<String> lines=DeckFactory.generateDeck(words).getLines();
     for(String line:lines){//
