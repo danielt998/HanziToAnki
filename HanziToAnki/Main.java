@@ -10,17 +10,19 @@ import java.util.HashSet;
  */
 public class Main{
   public static char[] getCharsFromFile(String fileName){
-    String acc="";//TODO:StringBuilder?
+    StringBuilder acc=new StringBuilder("");//TODO:StringBuilder?
     try{
       FileReader fileReader = new FileReader(fileName);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
       String tmpLine;
       while((tmpLine = bufferedReader.readLine())!=null){
-        acc += tmpLine;
+        acc.append(tmpLine);
        }
     }catch(Exception e){}
-    finally{}
-    char[] allChars = acc.toCharArray();
+    finally{
+     // bufferedReader.close();
+    }
+    char[] allChars = acc.toString().toCharArray();
     String chineseCharsOnly = "";
     for (char c:allChars){
       if(Character.UnicodeScript.of(c)==Character.UnicodeScript.HAN){
@@ -99,7 +101,6 @@ public class Main{
       }
       //handle other flags..., create a separate class if args get too numerous
     }
-
     Set<Word> words = new HashSet();
     if(useWordList){
       words.addAll(VocabularyImporter.getWordsFromNewlineSeparatedFile(filename));
@@ -108,9 +109,7 @@ public class Main{
     }else{
       words.addAll(getAnkiOutputFromSingleChars(filename));
     }
-System.out.println("word list generated");
     words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(hskLevelToExtract));
-System.out.println("hsk vocab removed");
     List<String> lines=DeckFactory.generateDeck(words).getLines();
     for(String line:lines){//
       System.out.println(line);//

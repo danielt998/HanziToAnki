@@ -29,7 +29,8 @@ import java.io.File;
   Capitals are causing issues too...
 */
 public class Extract{
-  private static final String DEFAULT_DICTIONARY_FILENAME="dict";
+//  private static final String DEFAULT_DICTIONARY_FILENAME="dict";
+  private static final String DEFAULT_DICTIONARY_FILENAME="cedict_ts.u8";
 
   public static List<Word> dictionary = new ArrayList<Word>();
 
@@ -39,34 +40,7 @@ public class Extract{
     //then run the following on this output:| sort | cut -d ' ' -f2- > dict
 
   }
-
-  //may want to be a different type
-  public static List<Word> findMatches(int index, String pinyin){
-    //go back and forth until no matches, storing/printing all the matches as you go along
-    List<Word> matches = new ArrayList<Word>();
-    matches.add(dictionary.get(index));
-    //traverse in reverse order first
-    for (int i=index-1;i >0;i--){
-      Word tmp = dictionary.get(i);
-      if(tmp.getPinyinNoTones().startsWith(pinyin)){
-        matches.add(tmp);
-      } else {
-        break;
-      }
-    }
-
-    //then forwards
-    for (int i=index+1;i<dictionary.size();i++){
-      Word tmp = dictionary.get(i);
-      if(tmp.getPinyinNoTones().startsWith(pinyin)){
-        matches.add(tmp);
-      } else {
-        break;
-      }
-    }
-    return matches;
-  }
-
+/*
   public static List<Word> getWordPin(String pinyin){
     int left=0;
     int right=dictionary.size() -1;
@@ -83,20 +57,22 @@ public class Extract{
       }else if (pinyin.compareTo(midPin) > 0){
         System.out.println(midWord.getPinyinWithTones() + ":>0");
         left = mid + 1;//make more efficient by only running compareTo once
-      } /*else {
-        return midWord;
-      }*/
+      } //else {
+      //  return midWord;
+      //}
     } while (left <= right);
     //if not found:
     //Word empty = new Word();
     //empty.trad = empty.simp=empty.pinyin=empty.pinTones=empty.def="The word was not found";
     return null;
   }
-
+*/
   private static List<Word> readInDictionary(String filename){
     List<Word> wordList=new ArrayList<Word>();
     try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
       String line;
+      for (int i=0;i<30 && (line = br.readLine()) != null;i++)
+        ;//ignore first 31 lines
       while ((line = br.readLine()) != null) {
         Word word = new Word();
         String[] str=line.split(" /");
@@ -121,15 +97,68 @@ public class Extract{
   }
 
   public static Word getWordFromChinese(String chineseWord){
-    for (Word word : dictionary){
+    //TODO: add support for traditional Chinese
+    return getWordFromSimplifiedChinese(chineseWord);
+  }
+  public static Word getWordFromSimplifiedChinese(String chineseWord){
+/*    for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
                       || word.getTraditionalChinese().equals(chineseWord)){
         return word;
       }
     }
     return null;
-  }
+*/
+    int left=0;
+    int right=dictionary.size() -1;
+    do{
+      int mid = left + (right - left) /2;
 
+      Word midWord=dictionary.get(mid);
+      String simplifiedMidWord = midWord.getSimplifiedChinese();
+      if(simplifiedMidWord.equals(chineseWord)){
+        return midWord;
+      } else if(chineseWord.compareTo(simplifiedMidWord) < 0){
+        right = mid - 1;
+      }else if (chineseWord.compareTo(simplifiedMidWord) > 0){
+        left = mid + 1;//make more efficient by only running compareTo once
+      } //else {
+        //return midWord;
+      //}
+    } while (left <= right);
+    //if not found:
+    //Word empty = new Word();
+    //empty.trad = empty.simp=empty.pinyin=empty.pinTones=empty.def="The word was not found";
+    return null;
+   
+  }
+/*
+  public static List<Word> getWordPin(String pinyin){
+    int left=0;
+    int right=dictionary.size() -1;
+    do{
+      int mid = left + (right - left) /2;
+
+      Word midWord=dictionary.get(mid);
+      String midPin = midWord.getPinyinNoTones();
+      if(midPin.startsWith(pinyin)){ //that is compare ==0 (more or less...)
+        return findMatches(mid,pinyin);
+      } else if(pinyin.compareTo(midPin) < 0){
+        System.out.println(midWord.getPinyinWithTones() + ":<0");
+        right = mid - 1;
+      }else if (pinyin.compareTo(midPin) > 0){
+        System.out.println(midWord.getPinyinWithTones() + ":>0");
+        left = mid + 1;//make more efficient by only running compareTo once
+      } //else {
+        //return midWord;
+      //}
+    } while (left <= right);
+    //if not found:
+    //Word empty = new Word();
+    //empty.trad = empty.simp=empty.pinyin=empty.pinTones=empty.def="The word was not found";
+    return null;
+  }
+*/
   public static String getEnglish(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)

@@ -84,6 +84,10 @@ public class DeckFactory{
         }
       }
     }
+    if(syllable.contains("r")){
+      return 'e';//TODO:for now, but later we may want to handle this differently
+    }
+    System.out.println("Something went wrong, syllable:"+syllable);
     return '☃';
   }
   private static char getCharWithTone(char originalChar, int tone){
@@ -102,6 +106,7 @@ public class DeckFactory{
                 break;
       case 'ü': tones= new char[]{'ǖ','ǘ','ǚ','ǜ','ü'};
                 break;
+      default : System.out.println("Unrecognised character:"+originalChar);
     }
     char newChar= tones[tone-1];
     if(Character.isUpperCase(originalChar)){
