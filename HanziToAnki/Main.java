@@ -108,9 +108,9 @@ public class Main{
     }else{
       words.addAll(getAnkiOutputFromSingleChars(filename));
     }
-
+System.out.println("word list generated");
     words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(hskLevelToExtract));
-
+System.out.println("hsk vocab removed");
     List<String> lines=DeckFactory.generateDeck(words).getLines();
     for(String line:lines){//
       System.out.println(line);//
