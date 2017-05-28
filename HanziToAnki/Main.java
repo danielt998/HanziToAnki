@@ -7,9 +7,11 @@ import java.util.HashSet;
 /*TODO:
  *  move more of the code to use HashSets, some of it still allows duplicates
  *  move stuff out of the main method and find some way to make it a little more generic
+ *  in getCharsFromFile, 1) rename "acc" (accumulator), try StringBuilder chineseCharsOnly (instead of String)...
+ *  ...See if StringBuilder is much faster than String for the above
  */
 public class Main{
-  public static char[] getCharsFromFile(String fileName){
+  private static char[] getCharsFromFile(String fileName){
     StringBuilder acc=new StringBuilder("");//TODO:StringBuilder?
     try{
       FileReader fileReader = new FileReader(fileName);
@@ -74,7 +76,7 @@ public class Main{
   }
 
   public static void main(String[] args){
-    if(args.length==0||args[0].equals("-h")){
+    if(args.length==0||args[0].equals("-h")||args[0].equals("-help")){
       printUsage();
       return;
     }
