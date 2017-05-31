@@ -50,26 +50,30 @@ public class Main{
                                                                               + " the given one.");
   }
 
+
   //TODO:resurrect this code(basically copy what is now done in main and call this from main
-  public static void produceDeck(String[] lines, boolean useWordList, boolean allWords,
-                                                                    String outputFileName){
-         /*
-   List<String> outputStringList;
-    if(useWordList){
-      outputStringList=getAnkiOutputWordListFromStringArr(lines);
-    }else if(allWords){
-      char[] charArray=stringArrToCharArr(lines);
-      outputStringList=getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
-    }else{
-      char[] charArray=stringArrToCharArr(lines);
-      outputStringList=getAnkiOutputFromSingleCharsWithCharArr(charArray);
-    }
-    writeStringListToFile(outputStringList,outputFileName); 
-    */
+  //public static void produceDeck(List<String> lines, boolean useWordList, boolean allWords,
+    //                                                                String outputFileName){
+  public static void produceDeck(List<String> lines, Options options, String outputFileName){
+      Set<Word> words = new HashSet();
+    System.out.println("Trying to produceDeck");//
+      if(options.getUseWordList()){
+          words.addAll(VocabularyImporter.getWordsFromStringList(lines));
+      }else if(options.getAllWords()){
+          words.addAll(VocabularyImporter.getWordsFromStringList(lines));
+      }else{
+          words.addAll(VocabularyImporter.getWordsFromStringList(lines));
+      }
+      words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(options.getHskLevelToExclude()));
+      List<String> outputLines=DeckFactory.generateDeck(words).getLines();
+      //TODO:change this to writ
+      for(String line:lines){//
+          System.out.println(line);//
+      }//
   }
 
-  public void produceDeck(String filename, boolean useWordList, boolean allWords, String outputFileName){
-
+  public static void produceDeck(String filename, Options options,String outputFileName){
+    produceDeck(FileUtils.fileToStringArray(filename),options,outputFileName);
   }
 
   public static void main(String[] args){
@@ -82,6 +86,7 @@ public class Main{
     boolean allWords=true;
     String filename = args[args.length-1];
     int hskLevelToExtract=0;
+
     for(int argno=0;argno<args.length-1;argno++){
       //flag handling
       if(args[argno].equals("-w")||args[argno].equals("--word-list")){
@@ -98,21 +103,13 @@ public class Main{
         printUsage();
         return;
       }
+
       //handle other flags..., create a separate class if args get too numerous
+
     }
-    Set<Word> words = new HashSet();
-    if(useWordList){
-      words.addAll(VocabularyImporter.getWordsFromNewlineSeparatedFile(filename));
-    }else if(allWords){
-      words.addAll(getAnkiOutputForOneTwoThreeCharWords(filename));
-    }else{
-      words.addAll(getAnkiOutputFromSingleChars(filename));
-    }
-    words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(hskLevelToExtract));
-    List<String> lines=DeckFactory.generateDeck(words).getLines();
-    for(String line:lines){//
-      System.out.println(line);//
-    }//
+
+    produceDeck(filename,new Options(useWordList,allWords,hskLevelToExtract),"outputfileName");
+
   }
   private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(String filename){
       char[] charArray=getCharsFromFile(filename);

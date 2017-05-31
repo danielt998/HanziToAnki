@@ -1,5 +1,5 @@
-import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
 import javax.swing.*;
 public class GUI extends JFrame implements ActionListener{
   public JTextArea textField;
@@ -54,7 +54,8 @@ public class GUI extends JFrame implements ActionListener{
   }
   public void actionPerformed(ActionEvent e){
     if(e.getSource()==createDeck){
-      Main.produceDeck(textField.getText().split("\\r?\\n"),wordList.isSelected(),theDefault.isSelected(),outputName.getText()+".csv");
+System.out.println("options:"+new Options(wordList.isSelected(),theDefault.isSelected(),0));
+      Main.produceDeck(Arrays.asList(textField.getText().split("\\r?\\n")),new Options(wordList.isSelected(),theDefault.isSelected(),0),outputName.getText()+".csv");
     }
   }
 }
