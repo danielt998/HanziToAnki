@@ -1,18 +1,16 @@
 import java.io.*;
-import java.util.Scanner;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 /*TODO:
  *  move more of the code to use HashSets, some of it still allows duplicates
- *  move stuff out of the main method and find some way to make it a little more generic
+ *  move stuff out of the main method and find some  way to make it a little more generic
  *  in getCharsFromFile, 1) rename "acc" (accumulator), try StringBuilder chineseCharsOnly (instead of String)...
  *  ...See if StringBuilder is much faster than String for the above
  */
 public class Main{
   private static char[] getCharsFromFile(String fileName){
-    StringBuilder acc=new StringBuilder("");//TODO:StringBuilder?
+    StringBuilder acc=new StringBuilder("");
     try{
       FileReader fileReader = new FileReader(fileName);
       BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -20,18 +18,17 @@ public class Main{
       while((tmpLine = bufferedReader.readLine())!=null){
         acc.append(tmpLine);
        }
-    }catch(Exception e){}
-    finally{
-     // bufferedReader.close();
+    }catch(Exception exception){
+        exception.printStackTrace();
     }
     char[] allChars = acc.toString().toCharArray();
-    String chineseCharsOnly = "";
+    StringBuilder chineseCharsOnly = new StringBuilder("");
     for (char c:allChars){
       if(Character.UnicodeScript.of(c)==Character.UnicodeScript.HAN){
-        chineseCharsOnly += c;
+        chineseCharsOnly.append(c);
       }
     } 
-    return chineseCharsOnly.toCharArray();
+    return chineseCharsOnly.toString().toCharArray();
   }
 
   private static char[] stringArrToCharArr(String[] stringArr){
@@ -156,8 +153,7 @@ public class Main{
 
   private static Set<Word> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray){
     Set<Word> words=new HashSet<Word>();
-    for(int i=0;i<charArray.length;i++){
-      char c=charArray[i];
+    for(char c:charArray){
       Word word=Extract.getWordFromChinese(c);
       words.add(word);
     }
