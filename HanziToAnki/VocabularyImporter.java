@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 public class VocabularyImporter{
@@ -23,14 +24,18 @@ public class VocabularyImporter{
      return getWordsFromNewlineSeparatedFile(VOCAB_LOCATION+level);
   }
 
-  public static Set<Word> getWordsFromNewlineSeparatedFile(String filename){
+  public static Set<Word> getWordsFromStringList(List<String> lines){
     Set<Word> vocabSet = new HashSet<Word>();
-    for(String line:FileUtils.fileToStringArray(filename)){
+    for(String line:lines){
       Word wordToAdd=Extract.getWordFromChinese(line);
       if(wordToAdd!=null){
         vocabSet.add(wordToAdd);
       }
     }
-    return vocabSet; 
+    return vocabSet;
+  }
+
+  public static Set<Word> getWordsFromNewlineSeparatedFile(String filename){
+    return getWordsFromStringList(FileUtils.fileToStringArray(filename));
   }
 }

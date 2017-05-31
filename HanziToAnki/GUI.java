@@ -55,7 +55,7 @@ public class GUI extends JFrame implements ActionListener{
   public void actionPerformed(ActionEvent e){
     if(e.getSource()==createDeck){
 System.out.println("options:"+new Options(wordList.isSelected(),theDefault.isSelected(),0));
-      Main.produceDeck(Arrays.asList(textField.getText().split("\\r?\\n")),new Options(wordList.isSelected(),theDefault.isSelected(),0),outputName.getText()+".csv");
+       Main.produceDeck(Arrays.asList(textField.getText().split("\\r?\\n")),new Options(wordList.isSelected(),theDefault.isSelected(),0),outputName.getText()+".csv");
     }
   }
 }

@@ -56,7 +56,6 @@ public class Main{
     //                                                                String outputFileName){
   public static void produceDeck(List<String> lines, Options options, String outputFileName){
       Set<Word> words = new HashSet();
-    System.out.println("Trying to produceDeck");//
       if(options.getUseWordList()){
           words.addAll(VocabularyImporter.getWordsFromStringList(lines));
       }else if(options.getAllWords()){
