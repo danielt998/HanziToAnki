@@ -1,3 +1,6 @@
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -16,5 +19,15 @@ public class FileUtils{
       exception.printStackTrace();
     }
     return lines;
+  }
+  public static void writeToFile(List<String> lines, String outputFileName){
+    try {
+      Files.write(Paths.get(outputFileName), lines, Charset.defaultCharset());
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+  public static String removeExtensionFromFileName(String originalFileName){
+    return originalFileName.substring(0, originalFileName.lastIndexOf("."));
   }
 }

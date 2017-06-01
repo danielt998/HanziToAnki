@@ -45,14 +45,8 @@ public class Main{
           words.addAll(getAnkiOutputFromSingleChars(lines));
       }
       words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(options.getHskLevelToExclude()));
-  for (Word word:words){
-    System.out.println(word.getSimplifiedChinese());
-  }
       List<String> outputLines=DeckFactory.generateDeck(words).getLines();
-      //TODO:change this to write to a file
-      for(String line:outputLines){//
-          System.out.println(line);//
-      }//
+      FileUtils.writeToFile(outputLines,outputFileName);
   }
 
   public static void produceDeck(String filename, Options options,String outputFileName){
@@ -69,7 +63,8 @@ public class Main{
     boolean allWords=true;
     String filename = args[args.length-1];
     int hskLevelToExtract=0;
-
+    //TODO: provide a command line option for the user to override this name
+    String outputFileName=FileUtils.removeExtensionFromFileName(filename)+".csv";
     for(int argno=0;argno<args.length-1;argno++){
       //flag handling
       if(args[argno].equals("-w")||args[argno].equals("--word-list")){
@@ -88,7 +83,7 @@ public class Main{
       }
       //handle other flags..., create a separate class if args get too numerous
     }//for
-    produceDeck(filename,new Options(useWordList,allWords,hskLevelToExtract),"outputfileName");
+    produceDeck(filename,new Options(useWordList,allWords,hskLevelToExtract),outputFileName);
   }
 
   private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list){
