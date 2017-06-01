@@ -114,13 +114,4 @@ public class DeckFactory{
   private static String getSimpWithToneInfo(Word word){
     return "";
   }
-  public static void main(String[] args){
-    Set<Word> list=new HashSet<Word>();
-    list.add(new Word("阿巴拉契亞","阿巴拉契亚","Aqiya", "A1 ba1 la1 qi4 ya4", "Some definition"));
-    list.add(new Word("m","阿巴拉契亚","Aqiya", "A1 ba1 la1 qi4 ya4", "Some definition"));
-    Deck deck=generateDeck(list);
-    for(String s:deck.getLines()){
-      System.out.println(s);
-    }
-  }
 }

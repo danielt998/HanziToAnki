@@ -9,34 +9,19 @@ import java.util.HashSet;
  *  ...See if StringBuilder is much faster than String for the above
  */
 public class Main{
-  private static char[] getCharsFromFile(String fileName){
-    StringBuilder acc=new StringBuilder("");
-    try{
-      FileReader fileReader = new FileReader(fileName);
-      BufferedReader bufferedReader = new BufferedReader(fileReader);
-      String tmpLine;
-      while((tmpLine = bufferedReader.readLine())!=null){
-        acc.append(tmpLine);
-       }
-    }catch(Exception exception){
-        exception.printStackTrace();
+  private static char[] getCharsFromList(List<String> lines){
+    StringBuilder fullString=new StringBuilder("");
+    for(String line: lines){
+      fullString.append(line);
     }
-    char[] allChars = acc.toString().toCharArray();
+    char[] allChars = fullString.toString().toCharArray();
     StringBuilder chineseCharsOnly = new StringBuilder("");
     for (char c:allChars){
       if(Character.UnicodeScript.of(c)==Character.UnicodeScript.HAN){
         chineseCharsOnly.append(c);
       }
-    } 
-    return chineseCharsOnly.toString().toCharArray();
-  }
-
-  private static char[] stringArrToCharArr(String[] stringArr){
-    StringBuilder builder=new StringBuilder();
-    for(String s : stringArr){
-      builder.append(s);
     }
-    return builder.toString().toCharArray();
+    return chineseCharsOnly.toString().toCharArray();
   }
 
   public static void printUsage(){
@@ -50,23 +35,22 @@ public class Main{
                                                                               + " the given one.");
   }
 
-
-  //TODO:resurrect this code(basically copy what is now done in main and call this from main
-  //public static void produceDeck(List<String> lines, boolean useWordList, boolean allWords,
-    //                                                                String outputFileName){
   public static void produceDeck(List<String> lines, Options options, String outputFileName){
       Set<Word> words = new HashSet();
       if(options.getUseWordList()){
           words.addAll(VocabularyImporter.getWordsFromStringList(lines));
       }else if(options.getAllWords()){
-          words.addAll(VocabularyImporter.getWordsFromStringList(lines));
+        words.addAll(getAnkiOutputForOneTwoThreeCharWords(lines));
       }else{
-          words.addAll(VocabularyImporter.getWordsFromStringList(lines));
+          words.addAll(getAnkiOutputFromSingleChars(lines));
       }
       words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(options.getHskLevelToExclude()));
+  for (Word word:words){
+    System.out.println(word.getSimplifiedChinese());
+  }
       List<String> outputLines=DeckFactory.generateDeck(words).getLines();
-      //TODO:change this to writ
-      for(String line:lines){//
+      //TODO:change this to write to a file
+      for(String line:outputLines){//
           System.out.println(line);//
       }//
   }
@@ -102,16 +86,13 @@ public class Main{
         printUsage();
         return;
       }
-
       //handle other flags..., create a separate class if args get too numerous
-
-    }
-
+    }//for
     produceDeck(filename,new Options(useWordList,allWords,hskLevelToExtract),"outputfileName");
-
   }
-  private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(String filename){
-      char[] charArray=getCharsFromFile(filename);
+
+  private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list){
+      char[] charArray=getCharsFromList(list);
       return getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
   }
   private static Set<Word> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[]  charArray){
@@ -136,7 +117,7 @@ public class Main{
           }
         }
         if(!wordUsed){//iff character is not used as part of any other word, we print it
-          //TODO:onsider whether this should be the behaviour and how arguments might be restructured
+          //TODO:consider whether this should be the behaviour and how arguments might be restructured
           Word wordSingleChar=Extract.getWordFromChinese(word);
           if(wordSingleChar!=null){
             words.add(wordSingleChar);
@@ -155,8 +136,8 @@ public class Main{
     }
     return words;
   }
-  private static Set<Word> getAnkiOutputFromSingleChars(String filename){
-    char[] charArray=getCharsFromFile(filename);
+  private static Set<Word> getAnkiOutputFromSingleChars(List<String> lines){
+    char[] charArray =getCharsFromList(lines);
     return getAnkiOutputFromSingleCharsWithCharArr(charArray);
   }
 }
