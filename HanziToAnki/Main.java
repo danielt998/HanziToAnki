@@ -33,6 +33,7 @@ public class Main{
     System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
     System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
                                                                               + " the given one.");
+    System.out.println("\t-o <output filename> Override the default output file name");
   }
 
   public static void produceDeck(List<String> lines, Options options, String outputFileName){
@@ -61,10 +62,12 @@ public class Main{
     Extract.readInDictionary();
     boolean useWordList=false;
     boolean allWords=true;
-    String filename = args[args.length-1];
-    int hskLevelToExtract=0;
-    //TODO: provide a command line option for the user to override this name
+    final String filename = args[args.length-1];
     String outputFileName=FileUtils.removeExtensionFromFileName(filename)+".csv";
+    int hskLevelToExtract=0;
+
+    //TODO: provide a command line option for the user to override this name
+
     for(int argno=0;argno<args.length-1;argno++){
       //flag handling
       if(args[argno].equals("-w")||args[argno].equals("--word-list")){
@@ -73,8 +76,10 @@ public class Main{
       }else if(args[argno].equals("-s")||args[argno].equals("--single-characters")){
         allWords=false;
         useWordList=false;
-      }else if(args[argno].equals("-hsk")){
-        hskLevelToExtract=Integer.parseInt(args[++argno]);
+      }else if(args[argno].equals("-hsk")) {
+        hskLevelToExtract = Integer.parseInt(args[++argno]);
+      }else if(args[argno].equals("-o")){
+        outputFileName=args[++argno];
       }else{
         System.out.println(
                        "An unrecognised flag was used, please see below for usage information:\n");
