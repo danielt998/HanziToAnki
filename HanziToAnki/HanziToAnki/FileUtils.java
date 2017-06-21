@@ -10,9 +10,12 @@ import java.io.File;
 import java.io.IOException;
 public class FileUtils{
   public static List<String> fileToStringArray(String filename){
+    return fileToStringArray(new File(filename));
+  }
+  public static List<String> fileToStringArray(File file){
     List<String> lines = new ArrayList<String>();
     try{
-      Scanner scanner = new Scanner(new File(filename));
+      Scanner scanner = new Scanner(file);
       while(scanner.hasNextLine()){
         lines.add(scanner.nextLine());
       }
