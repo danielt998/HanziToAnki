@@ -1,11 +1,11 @@
 package HanziToAnki;
 
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
+
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
   Also, it has some useful methods that are of no use for this particular project, so it might be nice
@@ -34,10 +34,13 @@ import java.io.File;
 public class Extract{
   private static final String DEFAULT_DICTIONARY_FILENAME= "../resources/cedict_ts.u8";
   private static final char COMMENT_CHARACTER='#';
-  public static List<Word> dictionary = new ArrayList<Word>();
+  //public static List<Word> dictionary = new ArrayList<Word>();
+  public static Map<String,Word> simplifiedMapping = new HashMap<String,Word>();
 
-  private static List<Word> readInDictionary(String filename){
-    List<Word> wordList=new ArrayList<Word>();
+  public static void readInDictionary(){
+    readInDictionary(DEFAULT_DICTIONARY_FILENAME);
+  }
+  public static void readInDictionary(String filename){
     try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
       String line;
       while ((line = br.readLine()) != null) {
@@ -54,12 +57,11 @@ public class Extract{
         String[] remRem=rem[0].split(" ");
         word.setTraditionalChinese(remRem[0]);
         word.setSimplifiedChinese(remRem[1]);
-        wordList.add(word);
+        simplifiedMapping.put(word.getSimplifiedChinese(),word);
       }
     } catch (Exception e){
       e.printStackTrace();
     }
-    return wordList;
   }
 
   public static Word getWordFromChinese(char c){
@@ -68,27 +70,23 @@ public class Extract{
 
   public static Word getWordFromChinese(String chineseWord){
     //TODO: add support for traditional Chinese
-    return getWordFromSimplifiedChinese(chineseWord);
-  }
-  public static Word getWordFromSimplifiedChinese(String chineseWord){
-    int left=0;
-    int right=dictionary.size() -1;
-    do{
-      int mid = left + (right - left) /2;
-      Word midWord=dictionary.get(mid);
-      String simplifiedMidWord = midWord.getSimplifiedChinese();
-      if(simplifiedMidWord.equals(chineseWord)){
-        return midWord;
-      } else if(chineseWord.compareTo(simplifiedMidWord) < 0){
-        right = mid - 1;
-      }else if (chineseWord.compareTo(simplifiedMidWord) > 0){
-        left = mid + 1;//make more efficient by only running compareTo once
-      }
-    } while (left <= right);
-    return null;
-   
+    Word simplified=getWordFromSimplifiedChinese(chineseWord);
+    if(simplified!=null){
+      return simplified;
+    }
+    return getWordFromTraditionalChinese(chineseWord);
   }
 
+  public static Word getWordFromTraditionalChinese(String chineseWord){
+    return null;
+  }
+  public static Word getWordFromSimplifiedChinese(String chineseWord){
+      return simplifiedMapping.get(chineseWord);
+  }
+
+
+/*TODO:resurrect
+  //LINEAR COMPLEXITY
   public static String getEnglish(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
@@ -98,7 +96,6 @@ public class Extract{
     }
     return "Chinese word not found";
   }
-
   public static String getPinyinWithTones(String chineseWord){
     for (Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
@@ -108,8 +105,10 @@ public class Extract{
     }
     return "Chinese word not found";
   }
+  */
+  /*
   public static void readInDictionary(){
     dictionary=readInDictionary(DEFAULT_DICTIONARY_FILENAME);
-  }
-  
+  }*/
+
 }

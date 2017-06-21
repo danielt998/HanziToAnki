@@ -108,7 +108,7 @@ public class Main{
             i++;
           }
         }
-        if(i+2-1<charArray.length){
+        if(i+2-1<charArray.length){//TODO:fix this
           Word wordThreeChars= Extract.getWordFromChinese(word+charArray[i+1-1]+charArray[i+2-1]);
           if(wordThreeChars!=null){
             words.add(wordThreeChars);

@@ -3,6 +3,7 @@ package GUIs
 import HanziToAnki.*
 import javafx.fxml.FXML
 import javafx.scene.control.*
+import javafx.stage.FileChooser
 import java.util.*
 
 class TabbedUIController {
@@ -10,17 +11,20 @@ class TabbedUIController {
     @FXML var inputText: TextArea? = null
     @FXML var inputFullFilename: TextField? = null
     @FXML var outputFullFilename: TextField? = null
-    @FXML var fileSelectorButton: Button? = null
+    @FXML var fileSelectorInputButton: Button? = null
+    @FXML var fileSelectorOutputButton: Button? = null
     @FXML var howToHandleHanzi: ComboBox<String>? = null
 //    @FXML var pronunciationCheckBox: CheckBox? = null
 
-    constructor() {}
-
+    @FXML fun selectOutput(){
+        val file = (FileChooser()).showSaveDialog(MainGUI.stage)
+        if (file != null) {
+            outputFullFilename?.text=file.absolutePath
+        }
+    }
     @FXML fun initialize() {}
     @FXML fun export() {
-        System.out.println("hi")
         val outputName:String?=outputFullFilename?.getText()
         Main.produceDeck(inputText?.getText()?.split("\n") as List<String>, ExportOptions(false, true, 0),outputName)
-System.out.println("did stuff")
     }
 }
