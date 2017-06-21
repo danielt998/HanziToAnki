@@ -16,8 +16,6 @@ import java.io.File;
 /*TODO:
   tidy up formatting (e.g. trailing \)
   ensure that split(" /") does not miss anything
-  verify that everything is sorted alphabetically by pinyin
-  implement search...
   give some thought to how we can implement search for characters/English too...
      maybe create some sort of hashmap
   search should not require exact matches, if whole provided string is a substring of pinyin
@@ -26,16 +24,13 @@ import java.io.File;
       traverse the list both backwards and forwards as far as possible and add all the matches
   (starting at same place), this should be a match too.
   also,** multiple words have same pinyin** - for themoment, this will return only the first result
-  
-  could probably just switch to using an array too...
-  
   Capitals are causing issues too...
 */
 public class Extract{
   private static final String DEFAULT_DICTIONARY_FILENAME= "../resources/cedict_ts.u8";
   private static final char COMMENT_CHARACTER='#';
-  //public static List<Word> dictionary = new ArrayList<Word>();
-  public static Map<String,Word> simplifiedMapping = new HashMap<String,Word>();
+  private static Map<String,Word> simplifiedMapping = new HashMap<String,Word>();
+  private static Map<String,Word> traditionalMapping = new HashMap<String,Word>();
 
   public static void readInDictionary(){
     readInDictionary(DEFAULT_DICTIONARY_FILENAME);
@@ -58,6 +53,7 @@ public class Extract{
         word.setTraditionalChinese(remRem[0]);
         word.setSimplifiedChinese(remRem[1]);
         simplifiedMapping.put(word.getSimplifiedChinese(),word);
+        traditionalMapping.put(word.getTraditionalChinese(),word);
       }
     } catch (Exception e){
       e.printStackTrace();
@@ -78,10 +74,10 @@ public class Extract{
   }
 
   public static Word getWordFromTraditionalChinese(String chineseWord){
-    return null;
+    return traditionalMapping.get(chineseWord);
   }
   public static Word getWordFromSimplifiedChinese(String chineseWord){
-      return simplifiedMapping.get(chineseWord);
+    return simplifiedMapping.get(chineseWord);
   }
 
 
@@ -107,8 +103,5 @@ public class Extract{
   }
   */
   /*
-  public static void readInDictionary(){
-    dictionary=readInDictionary(DEFAULT_DICTIONARY_FILENAME);
-  }*/
 
 }
