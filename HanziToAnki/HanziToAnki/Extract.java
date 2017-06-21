@@ -65,7 +65,6 @@ public class Extract{
   }
 
   public static Word getWordFromChinese(String chineseWord){
-    //TODO: add support for traditional Chinese
     Word simplified=getWordFromSimplifiedChinese(chineseWord);
     if(simplified!=null){
       return simplified;
@@ -79,7 +78,6 @@ public class Extract{
   public static Word getWordFromSimplifiedChinese(String chineseWord){
     return simplifiedMapping.get(chineseWord);
   }
-
 
 /*TODO:resurrect
   //LINEAR COMPLEXITY
@@ -102,6 +100,5 @@ public class Extract{
     return "Chinese word not found";
   }
   */
-  /*
 
 }
