@@ -39,7 +39,8 @@ class TabbedUIController {
         Main.produceDeck(allText, ExportOptions(false, true, 0),outputName)
     }
     @FXML fun selectFiles(){
-        files=FileChooser().showOpenMultipleDialog(MainGUI.stage)
+        val selectedFiles:List<File>?=FileChooser().showOpenMultipleDialog(MainGUI.stage)
+        selectedFiles?.let{files=selectedFiles}
     }
     fun showError(title:String){
         //using swing instead of JavaFx due to reasons of Java version
