@@ -16,7 +16,6 @@ public class FileUtils{
   public static List<String> fileToStringArray(File file){
     List<String> lines = new ArrayList<String>();
     try{
-//      Scanner scanner = new Scanner(file);
       Scanner scanner = new Scanner(new FileReader(file));
       while(scanner.hasNextLine()){
         lines.add(scanner.nextLine());

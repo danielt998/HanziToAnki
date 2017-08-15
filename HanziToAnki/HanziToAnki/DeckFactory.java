@@ -9,6 +9,7 @@ public class DeckFactory{
   public static Deck generateDeck(Set<Word> words){
     Deck deck=new Deck();
     for(Word word:words){
+      System.out.println("word:"+word.getSimplifiedChinese());//DEBUG
       deck.addLine(getSimp(word)+DELIMITER+getDefinition(word)+DELIMITER+getPinyinWithHTML(word)
                 + getSimpWithToneInfo(word) + DELIMITER); 
     }
@@ -89,7 +90,10 @@ public class DeckFactory{
     return '☃';
   }
   private static char getCharWithTone(char originalChar, int tone){
-          // may be possible to use unicode modifiers to do this
+    //TODO: may be possible to use unicode modifiers to do this
+    if (!"aeiouü".contains(""+originalChar)){
+        return originalChar;
+    }
     char[] tones=new char[]{};
     switch (Character.toLowerCase(originalChar)){
       case 'a': tones= new char[]{'ā','á','ǎ','à','a'};
@@ -106,6 +110,7 @@ public class DeckFactory{
                 break;
       default : System.out.println("Unrecognised character:"+originalChar);
     }
+    System.out.println("char:"+originalChar+"tone:"+tone);//DEBUG
     char newChar= tones[tone-1];
     if(Character.isUpperCase(originalChar)){
       newChar=Character.toUpperCase(newChar);
