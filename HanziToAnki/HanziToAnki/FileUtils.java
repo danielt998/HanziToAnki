@@ -1,5 +1,6 @@
 package HanziToAnki;
 
+import java.io.FileReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,7 +16,8 @@ public class FileUtils{
   public static List<String> fileToStringArray(File file){
     List<String> lines = new ArrayList<String>();
     try{
-      Scanner scanner = new Scanner(file);
+//      Scanner scanner = new Scanner(file);
+      Scanner scanner = new Scanner(new FileReader(file));
       while(scanner.hasNextLine()){
         lines.add(scanner.nextLine());
       }
