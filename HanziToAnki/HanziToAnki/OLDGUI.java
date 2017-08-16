@@ -57,7 +57,7 @@ public class OLDGUI extends JFrame implements ActionListener{
   }
   public void actionPerformed(ActionEvent e){
     if(e.getSource()==createDeck){
-       Main.produceDeck(Arrays.asList(textField.getText().split("\\r?\\n")),new ExportOptions(wordList.isSelected(),theDefault.isSelected(),0),outputName.getText()+".csv");
+       Main.produceDeck(Arrays.asList(textField.getText().split("\\r?\\n")),new ExportOptions(wordList.isSelected(),theDefault.isSelected(),0,OutputFormat.ANKI),outputName.getText()+".csv");
     }
   }
 }
