@@ -63,7 +63,13 @@ public class Main{
     boolean useWordList=false;
     boolean allWords=true;
     final String filename = args[args.length-1];
-    String outputFileName=FileUtils.removeExtensionFromFileName(filename)+".csv";
+    String outputFileName = "";
+    if (filename.contains(".")){
+      outputFileName=FileUtils.removeExtensionFromFileName(filename)+".csv";
+    }
+    else {
+      outputFileName=filename+".csv";
+    }
     int hskLevelToExtract=0;
 
     //TODO: provide a command line option for the user to override this name
