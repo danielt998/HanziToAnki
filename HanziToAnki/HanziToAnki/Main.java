@@ -63,7 +63,7 @@ public class Main{
     boolean useWordList=false;
     boolean allWords=true;
     final String filename = args[args.length-1];
-    String outputFileName = "";
+    String outputFileName = ""; 
     if (filename.contains(".")){
       outputFileName=FileUtils.removeExtensionFromFileName(filename)+".csv";
     }
