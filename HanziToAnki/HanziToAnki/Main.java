@@ -1,4 +1,5 @@
 package HanziToAnki;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class Main {
     }
 
     public static void produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
-        Set<Word> words = new HashSet();
+        Set<Word> words = new LinkedHashSet();
         if (exportOptions.getUseWordList()) {
             words.addAll(VocabularyImporter.getWordsFromStringList(lines));
         } else if (exportOptions.getAllWords()) {
@@ -158,7 +159,7 @@ public class Main {
     }
 
     private static Set<Word> getAnkiOutputForAllWordCombos(List<String> list) {
-        Set<Word> words = new HashSet<Word>();
+        Set<Word> words = new LinkedHashSet<Word>();
         for (String line : list) {     // foreach line of the input file
             System.out.printf("Current line is: "+line);
             //char[] charArray = getCharsFromLine(line); // Use this for now. May create unwanted cards from e.g. line 1 ending with 你, line 2 starting with 好 though. TODO
