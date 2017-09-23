@@ -35,6 +35,7 @@ public class Main {
                         + " by line breaks. Without this flag, individual characters are extracted.");
         System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
         System.out.println("\t-awc :\tExtract all word combos from the file.");
+        System.out.println("\t-ac :\tAdd line where character was extracted from (for -awc mode).");
         System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
                 + " the given one.");
         System.out.println("\t-o <output filename> Override the default output file name");
@@ -47,7 +48,7 @@ public class Main {
         } else if (exportOptions.getAllWords()) {
             words.addAll(getAnkiOutputForOneTwoThreeCharWords(lines));
         } else if (exportOptions.getAllWordCombos()) {
-            words.addAll(getAnkiOutputForAllWordCombos(lines)); // TODO pass in each line, one  at a time
+            words.addAll(getAnkiOutputForAllWordCombos(lines, exportOptions.getAddContext())); 
         } else {
             words.addAll(getAnkiOutputFromSingleChars(lines));
         }
@@ -69,6 +70,7 @@ public class Main {
         boolean useWordList = false;
         boolean allWords = true;
         boolean allWordCombos = false;
+        boolean addContext = false;
         final String filename = args[args.length - 1];
         String outputFileName = "";
         if (filename.contains(".")) {
@@ -91,7 +93,10 @@ public class Main {
             } else if (args[argno].equals("-awc")) {
                 allWords = false;
                 allWordCombos = true;
-            } else if (args[argno].equals("-hsk")) {
+            } else if (args[argno].equals("-ac")) {
+                addContext = true;
+            }
+            else if (args[argno].equals("-hsk")) {
                 hskLevelToExtract = Integer.parseInt(args[++argno]);
             } else if (args[argno].equals("-o")) {
                 outputFileName = args[++argno];
@@ -103,7 +108,7 @@ public class Main {
             }
             //handle other flags..., create a separate class if args get too numerous
         }//for
-        produceDeck(filename, new ExportOptions(useWordList, allWords, allWordCombos, hskLevelToExtract), outputFileName);
+        produceDeck(filename, new ExportOptions(useWordList, allWords, allWordCombos, addContext, hskLevelToExtract), outputFileName);
     }
 
     private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list) {
@@ -158,24 +163,27 @@ public class Main {
         return getAnkiOutputFromSingleCharsWithCharArr(charArray);
     }
 
-    private static Set<Word> getAnkiOutputForAllWordCombos(List<String> list) {
+    private static Set<Word> getAnkiOutputForAllWordCombos(List<String> list, boolean addContext) {
         Set<Word> words = new LinkedHashSet<Word>();
         for (String line : list) {     // foreach line of the input file
-            System.out.printf("Current line is: "+line);
+            System.out.printf("Current line is: "+line + "\n");
             //char[] charArray = getCharsFromLine(line); // Use this for now. May create unwanted cards from e.g. line 1 ending with 你, line 2 starting with 好 though. TODO
-            returnAllWordCombos(line, words);
+            returnAllWordCombos(line, words, line, addContext);
         }
         return words;
     }
 
-    private static Set returnAllWordCombos(String fullWord, Set<Word> words){
+    private static Set returnAllWordCombos(String fullWord, Set<Word> words, String contextLine, boolean addContext){
         Word fullWordWord = Extract.getWordFromChinese(fullWord);
         if(fullWordWord!=null){
+            if (addContext!=false){
+                fullWordWord.setContext(contextLine);
+            }
             words.add(fullWordWord);
         }
         if(fullWord.length()>1){
-            words.addAll(returnAllWordCombos(fullWord.substring(0,fullWord.length()-1),words));
-            words.addAll(returnAllWordCombos(fullWord.substring(1,fullWord.length()),words));
+            words.addAll(returnAllWordCombos(fullWord.substring(0,fullWord.length()-1),words,contextLine, addContext));
+            words.addAll(returnAllWordCombos(fullWord.substring(1,fullWord.length()),words,contextLine, addContext));
         }
         return words;
     }

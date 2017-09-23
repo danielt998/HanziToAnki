@@ -9,7 +9,15 @@ public class Word{
     pinTones=givenPinTones;
     def=givenDef;
   }
-  private String trad,simp,pinyin,pinTones,def;
+  public Word(String givenTrad, String givenSimp,String givenPinyin, String givenPinTones, String givenDef, String givenContext){
+    trad=givenTrad;
+    simp=givenSimp;
+    pinyin=givenPinyin;
+    pinTones=givenPinTones;
+    def=givenDef;
+    context=givenContext;
+  }
+  private String trad,simp,pinyin,pinTones,def,context;
   private final int LARGE_PRIME_NUMBER=65729;
 
   public String getTraditionalChinese(){
@@ -27,6 +35,9 @@ public class Word{
   public String getDefinition(){
     return def;
   }
+  public String getContext(){
+    return context;
+  }
   public void setTraditionalChinese (String given){
     trad=given;
   }
@@ -41,6 +52,9 @@ public class Word{
   }
   public void setDefinition (String given){
     def=given;
+  }
+  public void setContext (String given){
+    context=given;
   }
 
   public String getFileOutput(){

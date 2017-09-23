@@ -8,12 +8,23 @@ public class DeckFactory{
   private static final String CLOSING_HTML_TAG="</span>";
   public static Deck generateDeck(Set<Word> words){
     Deck deck=new Deck();
-    for(Word word:words){
-      deck.addLine(getSimp(word)+DELIMITER+getDefinition(word)+DELIMITER+getPinyinWithHTML(word)
-                + getSimpWithToneInfo(word) + DELIMITER); 
+    Word firstWord = words.stream().findFirst().get(); // get first word, to see if it contains examples element
+
+    if (firstWord.getContext()!=null){     // if context line is used (i.e. word size goes up by 1)
+      for (Word word : words) {
+        deck.addLine(getSimp(word) + DELIMITER + getDefinition(word) + DELIMITER + getPinyinWithHTML(word)
+                + getSimpWithToneInfo(word) + DELIMITER + getContext(word) + DELIMITER);
+      }
+    }
+    else {
+      for (Word word : words) {
+        deck.addLine(getSimp(word) + DELIMITER + getDefinition(word) + DELIMITER + getPinyinWithHTML(word)
+                + getSimpWithToneInfo(word) + DELIMITER);
+      }
     }
     return deck;
   }
+
 
   private static String getSimp(Word word){
     return word.getSimplifiedChinese();
@@ -44,6 +55,10 @@ public class DeckFactory{
   }
   private static String getDefinition(Word word){
     return word.getDefinition();
+  }
+
+  private static String getContext(Word word){
+    return word.getContext();
   }
 
   //FIX THESE
