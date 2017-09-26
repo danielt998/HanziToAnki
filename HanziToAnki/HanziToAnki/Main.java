@@ -1,4 +1,5 @@
 package HanziToAnki;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -46,7 +47,17 @@ public class Main{
           words.addAll(getAnkiOutputFromSingleChars(lines));
       }
       words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.getHskLevelToExclude()));
-      List<String> outputLines=DeckFactory.generateDeck(words).getLines();
+      List<String> outputLines=new ArrayList<>();
+      switch(exportOptions.getOutputFormat()) {
+        case ANKI:
+          outputLines = DeckFactory.generateDeck(words).getLines();
+          break;
+        case PLECO:
+          outputLines = PlecoDeckFactory.generateDeck(words).getLines();
+          break;
+        default:
+          System.out.println("unrecognised output format");
+      }
       FileUtils.writeToFile(outputLines,outputFileName);
   }
 
@@ -62,8 +73,10 @@ public class Main{
     Extract.readInDictionary();
     boolean useWordList=false;
     boolean allWords=true;
-    final String filename = args[args.length-1];
-    String outputFileName=FileUtils.removeExtensionFromFileName(filename)+".csv";
+    OutputFormat outputFormat=OutputFormat.ANKI;
+    List<String> fileNames= new ArrayList<>();
+    fileNames.add(args[args.length-1]);
+    String outputFileName=FileUtils.removeExtensionFromFileName(fileNames.get(0))+".csv";
     int hskLevelToExtract=0;
 
     //TODO: provide a command line option for the user to override this name
@@ -80,15 +93,27 @@ public class Main{
         hskLevelToExtract = Integer.parseInt(args[++argno]);
       }else if(args[argno].equals("-o")){
         outputFileName=args[++argno];
+      }else if(args[argno].equals("-f")) {
+        String format=args[++argno];
+        if(format.toLowerCase().equals("anki")) {
+          outputFormat=OutputFormat.ANKI;
+        }else if(format.toLowerCase().equals("pleco")){
+          outputFormat=OutputFormat.PLECO;
+        }else if(format.toLowerCase().equals("memrise")){
+          outputFormat=OutputFormat.MEMRISE;
+        }else{
+          System.out.println("Unrecognised output format:"+format);
+        }
+
       }else{
-        System.out.println(
-                       "An unrecognised flag was used, please see below for usage information:\n");
-        printUsage();
+        fileNames.add(args[argno]);
         return;
       }
       //handle other flags..., create a separate class if args get too numerous
     }//for
-    produceDeck(filename,new ExportOptions(useWordList,allWords,hskLevelToExtract),outputFileName);
+    for(String fileName:fileNames){
+      produceDeck(fileName,new ExportOptions(useWordList,allWords,hskLevelToExtract,outputFormat),outputFileName);
+    }
   }
 
   private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list){
