@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUIs.TabbedUIController">
+  <tabs>
+    <Tab closable="false" text="Export">
+         <content>
+            <Pane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <ComboBox fx:id="outputSelector" layoutX="35.0" layoutY="14.0" prefWidth="150.0" promptText="Anki/Memrise" />
+                  <TextArea fx:id="inputText" layoutX="35.0" layoutY="51.0" prefHeight="97.0" prefWidth="548.0" promptText="input text area" />
+                  <Button fx:id="fileSelectorInputButton" layoutX="35.0" layoutY="171.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" onAction="#selectFiles" text="Input File(s)" />
+                  <TextField fx:id="outputFullFilename" layoutX="35.0" layoutY="210.0" prefHeight="25.0" prefWidth="513.0" promptText="output file name and path" />
+                   <Button fx:id="fileSelectorOutputButton" layoutX="555.0" layoutY="210.0" mnemonicParsing="false" onAction="#selectOutput" prefHeight="25.0" prefWidth="30.0" text="Button" />
+                  <ComboBox fx:id="howToHandleHanzi" layoutX="35.0" layoutY="250.0" prefHeight="25.0" prefWidth="234.0" promptText="How to handle hanzi" />
+                  <Button fx:id="exportButton" layoutX="525.0" layoutY="299.0" mnemonicParsing="false" onAction="#export" text="Export" />
+                  <CheckBox fx:id="pronunciationCheckbox" layoutX="42.0" layoutY="299.0" mnemonicParsing="false" text="Include pronunciation audio?" />
+                  <!--AnchorPane layoutX="386.0" layoutY="276.0" prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane layoutX="-12.0" layoutY="-23.0" prefHeight="200.0" prefWidth="200.0" />
+                     </children></AnchorPane-->
+               </children>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Pane>
+         </content></Tab>
+    <Tab closable="false" text="Dictionary" />
+  </tabs>
+</TabPane>

@@ -1,0 +1,4 @@
+-allow importing of an existing file of words
+-create a OLDGUI/command line exportOptions
+-an option to remove any occurences of words in a different set of words (for example, remove anything ≤ HSK4)
+-...
