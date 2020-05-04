@@ -1,6 +1,11 @@
 # HanziToAnki
-# HanziToAnki
+## Intro
 
-This is a project very much in its naissance period, where there are lots of possible directions to take the project from its base functionality (input Chinese -> output Anki deck). 
+HanziToAnki can make Pleco/Anki flashcards with fancy HTML markup/colour.
 
 Please feel free to make suggestions, open/comment on issues, or share code!
+
+
+## License 
+This project uses a modified version of the CEDICT Chinese dictionary, which can be found here:
+https://cc-cedict.org/wiki/
