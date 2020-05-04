@@ -1,8 +1,10 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
@@ -27,38 +29,39 @@ import java.util.Map;
 public class Extract {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
-    private static Map<String, Word> simplifiedMapping = new HashMap<String, Word>();
-    private static Map<String, Word> traditionalMapping = new HashMap<String, Word>();
+    private static Map<String, Word> simplifiedMapping = new HashMap<>();
+    private static Map<String, Word> traditionalMapping = new HashMap<>();
 
-    public static void readInDictionary() {
-        // TODO fix dict loading
-        String DEFAULT_DICTIONARY_PATH = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).toString();
-        readInDictionary(DEFAULT_DICTIONARY_PATH);
+    public static void readInDictionary() throws IOException {
+        String defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).getPath();
+        readInDictionary(Paths.get(defaultDictionaryPath));
     }
 
-    public static void readInDictionary(String filename) {
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(filename)))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.charAt(0) == COMMENT_CHARACTER) {
-                    continue;
-                }
-                Word word = new Word();
-                String[] str = line.split(" /");
-                word.setDefinition(str[1]);
-                String[] rem = str[0].split("\\[");
-                word.setPinyinNoTones(rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase());
-                word.setPinyinWithTones(rem[1].replaceAll("[\\[\\]]", "").toLowerCase());
+    public static void readInDictionary(Path path) throws IOException {
+        Files.readAllLines(path).stream()
+                .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
+                .map(Extract::getWordFromLine)
+                .forEach(word -> putWordToMaps(word));
+    }
 
-                String[] remRem = rem[0].split(" ");
-                word.setTraditionalChinese(remRem[0]);
-                word.setSimplifiedChinese(remRem[1]);
-                simplifiedMapping.put(word.getSimplifiedChinese(), word);
-                traditionalMapping.put(word.getTraditionalChinese(), word);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private static Word getWordFromLine(String line) {
+        String[] str = line.split(" /");
+        String definition = str[1];
+
+        String[] rem = str[0].split("\\[");
+        String pinyinNoTones = rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
+        String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
+
+        String[] remRem = rem[0].split(" ");
+        String trad = remRem[0];
+        String simp = remRem[1];
+
+        return new Word(trad, simp, pinyinNoTones, pinyinWithTones, definition);
+    }
+
+    private static void putWordToMaps(Word word) { // helper function for tidy stream
+        simplifiedMapping.put(word.getSimplifiedChinese(), word);
+        traditionalMapping.put(word.getTraditionalChinese(), word);
     }
 
     public static Word getWordFromChinese(char c) {
