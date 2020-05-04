@@ -1,8 +1,0 @@
-*.class
-*.csv
-*.txt
-#vim stuff
-*.swp
-*.swo
-*.swn
-.~lock*

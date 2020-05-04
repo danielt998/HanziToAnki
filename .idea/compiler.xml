@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="h2a_gradle.main" target="1.8" />
+      <module name="h2a_gradle.test" target="1.8" />
+      <module name="HanziToAnki.main" target="1.8" />
+      <module name="HanziToAnki.test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="javac -encoding UTF-8 HelloWorld.java " />
+  </component>
+</project>
