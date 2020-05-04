@@ -1,8 +1,15 @@
 package GUIs
 
-import HanziToAnki.*
+import FileUtils
+import HanziToAnki.ExportOptions
+import HanziToAnki.MainGUI
+import HanziToAnki.OutputFormat
+import Main
 import javafx.fxml.FXML
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.ComboBox
+import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import javafx.stage.FileChooser
 import java.io.File
 import java.util.*
@@ -18,33 +25,42 @@ class TabbedUIController {
 //    @FXML var pronunciationCheckBox: CheckBox? = null
     var files:List<File> = ArrayList<File>()
 
-    @FXML fun selectOutput(){
+    @FXML
+    fun selectOutput() {
         val file = (FileChooser()).showSaveDialog(MainGUI.stage)
         if (file != null) {
-            outputFullFilename!!.text =file.absolutePath
+            outputFullFilename!!.text = file.absolutePath
         }
     }
-    @FXML fun initialize() {}
-    @FXML fun export() {
-        val outputName:String?= outputFullFilename!!.getText()
-        val allText:ArrayList<String> = ArrayList<String>()
-        if(outputName.equals("")){
+
+    @FXML
+    fun initialize() {
+    }
+
+    @FXML
+    fun export() {
+        val outputName: String? = outputFullFilename!!.text
+        val allText: ArrayList<String> = ArrayList()
+        if (outputName.equals("")) {
             showError("Please enter an output file name")
             return
         }
-        allText.addAll(inputText!!.getText().split("\n") as List<String>)
-        for(file:File in files){
+        allText.addAll(inputText!!.text.split("\n"))
+        for (file: File in files) {
             allText.addAll(FileUtils.fileToStringArray(file))
         }
 
         var outputFormat = OutputFormat.ANKI // default, just use for now...
         Main.produceDeck(allText, ExportOptions(false, true, 0, outputFormat), outputName)
     }
-    @FXML fun selectFiles(){
-        val selectedFiles:List<File>?=FileChooser().showOpenMultipleDialog(MainGUI.stage)
-        selectedFiles?.let{files=selectedFiles}
+
+    @FXML
+    fun selectFiles() {
+        val selectedFiles: List<File>? = FileChooser().showOpenMultipleDialog(MainGUI.stage)
+        selectedFiles?.let { files = selectedFiles }
     }
-    fun showError(title:String){
+
+    fun showError(title: String) {
         //using swing instead of JavaFx due to reasons of Java version
         //TODO:update this to use JavaFx Alerts
         JOptionPane.showMessageDialog(null, title, "Error", JOptionPane.ERROR_MESSAGE)

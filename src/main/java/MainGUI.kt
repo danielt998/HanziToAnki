@@ -31,8 +31,8 @@ class MainGUI : Application() {
         val fxmlStream: FileInputStream = FileInputStream(fxmlDocPath)
         val root: TabPane = loader.load(fxmlStream) as TabPane
         val scene: Scene = Scene(root)
-        givenStage.setScene(scene)
-        givenStage.setTitle("HanziToAnki")
+        givenStage.scene = scene
+        givenStage.title = "HanziToAnki"
         givenStage.show()
     }
 }

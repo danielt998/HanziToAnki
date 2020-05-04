@@ -65,15 +65,13 @@ public class Extract {
     }
 
     public static Word getWordFromChinese(char c) {
-        return getWordFromChinese("" + c);
+        return getWordFromChinese(String.valueOf(c));
     }
 
     public static Word getWordFromChinese(String chineseWord) {
-        Word simplified = getWordFromSimplifiedChinese(chineseWord);
-        if (simplified != null) {
-            return simplified;
-        }
-        return getWordFromTraditionalChinese(chineseWord);
+        if (simplifiedMapping.containsKey(chineseWord))
+            return simplifiedMapping.get(chineseWord);
+        return traditionalMapping.get(chineseWord);
     }
 
     public static Word getWordFromTraditionalChinese(String chineseWord) {

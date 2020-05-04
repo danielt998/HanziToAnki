@@ -1,96 +1,100 @@
 import java.util.Set;
 
-public class DeckFactory{
-  private static final String DELIMITER="\t";
-  private static final String CLOSING_HTML_TAG="</span>";
-  public static Deck generateDeck(Set<Word> words){
-    Deck deck=new Deck();
-    for(Word word:words){
-      deck.addLine(getSimp(word)+DELIMITER+getDefinition(word)+DELIMITER+getPinyinWithHTML(word)
-                + getSimpWithToneInfo(word) + DELIMITER);
-    }
-    return deck;
-  }
+public class DeckFactory {
+    private static final String DELIMITER = "\t";
+    private static final String CLOSING_HTML_TAG = "</span>";
 
-  private static String getSimp(Word word){
-    return word.getSimplifiedChinese();
-  }
-
-  private static String getPinyinWithHTML(Word word){
-    String pinyin=word.getPinyinWithTones();
-    String[] syllables=pinyin.split(" ");
-    StringBuilder builder=new StringBuilder();
-    for (String syllable:syllables){
-      int tone=Integer.parseInt(""+syllable.charAt(syllable.length()-1));
-      builder.append(getOpeningHTMLTag(tone) +getPinyinWithMarks(syllable) + CLOSING_HTML_TAG);
-    }
-    return builder.toString();
-  }
-
-  private static String getOpeningHTMLTag(int tone){
-    return "<span class=\"tone"+tone+"\">";
-  }
-  private static String getPinyinWithMarks(String syllable){
-    char letterForTone=getLetterForTone(syllable);
-    int tone=Integer.parseInt(""+syllable.charAt(syllable.length()-1));
-    char charWithToneMark=getCharWithTone(letterForTone, tone);
-    if(letterForTone=='ü'){
-      return syllable.replaceAll("u:", ""+charWithToneMark).substring(0,syllable.length()-1);
-    }
-    return syllable.replaceAll(""+letterForTone,""+charWithToneMark).substring(0,syllable.length()-1);
-  }
-  private static String getDefinition(Word word){
-    return word.getDefinition();
-  }
-
-  //FIX THESE
-  private static char getLetterForTone(String syllable){
-     //yes this is disgusting
-     if(syllable.contains("E")){
-      return 'E';
-    }else if(syllable.contains("A")){
-      return 'A';
-    }else if(syllable.contains("Ou")){
-      return 'O';
-    }else{
-      for(int i=syllable.length()-1; i>=0; i--){
-        if(syllable.charAt(i)==':'){
-          return 'ü';
+    public static Deck generateDeck(Set<Word> words) {
+        Deck deck = new Deck();
+        for (Word word : words) {
+            deck.addLine(getSimp(word) + DELIMITER + getDefinition(word) + DELIMITER + getPinyinWithHTML(word)
+                    + getSimpWithToneInfo(word) + DELIMITER);
         }
-        if ("AEIOU".contains(""+syllable.charAt(i))){
-          return syllable.charAt(i);
-        }
-      }
+        return deck;
     }
 
-    if(syllable.contains("e")){
-      return 'e';
-    }else if(syllable.contains("a")){
-      return 'a';
-    }else if(syllable.contains("ou")){
-      return 'o';
-    }else{
-      for(int i=syllable.length()-1; i>=0; i--){
-        if(syllable.charAt(i)==':'){
-          return 'ü';
+    private static String getSimp(Word word) {
+        return word.getSimplifiedChinese();
+    }
+
+    private static String getPinyinWithHTML(Word word) {
+        String pinyin = word.getPinyinWithTones();
+        String[] syllables = pinyin.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String syllable : syllables) {
+            int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+            builder.append(getOpeningHTMLTag(tone) + getPinyinWithMarks(syllable) + CLOSING_HTML_TAG);
         }
-        if ("aeiou".contains(""+syllable.charAt(i))){
-          return syllable.charAt(i);
+        return builder.toString();
+    }
+
+    private static String getOpeningHTMLTag(int tone) {
+        return "<span class=\"tone" + tone + "\">";
+    }
+
+    private static String getPinyinWithMarks(String syllable) {
+        char letterForTone = getLetterForTone(syllable);
+        int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+        char charWithToneMark = getCharWithTone(letterForTone, tone);
+        if (letterForTone == 'ü') {
+            return syllable.replaceAll("u:", "" + charWithToneMark).substring(0, syllable.length() - 1);
         }
-      }
+        return syllable.replaceAll("" + letterForTone, "" + charWithToneMark).substring(0, syllable.length() - 1);
     }
-    if(syllable.contains("r")){
-      return 'e';//TODO:for now, but later we may want to handle this differently
+
+    private static String getDefinition(Word word) {
+        return word.getDefinition();
     }
-    System.out.println("Something went wrong, syllable:"+syllable);
-    return 'X'; // TODO what
-  }
-  private static char getCharWithTone(char originalChar, int tone){
-    //TODO: may be possible to use unicode modifiers to do this
-    if (!"aeiouü".contains(""+originalChar)){
-        return originalChar;
+
+    //FIX THESE
+    private static char getLetterForTone(String syllable) {
+        //yes this is disgusting
+        if (syllable.contains("E")) {
+            return 'E';
+        } else if (syllable.contains("A")) {
+            return 'A';
+        } else if (syllable.contains("Ou")) {
+            return 'O';
+        } else {
+            for (int i = syllable.length() - 1; i >= 0; i--) {
+                if (syllable.charAt(i) == ':') {
+                    return 'ü';
+                }
+                if ("AEIOU".contains("" + syllable.charAt(i))) {
+                    return syllable.charAt(i);
+                }
+            }
+        }
+
+        if (syllable.contains("e")) {
+            return 'e';
+        } else if (syllable.contains("a")) {
+            return 'a';
+        } else if (syllable.contains("ou")) {
+            return 'o';
+        } else {
+            for (int i = syllable.length() - 1; i >= 0; i--) {
+                if (syllable.charAt(i) == ':') {
+                    return 'ü';
+                }
+                if ("aeiou".contains("" + syllable.charAt(i))) {
+                    return syllable.charAt(i);
+                }
+            }
+        }
+        if (syllable.contains("r")) {
+            return 'e';//TODO:for now, but later we may want to handle this differently
+        }
+        System.out.println("Something went wrong, syllable:" + syllable);
+        return 'X'; // TODO what
     }
-    return 'a';
+
+    private static char getCharWithTone(char originalChar, int tone) {
+        //TODO: may be possible to use unicode modifiers to do this
+        if (!"aeiouü".contains("" + originalChar)) {
+            return originalChar;
+        }
+        return 'a';
 //    char[] tones=new char[]{};
 //    switch (Character.toLowerCase(originalChar)){
 //      case 'a': tones= new char[]{'ā','á','ǎ','à','a'};
@@ -112,8 +116,9 @@ public class DeckFactory{
 //      newChar=Character.toUpperCase(newChar);
 //    }
 //    return newChar;
-  }
-  private static String getSimpWithToneInfo(Word word){
-    return "";
-  }
+    }
+
+    private static String getSimpWithToneInfo(Word word) {
+        return "";
+    }
 }
