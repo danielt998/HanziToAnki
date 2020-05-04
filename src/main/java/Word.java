@@ -2,8 +2,6 @@ public class Word {
     private final int LARGE_PRIME_NUMBER = 65729;
     private String trad, simp, pinyin, pinTones, def;
 
-    public Word() {
-    }
     public Word(String givenTrad, String givenSimp, String givenPinyin, String givenPinTones, String givenDef) {
         trad = givenTrad;
         simp = givenSimp;
@@ -16,40 +14,20 @@ public class Word {
         return trad;
     }
 
-    public void setTraditionalChinese(String given) {
-        trad = given;
-    }
-
     public String getSimplifiedChinese() {
         return simp;
-    }
-
-    public void setSimplifiedChinese(String given) {
-        simp = given;
     }
 
     public String getPinyinNoTones() {
         return pinyin;
     }
 
-    public void setPinyinNoTones(String given) {
-        pinyin = given;
-    }
-
     public String getPinyinWithTones() {
         return pinTones;
     }
 
-    public void setPinyinWithTones(String given) {
-        pinTones = given;
-    }
-
     public String getDefinition() {
         return def;
-    }
-
-    public void setDefinition(String given) {
-        def = given;
     }
 
     public String getFileOutput() {
