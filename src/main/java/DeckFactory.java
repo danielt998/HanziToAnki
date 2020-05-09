@@ -4,6 +4,13 @@ public class DeckFactory {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
 
+    private static final char[] A_ACCENTs = new char[]{'ā', 'á', 'ǎ', 'à', 'a'};
+    private static final char[] E_ACCENTs = new char[]{'ē', 'é', 'ě', 'è', 'e'};
+    private static final char[] I_ACCENTs = new char[]{'ī', 'í', 'ǐ', 'ì', 'i'};
+    private static final char[] O_ACCENTs = new char[]{'ō', 'ó', 'ǒ', 'ò', 'o'};
+    private static final char[] U_ACCENTs = new char[]{'ū', 'ú', 'ǔ', 'ù', 'u'};
+    private static final char[] U_UMLAUT_ACCENTs = new char[]{'ǖ', 'ǘ', 'ǚ', 'ǜ', 'ü'};
+
     public static Deck generateDeck(Set<Word> words) {
         Deck deck = new Deck();
         for (Word word : words) {
@@ -105,21 +112,19 @@ public class DeckFactory {
             return originalChar;
         }
 
-    char[] tones=new char[]{};
-        switch (Character.toLowerCase(originalChar)) {
-            case 'a' -> tones = new char[]{'ā', 'á', 'ǎ', 'à', 'a'};
-            case 'e' -> tones = new char[]{'ē', 'é', 'ě', 'è', 'e'};
-            case 'i' -> tones = new char[]{'ī', 'í', 'ǐ', 'ì', 'i'};
-            case 'o' -> tones = new char[]{'ō', 'ó', 'ǒ', 'ò', 'o'};
-            case 'u' -> tones = new char[]{'ū', 'ú', 'ǔ', 'ù', 'u'};
-            case 'ü' -> tones = new char[]{'ǖ', 'ǘ', 'ǚ', 'ǜ', 'ü'};
-            default -> System.out.println("Unrecognised character:" + originalChar);
-        }
-    char newChar= tones[tone-1];
-    if(Character.isUpperCase(originalChar)){
-      newChar=Character.toUpperCase(newChar);
-    }
-    return newChar;
+        char c = switch (Character.toLowerCase(originalChar)) {
+            case 'a' -> A_ACCENTs[tone - 1];
+            case 'e' -> E_ACCENTs[tone - 1];
+            case 'i' -> I_ACCENTs[tone - 1];
+            case 'o' -> O_ACCENTs[tone - 1];
+            case 'u' -> U_ACCENTs[tone - 1];
+            case 'ü' -> U_UMLAUT_ACCENTs[tone - 1];
+            default -> Character.toLowerCase(originalChar);
+        };
+
+        if (Character.isLowerCase(originalChar))
+            return c;
+        return Character.toUpperCase(c);
     }
 
     private static String getSimpWithToneInfo(Word word) {
