@@ -4,6 +4,7 @@ public class DeckFactory {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
 
+    private static final char[] VOWELS_UNACCENTED = new char[]{'a', 'e', 'i', 'o', 'u', 'ü'};
     private static final char[] A_ACCENTs = new char[]{'ā', 'á', 'ǎ', 'à', 'a'};
     private static final char[] E_ACCENTs = new char[]{'ē', 'é', 'ě', 'è', 'e'};
     private static final char[] I_ACCENTs = new char[]{'ī', 'í', 'ǐ', 'ì', 'i'};
@@ -107,10 +108,8 @@ public class DeckFactory {
     }
 
     private static char getCharWithTone(char originalChar, int tone) {
-        //TODO: may be possible to use unicode modifiers to do this
-        if (!"aeiouü".contains("" + originalChar)) {
+        if (!isCharTonable(originalChar))
             return originalChar;
-        }
 
         char c = switch (Character.toLowerCase(originalChar)) {
             case 'a' -> A_ACCENTs[tone - 1];
@@ -125,6 +124,14 @@ public class DeckFactory {
         if (Character.isLowerCase(originalChar))
             return c;
         return Character.toUpperCase(c);
+    }
+
+    private static boolean isCharTonable(char testChar) {
+        for (char c : VOWELS_UNACCENTED) {
+            if (c == testChar)
+                return true;
+        }
+        return false;
     }
 
     private static String getSimpWithToneInfo(Word word) {
