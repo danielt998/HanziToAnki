@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,9 +34,9 @@ public class Extract {
     private static Map<String, Word> simplifiedMapping = new HashMap<>();
     private static Map<String, Word> traditionalMapping = new HashMap<>();
 
-    public static void readInDictionary() {
-        String defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).getPath();
-        readInDictionary(Paths.get(defaultDictionaryPath));
+    public static void readInDictionary() throws URISyntaxException {
+        URI defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
+        readInDictionary(Path.of(defaultDictionaryPath));
     }
 
     public static void readInDictionary(Path path) {

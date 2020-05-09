@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 public class OLDGUI extends JFrame implements ActionListener {
@@ -12,16 +13,16 @@ public class OLDGUI extends JFrame implements ActionListener {
     public JRadioButton singleChar;
     public JRadioButton wordList;
 
-    public OLDGUI() {
+    public OLDGUI() throws URISyntaxException {
         initUI();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException {
         OLDGUI OLDGUI = new OLDGUI();
         OLDGUI.setVisible(true);
     }
 
-    private void initUI() {
+    private void initUI() throws URISyntaxException {
         setTitle("HanziToAnki");
         setSize(300, 200);
         setLocationRelativeTo(null);

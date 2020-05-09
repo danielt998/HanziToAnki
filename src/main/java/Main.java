@@ -1,3 +1,4 @@
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -72,7 +73,7 @@ public class Main {
         produceDeck(FileUtils.fileToStringArray(filename), exportOptions, outputFileName);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException {
         if (args.length == 0 || args[0].equals("-h") || args[0].equals("-help") || args[0].equals("--help")) {
             printUsage();
             return;
