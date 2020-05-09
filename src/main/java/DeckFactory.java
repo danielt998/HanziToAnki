@@ -31,7 +31,9 @@ public class DeckFactory {
         StringBuilder builder = new StringBuilder();
         for (String syllable : syllables) {
             int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
-            builder.append(getOpeningHTMLTag(tone) + getPinyinWithMarks(syllable) + CLOSING_HTML_TAG);
+            builder.append(getOpeningHTMLTag(tone));
+            builder.append(getPinyinWithMarks(syllable));
+            builder.append(CLOSING_HTML_TAG);
         }
         return builder.toString();
     }
