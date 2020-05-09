@@ -53,16 +53,16 @@ public class Main {
             words.addAll(getAnkiOutputFromSingleChars(lines));
         }
         words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.getHskLevelToExclude()));
-        List<String> outputLines = new ArrayList<>();
+
+        List<String> outputLines;
         switch (exportOptions.getOutputFormat()) {
-            case ANKI:
-                outputLines = DeckFactory.generateDeck(words).getLines();
-                break;
-//            case PLECO: // TODO find where PlecoDeckFactory is :think:
-//                outputLines = PlecoDeckFactory.generateDeck(words).getLines();
-//                break;
-            default:
+            case ANKI -> outputLines = DeckFactory.generateDeck(words).getLines();
+//            case PLECO -> outputLines = PlecoDeckFactory.generateDeck(words).getLines(); // TODO find where PlecoDeckFactory is
+//            case MEMRISE -> outputLines = MemriseDeckFactory...
+            default -> {
                 System.out.println("unrecognised output format");
+                outputLines = new ArrayList<>();
+            }
         }
         FileUtils.writeToFile(outputLines, outputFileName);
     }
