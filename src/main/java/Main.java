@@ -78,48 +78,12 @@ public class Main {
             printUsage();
             return;
         }
+
         Extract.readInDictionary();
-        boolean useWordList = false;
-        boolean allWords = true;
-        OutputFormat outputFormat = OutputFormat.ANKI;
-        List<String> fileNames = new ArrayList<>();
-        fileNames.add(args[args.length - 1]);
-        String outputFileName = FileUtils.removeExtensionFromFileName(fileNames.get(0)) + ".csv";
-        int hskLevelToExtract = 0;
 
-        //TODO: provide a command line option for the user to override this name
-
-        for (int argno = 0; argno < args.length - 1; argno++) {
-            switch (args[argno]) {
-                case "-w", "--word-list" -> {
-                    useWordList = true;
-                    allWords = false;
-                }
-                case "-s", "--single-characters" -> {
-                    allWords = false;
-                    useWordList = false;
-                }
-                case "-hsk" -> hskLevelToExtract = Integer.parseInt(args[++argno]);
-                case "-o" -> outputFileName = args[++argno];
-                case "-f", "--format" -> {
-                    String format = args[++argno].toLowerCase();
-                    outputFormat = switch (format) {
-                        case "pleco" -> OutputFormat.PLECO;
-                        case "memrise" -> OutputFormat.MEMRISE;
-                        default -> OutputFormat.ANKI;
-                    };
-                }
-                default -> {
-                    fileNames.add(args[argno]);
-                    return;
-                }
-            }
-            //handle other flags..., create a separate class if args get too numerous
-        }
-
-        var options = new ExportOptions(useWordList, allWords, hskLevelToExtract, outputFormat);
-        for (String fileName : fileNames) {
-            produceDeck(fileName, options, outputFileName);
+        var parsedArgs = ArgParser.parseArgs(args);
+        for (String fileName : parsedArgs.fileNames()) {
+            produceDeck(fileName, parsedArgs.options(), parsedArgs.outputFileName());
         }
     }
 
