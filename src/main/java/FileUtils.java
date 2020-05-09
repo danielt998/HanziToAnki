@@ -1,5 +1,5 @@
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class FileUtils {
 
     public static void writeToFile(List<String> lines, String outputFileName) {
         try {
-            Files.write(Paths.get(outputFileName), lines, Charset.defaultCharset());
+            Files.write(Paths.get(outputFileName), lines, StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
