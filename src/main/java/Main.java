@@ -53,6 +53,12 @@ public class Main {
         } else {
             words.addAll(getAnkiOutputFromSingleChars(lines));
         }
+
+        if (words.isEmpty() && !lines.isEmpty()) {
+            System.out.println("Please provide UTF-8 encoded files - other encodings (e.g. GBK, Big5 not currently supported");
+            return;
+        }
+
         words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.getHskLevelToExclude()));
 
         List<String> outputLines;
