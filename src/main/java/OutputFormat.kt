@@ -1,5 +1,3 @@
-package HanziToAnki
-
 /**
  * Created by dtm on 16/08/17.
  */

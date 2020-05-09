@@ -1,9 +1,8 @@
 package GUIs
 
 import FileUtils
-import HanziToAnki.ExportOptions
+import ExportOptions
 import HanziToAnki.MainGUI
-import HanziToAnki.OutputFormat
 import Main
 import javafx.fxml.FXML
 import javafx.scene.control.Button
