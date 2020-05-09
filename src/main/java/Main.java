@@ -1,10 +1,9 @@
-import HanziToAnki.ExportOptions;
-import HanziToAnki.OutputFormat;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*TODO:
  *  move more of the code to use HashSets, some of it still allows duplicates
@@ -38,6 +37,10 @@ public class Main {
         System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
                 + " the given one.");
         System.out.println("\t-o <output filename> Override the default output file name");
+        System.out.println("\t-f --format <output format> Override the default output file name\n" +
+                "\t\tChoices are: " + Stream.of(OutputFormat.values())
+                .map(OutputFormat::name)
+                .collect(Collectors.joining(", ")));
     }
 
     public static void produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
@@ -96,18 +99,13 @@ public class Main {
                 hskLevelToExtract = Integer.parseInt(args[++argno]);
             } else if (args[argno].equals("-o")) {
                 outputFileName = args[++argno];
-            } else if (args[argno].equals("-f")) {
-                String format = args[++argno];
-                if (format.toLowerCase().equals("anki")) {
-                    outputFormat = OutputFormat.ANKI;
-                } else if (format.toLowerCase().equals("pleco")) {
-                    outputFormat = OutputFormat.PLECO;
-                } else if (format.toLowerCase().equals("memrise")) {
-                    outputFormat = OutputFormat.MEMRISE;
-                } else {
-                    System.out.println("Unrecognised output format:" + format);
-                }
-
+            } else if (args[argno].equals("-f") || args[argno].equals("--format")) {
+                String format = args[++argno].toLowerCase();
+                outputFormat = switch (format) {
+                    case "pleco" -> OutputFormat.PLECO;
+                    case "memrise" -> OutputFormat.MEMRISE;
+                    default -> OutputFormat.ANKI;
+                };
             } else {
                 fileNames.add(args[argno]);
                 return;
