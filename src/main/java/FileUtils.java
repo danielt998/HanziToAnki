@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -57,20 +56,16 @@ public class FileUtils {
 
     public static List<String> fileToStringArray(File file) {
         List<String> unzippedLines = getUnzippedLines(file);
-        if (unzippedLines != null) {
+        if (unzippedLines != null)
             return unzippedLines;
-        }
-        List<String> lines = new ArrayList<String>();
+
         try {
-            Scanner scanner = new Scanner(new FileReader(file));
-            while (scanner.hasNextLine()) {
-                lines.add(scanner.nextLine());
-            }
-            scanner.close();
+            return Files.readAllLines(file.toPath());
         } catch (IOException exception) {
+            System.out.println("Could not read lines from input file at " + file.getPath());
             exception.printStackTrace();
+            return new ArrayList<>();
         }
-        return lines;
     }
 
     public static void writeToFile(List<String> lines, String outputFileName) {
