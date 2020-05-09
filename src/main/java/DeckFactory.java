@@ -104,28 +104,22 @@ public class DeckFactory {
         if (!"aeiouü".contains("" + originalChar)) {
             return originalChar;
         }
-        return 'a';
-//    char[] tones=new char[]{};
-//    switch (Character.toLowerCase(originalChar)){
-//      case 'a': tones= new char[]{'ā','á','ǎ','à','a'};
-//                break;
-//      case 'e': tones= new char[]{'ē','é','ě','è','e'};
-//                break;
-//      case 'i': tones= new char[]{'ī','í','ǐ','ì','i'};
-//                break;
-//      case 'o': tones= new char[]{'ō','ó','ǒ','ò','o'};
-//                break;
-//      case 'u': tones= new char[]{'ū','ú','ǔ','ù','u'};
-//                break;
-//      case 'ü': tones= new char[]{'ǖ','ǘ','ǚ','ǜ','ü'};
-//                break;
-//      default : System.out.println("Unrecognised character:"+originalChar);
-//    }
-//    char newChar= tones[tone-1];
-//    if(Character.isUpperCase(originalChar)){
-//      newChar=Character.toUpperCase(newChar);
-//    }
-//    return newChar;
+
+    char[] tones=new char[]{};
+        switch (Character.toLowerCase(originalChar)) {
+            case 'a' -> tones = new char[]{'ā', 'á', 'ǎ', 'à', 'a'};
+            case 'e' -> tones = new char[]{'ē', 'é', 'ě', 'è', 'e'};
+            case 'i' -> tones = new char[]{'ī', 'í', 'ǐ', 'ì', 'i'};
+            case 'o' -> tones = new char[]{'ō', 'ó', 'ǒ', 'ò', 'o'};
+            case 'u' -> tones = new char[]{'ū', 'ú', 'ǔ', 'ù', 'u'};
+            case 'ü' -> tones = new char[]{'ǖ', 'ǘ', 'ǚ', 'ǜ', 'ü'};
+            default -> System.out.println("Unrecognised character:" + originalChar);
+        }
+    char newChar= tones[tone-1];
+    if(Character.isUpperCase(originalChar)){
+      newChar=Character.toUpperCase(newChar);
+    }
+    return newChar;
     }
 
     private static String getSimpWithToneInfo(Word word) {
