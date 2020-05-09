@@ -7,14 +7,22 @@ public class DeckFactory {
     public static Deck generateDeck(Set<Word> words) {
         Deck deck = new Deck();
         for (Word word : words) {
-            deck.addLine(getSimp(word) + DELIMITER + getDefinition(word) + DELIMITER + getPinyinWithHTML(word)
-                    + getSimpWithToneInfo(word) + DELIMITER);
+            deck.addLine(getWordAsDeckLine(word));
         }
         return deck;
     }
 
     private static String getSimp(Word word) {
         return word.getSimplifiedChinese();
+    }
+
+    private static String getWordAsDeckLine(Word word) {
+        return new StringBuilder()
+                .append(word.getSimplifiedChinese())
+                .append(DELIMITER).append(getDefinition(word))
+                .append(DELIMITER).append(getPinyinWithHTML(word))
+                .append(DELIMITER).append(getSimpWithToneInfo(word))
+                .toString();
     }
 
     private static String getPinyinWithHTML(Word word) {
