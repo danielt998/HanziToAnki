@@ -64,6 +64,7 @@ public class Main {
                 outputLines = new ArrayList<>();
             }
         }
+
         FileUtils.writeToFile(outputLines, outputFileName);
     }
 
@@ -88,27 +89,29 @@ public class Main {
         //TODO: provide a command line option for the user to override this name
 
         for (int argno = 0; argno < args.length - 1; argno++) {
-            //flag handling
-            if (args[argno].equals("-w") || args[argno].equals("--word-list")) {
-                useWordList = true;
-                allWords = false;
-            } else if (args[argno].equals("-s") || args[argno].equals("--single-characters")) {
-                allWords = false;
-                useWordList = false;
-            } else if (args[argno].equals("-hsk")) {
-                hskLevelToExtract = Integer.parseInt(args[++argno]);
-            } else if (args[argno].equals("-o")) {
-                outputFileName = args[++argno];
-            } else if (args[argno].equals("-f") || args[argno].equals("--format")) {
-                String format = args[++argno].toLowerCase();
-                outputFormat = switch (format) {
-                    case "pleco" -> OutputFormat.PLECO;
-                    case "memrise" -> OutputFormat.MEMRISE;
-                    default -> OutputFormat.ANKI;
-                };
-            } else {
-                fileNames.add(args[argno]);
-                return;
+            switch (args[argno]) {
+                case "-w", "--word-list" -> {
+                    useWordList = true;
+                    allWords = false;
+                }
+                case "-s", "--single-characters" -> {
+                    allWords = false;
+                    useWordList = false;
+                }
+                case "-hsk" -> hskLevelToExtract = Integer.parseInt(args[++argno]);
+                case "-o" -> outputFileName = args[++argno];
+                case "-f", "--format" -> {
+                    String format = args[++argno].toLowerCase();
+                    outputFormat = switch (format) {
+                        case "pleco" -> OutputFormat.PLECO;
+                        case "memrise" -> OutputFormat.MEMRISE;
+                        default -> OutputFormat.ANKI;
+                    };
+                }
+                default -> {
+                    fileNames.add(args[argno]);
+                    return;
+                }
             }
             //handle other flags..., create a separate class if args get too numerous
         }//for
