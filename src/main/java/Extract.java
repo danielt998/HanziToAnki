@@ -32,16 +32,20 @@ public class Extract {
     private static Map<String, Word> simplifiedMapping = new HashMap<>();
     private static Map<String, Word> traditionalMapping = new HashMap<>();
 
-    public static void readInDictionary() throws IOException {
+    public static void readInDictionary() {
         String defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).getPath();
         readInDictionary(Paths.get(defaultDictionaryPath));
     }
 
-    public static void readInDictionary(Path path) throws IOException {
-        Files.readAllLines(path).stream()
-                .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
-                .map(Extract::getWordFromLine)
-                .forEach(word -> putWordToMaps(word));
+    public static void readInDictionary(Path path) {
+        try {
+            Files.readAllLines(path).stream()
+                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
+                    .map(Extract::getWordFromLine)
+                    .forEach(Extract::putWordToMaps);
+        } catch (IOException e) {
+            System.out.println("Could not load dictionary file at " + path.toString());
+        }
     }
 
     private static Word getWordFromLine(String line) {
