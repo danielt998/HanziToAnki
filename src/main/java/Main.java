@@ -114,9 +114,11 @@ public class Main {
                 }
             }
             //handle other flags..., create a separate class if args get too numerous
-        }//for
+        }
+
+        var options = new ExportOptions(useWordList, allWords, hskLevelToExtract, outputFormat);
         for (String fileName : fileNames) {
-            produceDeck(fileName, new ExportOptions(useWordList, allWords, hskLevelToExtract, outputFormat), outputFileName);
+            produceDeck(fileName, options, outputFileName);
         }
     }
 
