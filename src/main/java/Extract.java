@@ -66,8 +66,8 @@ public class Extract {
     }
 
     private static void putWordToMaps(Word word) { // helper function for tidy stream
-        simplifiedMapping.put(word.getSimplifiedChinese(), word);
-        traditionalMapping.put(word.getTraditionalChinese(), word);
+        simplifiedMapping.put(word.simplified(), word);
+        traditionalMapping.put(word.traditional(), word);
     }
 
     public static Word getWordFromChinese(char c) {

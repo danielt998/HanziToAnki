@@ -21,20 +21,20 @@ public class DeckFactory {
     }
 
     private static String getSimp(Word word) {
-        return word.getSimplifiedChinese();
+        return word.simplified();
     }
 
     private static String getWordAsDeckLine(Word word) {
         return new StringBuilder()
-                .append(word.getSimplifiedChinese())
-                .append(DELIMITER).append(getDefinition(word))
+                .append(word.simplified())
+                .append(DELIMITER).append(word.definition())
                 .append(DELIMITER).append(getPinyinWithHTML(word))
                 .append(DELIMITER).append(getSimpWithToneInfo(word))
                 .toString();
     }
 
     private static String getPinyinWithHTML(Word word) {
-        String pinyin = word.getPinyinWithTones();
+        String pinyin = word.pinyinTones();
         String[] syllables = pinyin.split(" ");
         StringBuilder builder = new StringBuilder();
         for (String syllable : syllables) {
@@ -61,7 +61,7 @@ public class DeckFactory {
     }
 
     private static String getDefinition(Word word) {
-        return word.getDefinition();
+        return word.definition();
     }
 
     //FIX THESE
