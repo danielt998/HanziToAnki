@@ -3,6 +3,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +32,16 @@ class VocabularyImporterTest {
     }
 
     @Test
-    void getWordsFromStringList() {
+    void getWordsFromStringListTest() {
+        List<String> hskMixed = List.of("爱", "吧", "阿姨");
+
+        // Collect Set to sorted List so order is always guaranteed
+        List<Word> hskWords = VocabularyImporter.getWordsFromStringList(hskMixed).stream()
+                .sorted(Comparator.comparing(Word::getSpecialOutput))
+                .collect(Collectors.toList());
+
+        assertEquals("ai", hskWords.get(0).pinyin());
+        assertEquals("ayi", hskWords.get(1).pinyin());
+        assertEquals("ba", hskWords.get(2).pinyin());
     }
 }
