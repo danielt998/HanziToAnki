@@ -13,21 +13,11 @@ public class VocabularyImporter {
     private static final String VOCAB_DIRECTORY = "vocab_lists/HSK";
 
     public static Set<Word> getAccumulativeHSKVocabulary(int HSKLevel) {
-        boolean[] levelsIncluded = new boolean[6];
-        for (int i = 0; i < HSKLevel; i++) {
-            levelsIncluded[i] = true;
+        Set<Word> accumulativeVocabulary = new HashSet<>();
+        for (int level = 1; level <= HSKLevel; level++) {
+            accumulativeVocabulary.addAll(getHSKVocabularyOneLevel(level));
         }
-        return getHSKVocabulary(levelsIncluded);
-    }
-
-    private static Set<Word> getHSKVocabulary(boolean[] HSKLevelsIncluded) {
-        Set<Word> vocabSet = new HashSet();
-        for (int i = 0; i < 6; i++) {
-            if (HSKLevelsIncluded[i]) {
-                vocabSet.addAll(getHSKVocabularyOneLevel(i + 1));
-            }
-        }
-        return vocabSet;
+        return accumulativeVocabulary;
     }
 
     private static Set<Word> getHSKVocabularyOneLevel(int level) {
