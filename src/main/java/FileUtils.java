@@ -3,8 +3,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 
@@ -22,24 +24,18 @@ public class FileUtils {
     private static List<String> getUnzippedLines(File file) {
         List<String> combinedList = new ArrayList<>();
         try {
-            ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file.getCanonicalPath()));
-            if (inputStream.getNextEntry() == null) {
-                return null;//not a valid zipped file
-            }
-            ZipEntry entry = inputStream.getNextEntry();
-            while (entry != null) {
-                String outputPath = DESTINATION_DIR + File.separator + entry.getName();
-                if (!entry.isDirectory()) {
-                    extractFileFromZip(inputStream, outputPath);
-                    combinedList.addAll(fileToStringArray(new File(outputPath)));
-                } else {//not sure whether these two are absolutely necessary
-                    File dir = new File(outputPath);
-                    dir.mkdir();
+            ZipFile zip = new ZipFile(file);
+
+            Enumeration<? extends ZipEntry> entries = zip.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry zipEntry = entries.nextElement();
+                InputStream inputStream = zip.getInputStream(zipEntry);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                while(reader.ready()) {
+                    combinedList.add(reader.readLine());
                 }
-                inputStream.closeEntry();
-                entry = inputStream.getNextEntry();
+                inputStream.close();
             }
-            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
