@@ -17,7 +17,7 @@ public class FileUtils {
     }
 
 
-    public static List<String> getUnzippedLines(File file) {
+    private static List<String> getUnzippedLines(File file) {
         List<String> combinedList = new ArrayList<>();
         try {
             ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file.getCanonicalPath()));
