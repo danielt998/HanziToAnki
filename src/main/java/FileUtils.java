@@ -5,9 +5,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 
 public class FileUtils {
@@ -34,7 +35,7 @@ public class FileUtils {
                 while(reader.ready()) {
                     combinedList.add(reader.readLine());
                 }
-                inputStream.close();
+                reader.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,14 +43,18 @@ public class FileUtils {
         return combinedList;
     }
 
-    private static void extractFileFromZip(ZipInputStream zipIn, String filePath) throws IOException {
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-        byte[] bytesIn = new byte[BUFFER_SIZE];
-        int read = 0;
-        while ((read = zipIn.read(bytesIn)) != -1) {
-            bos.write(bytesIn, 0, read);
+    // Probably single file with .gz compression
+    private static List<String> getGZipLines(File file) {
+        try {
+            GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(gzipInputStream));
+            List<String> lines = reader.lines().collect(Collectors.toList());
+            reader.close();
+            return lines;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return List.of();
         }
-        bos.close();
     }
 
     public static List<String> fileToStringArray(File file) {
@@ -57,7 +62,7 @@ public class FileUtils {
             String contentType = Files.probeContentType(file.toPath());
             switch (contentType) {
                 case ZIP -> { return getUnzippedLines(file); }
-                case GZIP -> throw new IOException("gzip not yet supported");
+                case GZIP -> { return getGZipLines(file); }
                 default -> { return Files.readAllLines(file.toPath()); }
             }
         } catch (IOException exception) {
