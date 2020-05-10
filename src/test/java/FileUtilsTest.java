@@ -25,7 +25,7 @@ class FileUtilsTest {
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
         Assertions.assertTrue(strings.size() == 1);
-        Assertions.assertEquals("hello world", strings.get(0));
+        Assertions.assertEquals("# CC-CEDICT", strings.get(0));
     }
 
     @Test
