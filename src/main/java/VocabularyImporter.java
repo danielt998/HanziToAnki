@@ -5,7 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class VocabularyImporter {
     private static final String VOCAB_DIRECTORY = "vocab_lists/HSK";
@@ -44,13 +46,9 @@ public class VocabularyImporter {
     }
 
     public static Set<Word> getWordsFromStringList(List<String> lines) {
-        Set<Word> vocabSet = new HashSet<Word>();
-        for (String line : lines) {
-            Word wordToAdd = Extract.getWordFromChinese(line);
-            if (wordToAdd != null) {
-                vocabSet.add(wordToAdd);
-            }
-        }
-        return vocabSet;
+        return lines.stream()
+                .map(Extract::getWordFromChinese)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 }
