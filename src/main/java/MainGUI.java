@@ -4,7 +4,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -24,9 +23,8 @@ public class MainGUI extends Application {
             stage = givenStage;
             this.initialiseDictionary();
             FXMLLoader loader = new FXMLLoader();
-            String fxmlDocPath = "../GUIs/TabbedUI.fxml";
-            FileInputStream fxmlStream = new FileInputStream(fxmlDocPath);
-            Object tabPane = loader.load((InputStream)fxmlStream);
+            InputStream fxmlStream = this.getClass().getResourceAsStream("/GUI/TabbedUI.fxml");
+            Object tabPane = loader.load(fxmlStream);
 
             TabPane root = (TabPane)tabPane;
             Scene scene = new Scene((Parent)root);
