@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.6.2'
 }
 
 javafx {
@@ -27,6 +27,13 @@ mainClassName = 'MainGUIStarter'
 
 compileJava {options.encoding = "UTF-8"} // overcome ü cp-1252 issues
 compileTestJava {options.encoding = "UTF-8"}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
 
 tasks.withType(JavaCompile) {
     options.compilerArgs += "--enable-preview"
