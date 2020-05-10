@@ -23,7 +23,7 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-mainClassName = 'MainGUI'
+mainClassName = 'MainGUIStarter'
 
 compileJava {options.encoding = "UTF-8"} // overcome ü cp-1252 issues
 compileTestJava {options.encoding = "UTF-8"}
