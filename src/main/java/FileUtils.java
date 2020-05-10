@@ -11,6 +11,8 @@ import java.util.zip.ZipInputStream;
 public class FileUtils {
     private static final String DESTINATION_DIR = "/home/dtm/CHANGE_DIR_NAME";
     private static final int BUFFER_SIZE = 4096;
+    private static final String ZIP = "application/x-zip-compressed";
+    private static final String GZIP = "application/x-gzip";
 
     public static List<String> fileToStringArray(String filename) {
         return fileToStringArray(new File(filename));
@@ -55,12 +57,13 @@ public class FileUtils {
     }
 
     public static List<String> fileToStringArray(File file) {
-        List<String> unzippedLines = getUnzippedLines(file);
-        if (unzippedLines != null)
-            return unzippedLines;
-
         try {
-            return Files.readAllLines(file.toPath());
+            String contentType = Files.probeContentType(file.toPath());
+            switch (contentType) {
+                case ZIP -> { return getUnzippedLines(file); }
+                case GZIP -> throw new IOException("gzip not yet supported");
+                default -> { return Files.readAllLines(file.toPath()); }
+            }
         } catch (IOException exception) {
             System.out.println("Could not read lines from input file at " + file.getPath());
             exception.printStackTrace();
