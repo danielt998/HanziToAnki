@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.*;
 import javax.swing.JOptionPane;
 
-public class TabbedUIController {
+public class MainGUIController {
     @FXML ComboBox<String> outputSelector;
     @FXML TextArea inputText;
     @FXML TextField outputFullFilename;

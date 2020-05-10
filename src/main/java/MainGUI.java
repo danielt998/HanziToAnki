@@ -23,7 +23,7 @@ public class MainGUI extends Application {
             stage = givenStage;
             this.initialiseDictionary();
             FXMLLoader loader = new FXMLLoader();
-            InputStream fxmlStream = this.getClass().getResourceAsStream("/GUI/TabbedUI.fxml");
+            InputStream fxmlStream = this.getClass().getResourceAsStream("/GUI/MainGUI.fxml");
             Object tabPane = loader.load(fxmlStream);
 
             TabPane root = (TabPane)tabPane;

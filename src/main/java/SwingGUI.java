@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
-public class OLDGUI extends JFrame implements ActionListener {
+public class SwingGUI extends JFrame implements ActionListener {
     public JTextArea textField;
     public JTextField outputName = new JTextField();
     public JButton createDeck;
@@ -13,13 +13,13 @@ public class OLDGUI extends JFrame implements ActionListener {
     public JRadioButton singleChar;
     public JRadioButton wordList;
 
-    public OLDGUI() throws URISyntaxException {
+    public SwingGUI() throws URISyntaxException {
         initUI();
     }
 
     public static void main(String[] args) throws URISyntaxException {
-        OLDGUI OLDGUI = new OLDGUI();
-        OLDGUI.setVisible(true);
+        SwingGUI swingGUI = new SwingGUI();
+        swingGUI.setVisible(true);
     }
 
     private void initUI() throws URISyntaxException {
