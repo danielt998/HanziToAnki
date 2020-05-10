@@ -1,8 +1,5 @@
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.*;
@@ -48,6 +45,15 @@ public class MainGUIController {
         OutputFormat outputFormat = OutputFormat.ANKI; // default, just use for now...
         ExportOptions options = new ExportOptions(false, true, 0, outputFormat);
         Main.produceDeck(allText, options, outputName);
+        showGenerationCompleteAlert(outputName);
+    }
+
+    private void showGenerationCompleteAlert(String outputName) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Generation complete");
+        alert.setHeaderText("Flashcard generation complete");
+        alert.setContentText("Flashcard file " + outputName + " created");
+        alert.showAndWait();
     }
 
     @FXML
