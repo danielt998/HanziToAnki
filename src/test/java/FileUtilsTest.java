@@ -1,10 +1,12 @@
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileUtilsTest {
 
@@ -14,8 +16,8 @@ class FileUtilsTest {
         String fileName = Path.of(uri).toString();
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
-        Assertions.assertTrue(strings.size() == 1);
-        Assertions.assertEquals("hello world", strings.get(0));
+        assertTrue(strings.size() == 1);
+        assertEquals("hello world", strings.get(0));
     }
 
     @Test
@@ -24,8 +26,8 @@ class FileUtilsTest {
         String fileName = Path.of(uri).toString();
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
-        Assertions.assertTrue(strings.size() == 1);
-        Assertions.assertEquals("# CC-CEDICT", strings.get(0));
+        assertTrue(strings.size() == 1);
+        assertEquals("# CC-CEDICT", strings.get(0));
     }
 
     @Test
@@ -34,13 +36,13 @@ class FileUtilsTest {
         String fileName = Path.of(uri).toString();
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
-        Assertions.assertTrue(strings.size() == 1);
-        Assertions.assertEquals("hello world", strings.get(0));
+        assertTrue(strings.size() == 1);
+        assertEquals("# CC-CEDICT", strings.get(0));
     }
 
     @Test
     void removeExtensionFromFileName() {
         String file = "hello.world";
-        Assertions.assertEquals("hello", FileUtils.removeExtensionFromFileName(file));
+        assertEquals("hello", FileUtils.removeExtensionFromFileName(file));
     }
 }
