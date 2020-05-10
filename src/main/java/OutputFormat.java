@@ -1,6 +1,6 @@
 /**
  * Created by dtm on 16/08/17.
  */
-enum class OutputFormat {
+enum OutputFormat {
     ANKI, PLECO, MEMRISE
 }
