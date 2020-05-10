@@ -46,9 +46,9 @@ public class Main {
 
     public static void produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
         Set<Word> words = new HashSet();
-        if (exportOptions.getUseWordList()) {
+        if (exportOptions.useWordList()) {
             words.addAll(VocabularyImporter.getWordsFromStringList(lines));
-        } else if (exportOptions.getAllWords()) {
+        } else if (exportOptions.useAllWords()) {
             words.addAll(getAnkiOutputForOneTwoThreeCharWords(lines));
         } else {
             words.addAll(getAnkiOutputFromSingleChars(lines));
@@ -59,10 +59,10 @@ public class Main {
             return;
         }
 
-        words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.getHskLevelToExclude()));
+        words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.hskLevelToExclude()));
 
         List<String> outputLines;
-        switch (exportOptions.getOutputFormat()) {
+        switch (exportOptions.outputFormat()) {
             case ANKI -> outputLines = DeckFactory.generateDeck(words).getLines();
 //            case PLECO -> outputLines = PlecoDeckFactory.generateDeck(words).getLines(); // TODO find where PlecoDeckFactory is
 //            case MEMRISE -> outputLines = MemriseDeckFactory...
