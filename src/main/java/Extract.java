@@ -25,14 +25,14 @@ import java.util.Objects;
     if it's a (partial) match:
       traverse the list both backwards and forwards as far as possible and add all the matches
   (starting at same place), this should be a match too.
-  also,** multiple words have same pinyin** - for themoment, this will return only the first result
+  also,** multiple words have same pinyin** - for the moment, this will return only the first result
   Capitals are causing issues too...
 */
 public class Extract {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
-    private static Map<String, Word> simplifiedMapping = new HashMap<>();
-    private static Map<String, Word> traditionalMapping = new HashMap<>();
+    private static final Map<String, Word> simplifiedMapping = new HashMap<>();
+    private static final Map<String, Word> traditionalMapping = new HashMap<>();
 
     public static void readInDictionary() throws URISyntaxException {
         URI defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
@@ -46,7 +46,7 @@ public class Extract {
                     .map(Extract::getWordFromLine)
                     .forEach(Extract::putWordToMaps);
         } catch (IOException e) {
-            System.out.println("Could not load dictionary file at " + path.toString());
+            System.out.println("Could not load dictionary file at " + path);
         }
     }
 

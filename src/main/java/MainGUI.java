@@ -19,7 +19,7 @@ public class MainGUI extends Application {
             Extract.readInDictionary();
         }
 
-        public void start(Stage givenStage) throws URISyntaxException, IOException {
+        public void start(Stage givenStage) throws URISyntaxException {
             stage = givenStage;
             this.initialiseDictionary();
             FXMLLoader loader = new FXMLLoader();

@@ -45,7 +45,7 @@ public class Main {
     }
 
     public static void produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
-        Set<Word> words = new HashSet();
+        Set<Word> words = new HashSet<Word>();
         if (exportOptions.useWordList()) {
             words.addAll(VocabularyImporter.getWordsFromStringList(lines));
         } else if (exportOptions.useAllWords()) {
@@ -127,7 +127,6 @@ public class Main {
                 }
             }
         }
-        int i = 0;
         return words;
     }
 
