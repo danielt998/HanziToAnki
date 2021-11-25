@@ -25,12 +25,10 @@ public class DeckFactory {
     }
 
     private static String getWordAsDeckLine(Word word) {
-        return new StringBuilder()
-                .append(word.simplified())
-                .append(DELIMITER).append(word.definition())
-                .append(DELIMITER).append(getPinyinWithHTML(word))
-                .append(DELIMITER).append(getSimpWithToneInfo(word))
-                .toString();
+        return word.simplified() +
+                DELIMITER + word.definition() +
+                DELIMITER + getPinyinWithHTML(word) +
+                DELIMITER + getSimpWithToneInfo(word);
     }
 
     private static String getPinyinWithHTML(Word word) {

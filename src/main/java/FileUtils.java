@@ -81,6 +81,9 @@ public class FileUtils {
     }
 
     public static String removeExtensionFromFileName(String originalFileName) {
-        return originalFileName.substring(0, originalFileName.lastIndexOf("."));
+        if (originalFileName.contains(".")) {
+            return originalFileName.substring(0, originalFileName.lastIndexOf("."));
+        }
+        return originalFileName;
     }
 }
