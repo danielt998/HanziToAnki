@@ -13,7 +13,7 @@ public class MainGUIController {
     @FXML Button fileSelectorOutputButton;
     @FXML ComboBox<String> howToHandleHanzi;
 //    @FXML var pronunciationCheckBox: CheckBox? = null
-    private List<File> files = new ArrayList<File>();
+    private final List<File> files = new ArrayList<File>();
 
     @FXML
     public void selectOutput() {

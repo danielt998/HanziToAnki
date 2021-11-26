@@ -3,7 +3,7 @@ import java.util.List;
 
 
 public class Deck {
-    private List<String> lines = new ArrayList<>();
+    private final List<String> lines = new ArrayList<>();
 
     //USE ONLY FOR TESTING
     public static void main(String[] args) {

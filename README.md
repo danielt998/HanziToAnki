@@ -18,7 +18,7 @@ Features:
 * Pinyin has accented characters (nĭ hăo instead of ni3 hao3)
 * Pinyin is coloured by HTML markup
 * Can ignore vocabulary below specified HSK level (reduces card count & saves time)
-* Fully Open-Source, so you can contribute features, create issue tickets on Github, or even help fix those issues!
+* Fully Open-Source, so you can contribute features, create issue tickets on GitHub, or even help fix those issues!
 
 
 Please feel free to make suggestions, open/comment on issues, or share code!
