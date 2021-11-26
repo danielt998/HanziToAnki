@@ -20,8 +20,6 @@ public class FileUtils {
     private static final String X_GZIP = "application/x-gzip";
     private static final String GZIP = "application/gzip";
 
-
-
     public static List<String> fileToStringArray(String filename) {
         return fileToStringArray(new File(filename));
     }
