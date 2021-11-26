@@ -14,8 +14,11 @@ import java.util.zip.ZipFile;
 public class FileUtils {
     private static final String DESTINATION_DIR = "/home/dtm/CHANGE_DIR_NAME";
     private static final int BUFFER_SIZE = 4096;
-    private static final String ZIP = "application/x-zip-compressed";
-    private static final String GZIP = "application/x-gzip";
+    // TODO:consider other types that are similar to the below
+    private static final String ZIP_COMPRESSED = "application/x-zip-compressed";
+    private static final String ZIP = "application/zip";
+    private static final String X_GZIP = "application/x-gzip";
+    private static final String GZIP = "application/gzip";
 
     public static List<String> fileToStringArray(String filename) {
         return fileToStringArray(new File(filename));
@@ -61,8 +64,8 @@ public class FileUtils {
         try {
             String contentType = Files.probeContentType(file.toPath());
             switch (contentType) {
-                case ZIP -> { return getUnzippedLines(file); }
-                case GZIP -> { return getGZipLines(file); }
+                case ZIP, ZIP_COMPRESSED -> { return getUnzippedLines(file); }
+                case GZIP, X_GZIP -> { return getGZipLines(file); }
                 default -> { return Files.readAllLines(file.toPath()); }
             }
         } catch (IOException exception) {
