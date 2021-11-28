@@ -60,6 +60,9 @@ public class FileUtils {
     public static List<String> fileToStringArray(File file) {
         try {
             String contentType = Files.probeContentType(file.toPath());
+            if(contentType == null) {
+                contentType = "text/plain";// probeContentType seems to fail to return this when no .txt extension
+            }
             switch (contentType) {
                 case ZIP -> { return getUnzippedLines(file); }
                 case GZIP -> { return getGZipLines(file); }

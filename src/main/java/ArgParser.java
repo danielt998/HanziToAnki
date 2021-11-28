@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -6,14 +7,14 @@ public class ArgParser {
     public record ParsedArgs(ExportOptions options, List<String>fileNames, String outputFileName) {}
 
     public static ParsedArgs parseArgs(String[] args) {
-        List<String> fileNames = List.of(args[args.length - 1]);
-        String outputFileName = FileUtils.removeExtensionFromFileName(fileNames.get(0)) + ".csv";
+        List<String> fileNames = new ArrayList<>();
+        String outputFileName = "output.csv"; //FileUtils.removeExtensionFromFileName(fileNames.get(0)) + ".csv";
         OutputFormat outputFormat = OutputFormat.ANKI;
         boolean useWordList = false;
         boolean allWords = true;
         int hskLevelToExtract = 0;
 
-        for (int argNo = 0; argNo < args.length - 1; argNo++)
+        for (int argNo = 0; argNo < args.length; argNo++)
             switch (args[argNo]) {
                 case "-w", "--word-list" -> {
                     useWordList = true;
