@@ -1,3 +1,7 @@
+package hanziToAnki;
+
+import org.apache.tika.Tika;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -62,7 +66,8 @@ public class FileUtils {
 
     public static List<String> fileToStringArray(File file) {
         try {
-            String contentType = Files.probeContentType(file.toPath());
+            String contentType = new Tika().detect(file);
+
             switch (contentType) {
                 case ZIP, ZIP_COMPRESSED -> { return getUnzippedLines(file); }
                 case GZIP, X_GZIP -> { return getGZipLines(file); }

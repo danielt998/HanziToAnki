@@ -1,3 +1,9 @@
+package GUIs;
+
+import hanziToAnki.ExportOptions;
+import hanziToAnki.FileUtils;
+import hanziToAnki.Main;
+import hanziToAnki.OutputFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
