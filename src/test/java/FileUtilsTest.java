@@ -46,4 +46,11 @@ class FileUtilsTest {
         String file = "hello.world";
         assertEquals("hello", FileUtils.removeExtensionFromFileName(file));
     }
+
+    @Test
+    void handlesExtensionlessFilename() {
+        String filename = "helloWorld";
+        String result = FileUtils.removeExtensionFromFileName(filename);
+        assertEquals(filename, result);
+    }
 }
