@@ -1,3 +1,5 @@
+package dictionary;
+
 public record Word(String traditional, String simplified, String pinyin, String pinyinTones, String definition) {
 
     public String getFileOutput() {

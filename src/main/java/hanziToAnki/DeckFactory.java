@@ -1,3 +1,7 @@
+package hanziToAnki;
+
+import dictionary.Word;
+
 import java.util.Set;
 
 public class DeckFactory {

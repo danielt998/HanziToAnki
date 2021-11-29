@@ -1,3 +1,9 @@
+package hanziToAnki;
+
+import dictionary.Extract;
+import dictionary.VocabularyImporter;
+import dictionary.Word;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,12 +35,12 @@ public class Main {
     }
 
     public static void printUsage() {
-        System.out.println("Usage: java Main [OPTIONS] filename");
+        System.out.println("Usage: java hanziToAnki.Main [OPTIONS] filename");
         System.out.println("options:");
         System.out.println(
                 "\t-w --word-list:\tRead from an input file containing a list of words, separated"
                         + " by line breaks. Without this flag, individual characters are extracted.");
-        System.out.println("\t-s --single-characters:\tExtract only single characters from the file.");
+        System.out.println("\t-s --single-characters:\tdictHandler.Extract only single characters from the file.");
         System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
                 + " the given one.");
         System.out.println("\t-o <output filename> Override the default output file name");

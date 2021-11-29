@@ -1,3 +1,6 @@
+import dictionary.Extract;
+import dictionary.VocabularyImporter;
+import dictionary.Word;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
+package dictionary;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
@@ -58,6 +58,8 @@ public class Extract {
         String pinyinNoTones = rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
         String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
 
+
+
         String[] remRem = rem[0].split(" ");
         String trad = remRem[0];
         String simp = remRem[1];
@@ -91,7 +93,7 @@ public class Extract {
 /*TODO:resurrect
   //LINEAR COMPLEXITY
   public static String getEnglish(String chineseWord){
-    for (Word word : dictionary){
+    for (dictHandler.Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
                       || word.getTraditionalChinese().equals(chineseWord)){
         return word.getDefinition();
@@ -100,7 +102,7 @@ public class Extract {
     return "Chinese word not found";
   }
   public static String getPinyinWithTones(String chineseWord){
-    for (Word word : dictionary){
+    for (dictHandler.Word word : dictionary){
       if(word.getSimplifiedChinese().equals(chineseWord)
                       || word.getTraditionalChinese().equals(chineseWord)){
         return word.getPinyinWithTones();
