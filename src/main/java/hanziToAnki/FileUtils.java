@@ -83,7 +83,7 @@ public class FileUtils {
 
     public static void writeToFile(List<String> lines, String outputFilename) {
         try {
-            Files.write(Paths.get(outputFilename), lines, StandardCharsets.UTF_8);
+            Files.write(Paths.get(outputFilename), lines);
         } catch (Exception e) {
             e.printStackTrace();
         }
