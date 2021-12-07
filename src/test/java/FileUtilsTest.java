@@ -1,5 +1,10 @@
 import hanziToAnki.FileUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -7,50 +12,24 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Nested
 class FileUtilsTest {
 
-    @Test
-    void textFileToStringArray() throws URISyntaxException {
-        URI uri = this.getClass().getResource("FileUtils_helloWorld.txt").toURI();
+    @DisplayName("Lines of text from Different types of files can be extracted")
+    @ParameterizedTest(name = "Reading from {0}")
+    @ValueSource(strings = {
+        "FileUtils_helloWorld.txt",
+        "FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.zip",
+        "FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.txt.gz"
+    })
+    void readsLinesFromFile(String filename) throws URISyntaxException {
+        URI uri = this.getClass().getResource(filename).toURI();
         String fileName = Path.of(uri).toString();
 
-        List<String> strings = FileUtils.fileToStringArray(fileName);
-        assertTrue(strings.size() == 1);
-        assertEquals("hello world", strings.get(0));
+        List<String> lines = FileUtils.fileToStringArray(fileName);
+        assertEquals(1, lines.size());
+        assertEquals("# CC-CEDICT", lines.get(0));
     }
 
-    @Test
-    void zipFileToStringArray() throws URISyntaxException {
-        URI uri = this.getClass().getResource("FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.zip").toURI();
-        String fileName = Path.of(uri).toString();
-
-        List<String> strings = FileUtils.fileToStringArray(fileName);
-        assertTrue(strings.size() == 1);
-        assertEquals("# CC-CEDICT", strings.get(0));
-    }
-
-    @Test
-    void gzipFileToStringArray() throws URISyntaxException {
-        URI uri = this.getClass().getResource("FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.txt.gz").toURI();
-        String fileName = Path.of(uri).toString();
-
-        List<String> strings = FileUtils.fileToStringArray(fileName);
-        assertTrue(strings.size() == 1);
-        assertEquals("# CC-CEDICT", strings.get(0));
-    }
-
-    @Test
-    void removeExtensionFromFileName() {
-        String file = "hello.world";
-        assertEquals("hello", FileUtils.removeExtensionFromFileName(file));
-    }
-
-    @Test
-    void handlesExtensionlessFilename() {
-        String filename = "helloWorld";
-        String result = FileUtils.removeExtensionFromFileName(filename);
-        assertEquals(filename, result);
-    }
 }
