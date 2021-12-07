@@ -3,7 +3,6 @@ package hanziToAnki;
 import org.apache.tika.Tika;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -87,12 +86,5 @@ public class FileUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static String removeExtensionFromFileName(String originalFileName) {
-        if (originalFileName.contains(".")) {
-            return originalFileName.substring(0, originalFileName.lastIndexOf("."));
-        }
-        return originalFileName;
     }
 }

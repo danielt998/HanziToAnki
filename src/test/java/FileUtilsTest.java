@@ -40,17 +40,4 @@ class FileUtilsTest {
         assertTrue(strings.size() == 1);
         assertEquals("# CC-CEDICT", strings.get(0));
     }
-
-    @Test
-    void removeExtensionFromFileName() {
-        String file = "hello.world";
-        assertEquals("hello", FileUtils.removeExtensionFromFileName(file));
-    }
-
-    @Test
-    void handlesExtensionlessFilename() {
-        String filename = "helloWorld";
-        String result = FileUtils.removeExtensionFromFileName(filename);
-        assertEquals(filename, result);
-    }
 }

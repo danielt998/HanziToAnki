@@ -1,7 +1,8 @@
 package hanziToAnki;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ArgParser {
@@ -11,7 +12,7 @@ public class ArgParser {
     public static ParsedArgs parseArgs(String[] args) {
         List<String> fileNames = new ArrayList<>();
         fileNames.add(args[args.length - 1]);
-        String outputFileName = FileUtils.removeExtensionFromFileName(fileNames.get(0)) + ".csv";
+        String outputFileName = FilenameUtils.removeExtension(fileNames.get(0)) + ".csv";
         OutputFormat outputFormat = OutputFormat.ANKI;
         boolean useWordList = false;
         boolean allWords = true;
