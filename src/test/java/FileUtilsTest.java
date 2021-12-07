@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileUtilsTest {
 
@@ -17,7 +16,7 @@ class FileUtilsTest {
         String fileName = Path.of(uri).toString();
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
-        assertTrue(strings.size() == 1);
+        assertEquals(1, strings.size());
         assertEquals("hello world", strings.get(0));
     }
 
@@ -27,7 +26,7 @@ class FileUtilsTest {
         String fileName = Path.of(uri).toString();
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
-        assertTrue(strings.size() == 1);
+        assertEquals(1, strings.size());
         assertEquals("# CC-CEDICT", strings.get(0));
     }
 
@@ -37,7 +36,7 @@ class FileUtilsTest {
         String fileName = Path.of(uri).toString();
 
         List<String> strings = FileUtils.fileToStringArray(fileName);
-        assertTrue(strings.size() == 1);
+        assertEquals(1, strings.size());
         assertEquals("# CC-CEDICT", strings.get(0));
     }
 }
