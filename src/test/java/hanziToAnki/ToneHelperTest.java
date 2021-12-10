@@ -1,7 +1,5 @@
 package hanziToAnki;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -16,13 +14,13 @@ class ToneHelperTest {
                 "o,4,ò",
                 "u,5,u",
                 "ü,1,ǖ"})
-    void getLetterForTone(Character input, int tone, Character expected) {
+    void getCharWithTone(Character input, int tone, Character expected) {
         char result = ToneHelper.getCharWithTone(input, tone);
         assertEquals(expected, result);
     }
 
 //    @Test
-//    void getCharWithTone() {
+//    void getLetterForTone() {
 //        fail("Not yet implemented");
 //    }
 }
