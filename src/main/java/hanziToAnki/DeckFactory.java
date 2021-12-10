@@ -53,65 +53,28 @@ public class DeckFactory {
     }
 
     private static String getPinyinWithMarks(String syllable) {
-        char letterForTone = getLetterForTone(syllable);
+        syllable = syllable.replace("u:", "ü").replace("U:", "Ü");
+
         int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
-        char charWithToneMark = getCharWithTone(letterForTone, tone);
-        if (letterForTone == 'ü') {
-            return syllable.replaceAll("u:", "" + charWithToneMark).substring(0, syllable.length() - 1);
+        if (syllable.contains("iu")) {
+            return syllable.replace('u', getCharWithTone('u', tone)).substring(0, syllable.length() - 1);
         }
-        return syllable.replaceAll("" + letterForTone, "" + charWithToneMark).substring(0, syllable.length() - 1);
+        else for (char vowel: "AaOoEeIiUuÜü".toCharArray()) {
+            if (syllable.contains("" + vowel)) {
+                return syllable.replace(vowel, getCharWithTone(vowel, tone)).substring(0, syllable.length() - 1);
+            }
+        }
+        return null;//empty String or exception?
     }
 
     private static String getDefinition(Word word) {
         return word.definition();
     }
 
-    //FIX THESE
-    private static char getLetterForTone(String syllable) {
-        //yes this is disgusting
-        if (syllable.contains("E")) {
-            return 'E';
-        } else if (syllable.contains("A")) {
-            return 'A';
-        } else if (syllable.contains("Ou")) {
-            return 'O';
-        } else {
-            for (int i = syllable.length() - 1; i >= 0; i--) {
-                if (syllable.charAt(i) == ':') {
-                    return 'ü';
-                }
-                if ("AEIOU".contains("" + syllable.charAt(i))) {
-                    return syllable.charAt(i);
-                }
-            }
-        }
-
-        if (syllable.contains("e")) {
-            return 'e';
-        } else if (syllable.contains("a")) {
-            return 'a';
-        } else if (syllable.contains("ou")) {
-            return 'o';
-        } else {
-            for (int i = syllable.length() - 1; i >= 0; i--) {
-                if (syllable.charAt(i) == ':') {
-                    return 'ü';
-                }
-                if ("aeiou".contains("" + syllable.charAt(i))) {
-                    return syllable.charAt(i);
-                }
-            }
-        }
-        if (syllable.contains("r")) {
-            return 'e';//TODO:for now, but later we may want to handle this differently
-        }
-        System.out.println("Something went wrong, syllable:" + syllable);
-        return 'X'; // TODO what
-    }
-
     private static char getCharWithTone(char originalChar, int tone) {
-        if (!isCharTonable(originalChar))
+        if (!isCharTonable(Character.toLowerCase(originalChar)))
             return originalChar;
+            //exception?
 
         char c = switch (Character.toLowerCase(originalChar)) {
             case 'a' -> A_ACCENTs[tone - 1];
