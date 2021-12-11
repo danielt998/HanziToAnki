@@ -64,7 +64,7 @@ public class DeckFactory {
                 return syllable.replace(vowel, getCharWithTone(vowel, tone)).substring(0, syllable.length() - 1);
             }
         }
-        return null;//empty String or exception?
+        return syllable;
     }
 
     private static String getDefinition(Word word) {
@@ -72,9 +72,17 @@ public class DeckFactory {
     }
 
     private static char getCharWithTone(char originalChar, int tone) {
-        if (!isCharTonable(Character.toLowerCase(originalChar)))
+        if (tone < 1 || tone > 5){
+            System.err.println("An unknown tone was encountered: " + tone + "defaulting to untoned syllable");
             return originalChar;
-            //exception?
+        }
+        if (!isCharTonable(Character.toLowerCase(originalChar))) {
+            System.err.println("Character cannot be toned: " + originalChar);
+            return originalChar;
+        }
+        if (tone == 5) {
+            return originalChar;
+        }
 
         char c = switch (Character.toLowerCase(originalChar)) {
             case 'a' -> A_ACCENTs[tone - 1];
