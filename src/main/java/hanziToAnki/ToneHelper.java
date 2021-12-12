@@ -46,7 +46,7 @@ public class ToneHelper {
         return false;
     }
 
-    public static String getPinyinWithMarks(String syllable) {
+    public static String convertNumberedSyllableToAccentedSyllable(String syllable) {
         syllable = syllable.replace("u:", "ü").replace("U:", "Ü");
 
         int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));

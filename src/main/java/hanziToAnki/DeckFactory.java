@@ -16,10 +16,6 @@ public class DeckFactory {
         return deck;
     }
 
-    private static String getSimp(Word word) {
-        return word.simplified();
-    }
-
     private static String getWordAsDeckLine(Word word) {
         return word.simplified() +
                 DELIMITER + word.definition() +
@@ -34,7 +30,7 @@ public class DeckFactory {
         for (String syllable : syllables) {
             int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
             builder.append(getOpeningHTMLTag(tone));
-            builder.append(ToneHelper.getPinyinWithMarks(syllable));
+            builder.append(ToneHelper.convertNumberedSyllableToAccentedSyllable(syllable));
             builder.append(CLOSING_HTML_TAG);
         }
         return builder.toString();
@@ -42,10 +38,6 @@ public class DeckFactory {
 
     private static String getOpeningHTMLTag(int tone) {
         return "<span class=\"tone" + tone + "\">";
-    }
-
-    private static String getDefinition(Word word) {
-        return word.definition();
     }
 
     private static String getSimpWithToneInfo(Word word) {
