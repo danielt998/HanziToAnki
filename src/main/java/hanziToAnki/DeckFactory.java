@@ -4,14 +4,9 @@ import dictionary.Word;
 
 import java.util.Set;
 
-import static hanziToAnki.ToneHelper.getCharWithTone;
-import static hanziToAnki.ToneHelper.getLetterForTone;
-
 public class DeckFactory {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
-
-
 
     public static Deck generateDeck(Set<Word> words) {
         Deck deck = new Deck();
@@ -39,7 +34,7 @@ public class DeckFactory {
         for (String syllable : syllables) {
             int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
             builder.append(getOpeningHTMLTag(tone));
-            builder.append(getPinyinWithMarks(syllable));
+            builder.append(ToneHelper.getPinyinWithMarks(syllable));
             builder.append(CLOSING_HTML_TAG);
         }
         return builder.toString();
@@ -47,21 +42,6 @@ public class DeckFactory {
 
     private static String getOpeningHTMLTag(int tone) {
         return "<span class=\"tone" + tone + "\">";
-    }
-
-    private static String getPinyinWithMarks(String syllable) {
-        syllable = syllable.replace("u:", "ü").replace("U:", "Ü");
-
-        int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
-        if (syllable.contains("iu")) {
-            return syllable.replace('u', getCharWithTone('u', tone)).substring(0, syllable.length() - 1);
-        }
-        else for (char vowel: "AaOoEeIiUuÜü".toCharArray()) {
-            if (syllable.contains("" + vowel)) {
-                return syllable.replace(vowel, getCharWithTone(vowel, tone)).substring(0, syllable.length() - 1);
-            }
-        }
-        return syllable;
     }
 
     private static String getDefinition(Word word) {

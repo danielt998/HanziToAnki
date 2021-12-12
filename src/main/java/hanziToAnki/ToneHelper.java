@@ -10,7 +10,7 @@ public class ToneHelper {
     private static final char[] U_ACCENTs = new char[]{'ū', 'ú', 'ǔ', 'ù', 'u'};
     private static final char[] U_UMLAUT_ACCENTs = new char[]{'ǖ', 'ǘ', 'ǚ', 'ǜ', 'ü'};
 
-     private static char getCharWithTone(char originalChar, int tone) {
+    private static char getCharWithTone(char originalChar, int tone) {
         if (tone < 1 || tone > 5){
             System.err.println("An unknown tone was encountered: " + tone + "defaulting to untoned syllable");
             return originalChar;
@@ -46,4 +46,18 @@ public class ToneHelper {
         return false;
     }
 
+    public static String getPinyinWithMarks(String syllable) {
+        syllable = syllable.replace("u:", "ü").replace("U:", "Ü");
+
+        int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+        if (syllable.contains("iu")) {
+            return syllable.replace('u', getCharWithTone('u', tone)).substring(0, syllable.length() - 1);
+        }
+        else for (char vowel: "AaOoEeIiUuÜü".toCharArray()) {
+            if (syllable.contains("" + vowel)) {
+                return syllable.replace(vowel, getCharWithTone(vowel, tone)).substring(0, syllable.length() - 1);
+            }
+        }
+        return syllable;
+    }
 }
