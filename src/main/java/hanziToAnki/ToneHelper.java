@@ -10,50 +10,18 @@ public class ToneHelper {
     private static final char[] U_ACCENTs = new char[]{'ū', 'ú', 'ǔ', 'ù', 'u'};
     private static final char[] U_UMLAUT_ACCENTs = new char[]{'ǖ', 'ǘ', 'ǚ', 'ǜ', 'ü'};
 
-    static char getLetterForTone(String syllable) {
-        if (syllable.contains("E")) {
-            return 'E';
-        } else if (syllable.contains("A")) {
-            return 'A';
-        } else if (syllable.contains("Ou")) {
-            return 'O';
-        } else {
-            for (int i = syllable.length() - 1; i >= 0; i--) {
-                if (syllable.charAt(i) == ':') {
-                    return 'ü';
-                }
-                if ("AEIOU".contains("" + syllable.charAt(i))) {
-                    return syllable.charAt(i);
-                }
-            }
-        }
-
-        if (syllable.contains("e")) {
-            return 'e';
-        } else if (syllable.contains("a")) {
-            return 'a';
-        } else if (syllable.contains("ou")) {
-            return 'o';
-        } else {
-            for (int i = syllable.length() - 1; i >= 0; i--) {
-                if (syllable.charAt(i) == ':') {
-                    return 'ü';
-                }
-                if ("aeiou".contains("" + syllable.charAt(i))) {
-                    return syllable.charAt(i);
-                }
-            }
-        }
-        if (syllable.contains("r")) {
-            return 'e';//TODO:for now, but later we may want to handle this differently
-        }
-        System.out.println("Something went wrong, syllable:" + syllable);
-        return 'X'; // TODO what
-    }
-
-    static char getCharWithTone(char originalChar, int tone) {
-        if (!isCharTonable(originalChar))
+     private static char getCharWithTone(char originalChar, int tone) {
+        if (tone < 1 || tone > 5){
+            System.err.println("An unknown tone was encountered: " + tone + "defaulting to untoned syllable");
             return originalChar;
+        }
+        if (!isCharTonable(Character.toLowerCase(originalChar))) {
+            System.err.println("Character cannot be toned: " + originalChar);
+            return originalChar;
+        }
+        if (tone == 5) {
+            return originalChar;
+        }
 
         char c = switch (Character.toLowerCase(originalChar)) {
             case 'a' -> A_ACCENTs[tone - 1];
@@ -69,7 +37,7 @@ public class ToneHelper {
             return c;
         return Character.toUpperCase(c);
     }
-
+    
     private static boolean isCharTonable(char testChar) {
         for (char c : VOWELS_UNACCENTED) {
             if (c == testChar)
