@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ArgParser {
 
-    public record ParsedArgs(ExportOptions options, List<String>fileNames, String outputFileName) {}
+    public record ParsedArgs(ExportOptions options, List<String> fileNames, String outputFileName) {}
 
     public static ParsedArgs parseArgs(String[] args) {
         List<String> fileNames = new ArrayList<>();
@@ -15,7 +15,7 @@ public class ArgParser {
         boolean allWords = true;
         int hskLevelToExtract = 0;
 
-        for (int argNo = 0; argNo < args.length; argNo++)
+        for (int argNo = 0; argNo < args.length; argNo++) {
             switch (args[argNo]) {
                 case "-w", "--word-list" -> {
                     useWordList = true;
@@ -35,8 +35,9 @@ public class ArgParser {
                         default -> OutputFormat.ANKI;
                     };
                 }
-                default -> fileNames.add(args[argNo]); // no flag specified - so this is the output file
+                default -> fileNames.add(args[argNo]);
             }
+        }
 
         var options = new ExportOptions(useWordList, allWords, hskLevelToExtract, outputFormat);
         return new ParsedArgs(options, fileNames, outputFileName);
