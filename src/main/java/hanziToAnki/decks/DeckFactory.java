@@ -1,12 +1,12 @@
 package hanziToAnki.decks;
 
-import dictionary.Word;
+import dictionary.ChineseWord;
 
 import java.util.Set;
 
 public class DeckFactory {
 
-    public static Deck getDeck(Set<Word> words) {
+    public static Deck getDeck(Set<ChineseWord> words) {
         if (areChinese(words)) {
             return new ChineseDeck();
         } else {
@@ -14,9 +14,9 @@ public class DeckFactory {
         }
     }
 
-    private static boolean areChinese(Set<Word> words) {
+    private static boolean areChinese(Set<ChineseWord> words) {
         try {
-            return words.stream().allMatch(w -> w instanceof Word);
+            return words.stream().allMatch(w -> w instanceof ChineseWord);
         } catch (NullPointerException e) {
             return false; // hack for now, until we have Word interface and implementations
         }

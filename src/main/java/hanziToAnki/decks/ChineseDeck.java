@@ -1,14 +1,11 @@
 package hanziToAnki.decks;
 
-import dictionary.Word;
+import dictionary.ChineseWord;
 import hanziToAnki.ToneHelper;
-import hanziToAnki.decks.Deck;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 
@@ -21,7 +18,7 @@ public class ChineseDeck implements Deck {
     public ChineseDeck() {}
 
     @Override
-    public void generate(Set<Word> words) {
+    public void generate(Set<ChineseWord> words) {
         this.lines = words.stream()
                 .map(ChineseDeck::getWordAsDeckLine)
                 .collect(toList());
@@ -31,14 +28,14 @@ public class ChineseDeck implements Deck {
         return lines;
     }
 
-    private static String getWordAsDeckLine(Word word) {
+    private static String getWordAsDeckLine(ChineseWord word) {
         return word.simplified() +
                 DELIMITER + word.definition() +
                 DELIMITER + getPinyinWithHTML(word) +
                 DELIMITER + getSimpWithToneInfo(word);
     }
 
-    private static String getPinyinWithHTML(Word word) {
+    private static String getPinyinWithHTML(ChineseWord word) {
         String pinyin = word.pinyinTones();
         String[] syllables = pinyin.split(" ");
         StringBuilder builder = new StringBuilder();
@@ -55,7 +52,7 @@ public class ChineseDeck implements Deck {
         return "<span class=\"tone" + tone + "\">";
     }
 
-    private static String getSimpWithToneInfo(Word word) {
+    private static String getSimpWithToneInfo(ChineseWord word) {
         return "";
     }
 }

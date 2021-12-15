@@ -2,8 +2,7 @@ package hanziToAnki;
 
 import dictionary.Extract;
 import dictionary.VocabularyImporter;
-import dictionary.Word;
-import hanziToAnki.decks.ChineseDeck;
+import dictionary.ChineseWord;
 import hanziToAnki.decks.Deck;
 import hanziToAnki.decks.DeckFactory;
 
@@ -54,7 +53,7 @@ public class Main {
     }
 
     public static void produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
-        Set<Word> words = new HashSet<Word>();
+        Set<ChineseWord> words = new HashSet<ChineseWord>();
         if (exportOptions.useWordList()) {
             words.addAll(VocabularyImporter.getWordsFromStringList(lines));
         } else if (exportOptions.useAllWords()) {
@@ -105,18 +104,18 @@ public class Main {
         }
     }
 
-    private static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list) {
+    private static Set<ChineseWord> getAnkiOutputForOneTwoThreeCharWords(List<String> list) {
         char[] charArray = getCharsFromList(list);
         return getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
     }
 
-    private static Set<Word> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[] charArray) {
-        Set<Word> words = new HashSet<Word>();
+    private static Set<ChineseWord> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[] charArray) {
+        Set<ChineseWord> words = new HashSet<ChineseWord>();
         for (int i = 0; i < charArray.length; i++) {
             String word = "" + charArray[i];
             boolean wordUsed = false;
             if (i + 1 < charArray.length) {
-                Word wordTwoChars = Extract.getWordFromChinese(word + charArray[i + 1]);
+                ChineseWord wordTwoChars = Extract.getWordFromChinese(word + charArray[i + 1]);
                 if (wordTwoChars != null) {
                     words.add(wordTwoChars);
                     wordUsed = true;
@@ -124,7 +123,7 @@ public class Main {
                 }
             }
             if (i + 2 - 1 < charArray.length) {//TODO:fix this
-                Word wordThreeChars = Extract.getWordFromChinese(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
+                ChineseWord wordThreeChars = Extract.getWordFromChinese(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
                 if (wordThreeChars != null) {
                     words.add(wordThreeChars);
                     wordUsed = true;
@@ -133,7 +132,7 @@ public class Main {
             }
             if (!wordUsed) {//iff character is not used as part of any other word, we print it
                 //TODO:consider whether this should be the behaviour and how arguments might be restructured
-                Word wordSingleChar = Extract.getWordFromChinese(word);
+                ChineseWord wordSingleChar = Extract.getWordFromChinese(word);
                 if (wordSingleChar != null) {
                     words.add(wordSingleChar);
                 }
@@ -142,16 +141,16 @@ public class Main {
         return words;
     }
 
-    private static Set<Word> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray) {
-        Set<Word> words = new HashSet<Word>();
+    private static Set<ChineseWord> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray) {
+        Set<ChineseWord> words = new HashSet<ChineseWord>();
         for (char c : charArray) {
-            Word word = Extract.getWordFromChinese(c);
+            ChineseWord word = Extract.getWordFromChinese(c);
             words.add(word);
         }
         return words;
     }
 
-    private static Set<Word> getAnkiOutputFromSingleChars(List<String> lines) {
+    private static Set<ChineseWord> getAnkiOutputFromSingleChars(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
         return getAnkiOutputFromSingleCharsWithCharArr(charArray);
     }

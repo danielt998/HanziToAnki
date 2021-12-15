@@ -1,12 +1,11 @@
 package fixtures;
 
-import dictionary.Word;
-import org.junit.platform.commons.util.StringUtils;
+import dictionary.ChineseWord;
 
 public class WordFixtures {
 
-    public static Word aWord() {
-        return new Word(
+    public static ChineseWord aWord() {
+        return new ChineseWord(
         "traditional",
                 "simplified",
                 "nihao",

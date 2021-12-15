@@ -1,20 +1,14 @@
 import dictionary.Extract;
-import dictionary.Word;
-import hanziToAnki.decks.ChineseDeck;
+import fixtures.WordFixtures;
 import hanziToAnki.decks.Deck;
 import hanziToAnki.decks.DeckFactory;
 import hanziToAnki.decks.EmptyDeck;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

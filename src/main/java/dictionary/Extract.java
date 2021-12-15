@@ -31,8 +31,8 @@ import java.util.Map;
 public class Extract {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
-    private static final Map<String, Word> simplifiedMapping = new HashMap<>();
-    private static final Map<String, Word> traditionalMapping = new HashMap<>();
+    private static final Map<String, ChineseWord> simplifiedMapping = new HashMap<>();
+    private static final Map<String, ChineseWord> traditionalMapping = new HashMap<>();
 
     public static void readInDictionary() throws URISyntaxException {
         URI defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
@@ -50,7 +50,7 @@ public class Extract {
         }
     }
 
-    private static Word getWordFromLine(String line) {
+    private static ChineseWord getWordFromLine(String line) {
         String[] str = line.split(" /");
         String definition = str[1];
 
@@ -64,29 +64,29 @@ public class Extract {
         String trad = remRem[0];
         String simp = remRem[1];
 
-        return new Word(trad, simp, pinyinNoTones, pinyinWithTones, definition);
+        return new ChineseWord(trad, simp, pinyinNoTones, pinyinWithTones, definition);
     }
 
-    private static void putWordToMaps(Word word) { // helper function for tidy stream
+    private static void putWordToMaps(ChineseWord word) { // helper function for tidy stream
         simplifiedMapping.put(word.simplified(), word);
         traditionalMapping.put(word.traditional(), word);
     }
 
-    public static Word getWordFromChinese(char c) {
+    public static ChineseWord getWordFromChinese(char c) {
         return getWordFromChinese(String.valueOf(c));
     }
 
-    public static Word getWordFromChinese(String chineseWord) {
+    public static ChineseWord getWordFromChinese(String chineseWord) {
         if (simplifiedMapping.containsKey(chineseWord))
             return simplifiedMapping.get(chineseWord);
         return traditionalMapping.get(chineseWord);
     }
 
-    public static Word getWordFromTraditionalChinese(String chineseWord) {
+    public static ChineseWord getWordFromTraditionalChinese(String chineseWord) {
         return traditionalMapping.get(chineseWord);
     }
 
-    public static Word getWordFromSimplifiedChinese(String chineseWord) {
+    public static ChineseWord getWordFromSimplifiedChinese(String chineseWord) {
         return simplifiedMapping.get(chineseWord);
     }
 

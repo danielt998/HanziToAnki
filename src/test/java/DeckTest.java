@@ -1,6 +1,5 @@
-import dictionary.Word;
+import dictionary.ChineseWord;
 import fixtures.WordFixtures;
-import hanziToAnki.decks.ChineseDeck;
 import hanziToAnki.decks.DeckFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,8 @@ class DeckTest {
 
     @Test
     void readsLinesFromFile() {
-        Word word1 = WordFixtures.aWord();
-        Word word2 = WordFixtures.aWord();
+        ChineseWord word1 = WordFixtures.aWord();
+        ChineseWord word2 = WordFixtures.aWord();
 
         var words = Set.of(word1, word2);
         var deck = DeckFactory.getDeck(words);
