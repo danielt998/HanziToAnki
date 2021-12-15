@@ -3,7 +3,9 @@ import dictionary.Word;
 import hanziToAnki.decks.ChineseDeck;
 import hanziToAnki.decks.Deck;
 import hanziToAnki.decks.DeckFactory;
+import hanziToAnki.decks.EmptyDeck;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +39,12 @@ public class DeckFactoryTest {
 //        ChineseDeck outputDeck = ChineseDeck.generateDeck(validWords);
 //        assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("validWordsDeck.txt")),
 //                Arrays.toString(outputDeck.getLines().toArray()).replace(",","\n"));
+    }
+
+    @Test
+    void noWordsGivesEmptyDeck() {
+        Deck deck = DeckFactory.getDeck(null);
+        Assertions.assertTrue(deck instanceof EmptyDeck);
     }
 
 }

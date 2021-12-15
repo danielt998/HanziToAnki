@@ -7,8 +7,18 @@ import java.util.Set;
 public class DeckFactory {
 
     public static Deck getDeck(Set<Word> words) {
-        // TODO try to get instance of word, and make deck according to word instance
-            // Word instanceof ChineseWord -> return new ChineseDeck(words);
-        return new ChineseDeck();
+        if (areChinese(words)) {
+            return new ChineseDeck();
+        } else {
+            return new EmptyDeck();
+        }
+    }
+
+    private static boolean areChinese(Set<Word> words) {
+        try {
+            return words.stream().allMatch(w -> w instanceof Word);
+        } catch (NullPointerException e) {
+            return false; // hack for now, until we have Word interface and implementations
+        }
     }
 }
