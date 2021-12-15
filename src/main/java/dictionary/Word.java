@@ -1,13 +1,10 @@
 package dictionary;
 
-public record Word(String traditional, String simplified, String pinyin, String pinyinTones, String definition) {
-
-    public String getFileOutput() {
-        return traditional + ' ' +
-                simplified + ' ' +
-                '[' + pinyinTones + ']' + ' ' +
-                 '/' + definition;
-    }
+public record Word(String traditional,
+                   String simplified,
+                   String pinyin,
+                   String pinyinTones,
+                   String definition) implements IWord{
 
     //this allows us to run the sort command to sort the data ;)
     public String getSpecialOutput() {
