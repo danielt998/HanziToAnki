@@ -1,6 +1,7 @@
 import dictionary.Word;
 import fixtures.WordFixtures;
-import hanziToAnki.Deck;
+import hanziToAnki.decks.ChineseDeck;
+import hanziToAnki.decks.DeckFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,8 @@ class DeckTest {
         Word word2 = WordFixtures.aWord();
 
         var words = Set.of(word1, word2);
-        var deck = Deck.generateDeck(words);
+        var deck = DeckFactory.getDeck(words);
+        deck.generate(words);
 
         Assertions.assertEquals(2, deck.getLines().size());
     }

@@ -3,6 +3,9 @@ package hanziToAnki;
 import dictionary.Extract;
 import dictionary.VocabularyImporter;
 import dictionary.Word;
+import hanziToAnki.decks.ChineseDeck;
+import hanziToAnki.decks.Deck;
+import hanziToAnki.decks.DeckFactory;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -68,8 +71,11 @@ public class Main {
         words.removeAll(VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.hskLevelToExclude()));
 
         List<String> outputLines;
+        Deck deck = DeckFactory.getDeck(words);
+        deck.generate(words);
+
         switch (exportOptions.outputFormat()) {
-            case ANKI -> outputLines = Deck.generateDeck(words).getLines();
+            case ANKI -> outputLines = deck.getLines();
 //            case PLECO -> outputLines = PlecoDeckFactory.generateDeck(words).getLines(); // TODO find where PlecoDeckFactory is
 //            case MEMRISE -> outputLines = MemriseDeckFactory...
             default -> {

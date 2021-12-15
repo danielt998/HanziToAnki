@@ -1,29 +1,30 @@
-package hanziToAnki;
+package hanziToAnki.decks;
 
 import dictionary.Word;
+import hanziToAnki.ToneHelper;
+import hanziToAnki.decks.Deck;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 
-public class Deck {
+public class ChineseDeck implements Deck {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
 
     private List<String> lines;
 
-    private Deck(List<String> lines) {
-        Deck deck = new Deck(lines);
-    }
+    public ChineseDeck() {}
 
-    public static Deck generateDeck(Set<Word> words) {
-        return words.stream()
-                .map(Deck::getWordAsDeckLine)
-                .collect(collectingAndThen(toList(), Deck::new));
+    @Override
+    public void generate(Set<Word> words) {
+        this.lines = words.stream()
+                .map(ChineseDeck::getWordAsDeckLine)
+                .collect(toList());
     }
 
     public List<String> getLines() {
