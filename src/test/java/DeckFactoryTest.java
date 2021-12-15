@@ -1,7 +1,6 @@
 import dictionary.Extract;
 import dictionary.Word;
 import hanziToAnki.Deck;
-import hanziToAnki.DeckFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ public class DeckFactoryTest {
         for (String wordString: wordStrings){
             validWords.add(extract.getWordFromChinese(wordString));
         }
-        Deck outputDeck = DeckFactory.generateDeck(validWords);
+        Deck outputDeck = Deck.generateDeck(validWords);
         assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("validWordsDeck.txt")),
                 Arrays.toString(outputDeck.getLines().toArray()).replace(",","\n"));
     }

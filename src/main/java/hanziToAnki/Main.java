@@ -69,7 +69,7 @@ public class Main {
 
         List<String> outputLines;
         switch (exportOptions.outputFormat()) {
-            case ANKI -> outputLines = DeckFactory.generateDeck(words).getLines();
+            case ANKI -> outputLines = Deck.generateDeck(words).getLines();
 //            case PLECO -> outputLines = PlecoDeckFactory.generateDeck(words).getLines(); // TODO find where PlecoDeckFactory is
 //            case MEMRISE -> outputLines = MemriseDeckFactory...
             default -> {
