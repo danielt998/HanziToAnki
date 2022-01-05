@@ -3,6 +3,7 @@ package dictionary;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class Extract {
 
     public static void readInDictionary(Path path) {
         try {
-            Files.readAllLines(path).stream()
+            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                     .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
                     .map(Extract::getWordFromLine)
                     .forEach(Extract::putWordToMaps);
