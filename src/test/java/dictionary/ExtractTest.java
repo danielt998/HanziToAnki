@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -21,11 +20,13 @@ class ExtractTest {
     @Test
     void canExtractErHuaTest() {
         // 奴儿 is not in the dictionary; 奴 is
-        var words = Stream.of("奴儿")
+        var word = Stream.of("奴儿")
             .map(Extract::getWordFromChinese)
             .filter(Objects::nonNull) // Extract returns null if neither simp nor trad maps have the word
-            .toList();
-        Assertions.assertFalse(words.isEmpty());
+            .findFirst()
+            .get();
+
+        Assertions.assertEquals(Extract.getWordFromChinese("奴"), word);
     }
 
 }
