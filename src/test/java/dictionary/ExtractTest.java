@@ -10,11 +10,9 @@ import java.util.stream.Stream;
 
 class ExtractTest {
 
-    static Extract extract = new Extract();
-
     @BeforeAll
     static void setUp() throws URISyntaxException {
-        extract.readInDictionary();
+        Extract.readInDictionary();
     }
 
     @Test
