@@ -31,7 +31,7 @@ class VocabularyImporterTest {
         assertEquals(593, VocabularyImporter.getAccumulativeHSKVocabulary(3).size());
         assertEquals(1188, VocabularyImporter.getAccumulativeHSKVocabulary(4).size());
         assertEquals(2486, VocabularyImporter.getAccumulativeHSKVocabulary(5).size());
-        assertEquals(4982, VocabularyImporter.getAccumulativeHSKVocabulary(6).size());
+        assertEquals(4983, VocabularyImporter.getAccumulativeHSKVocabulary(6).size());
     }
 
     @Test

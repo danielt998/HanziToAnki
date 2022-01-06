@@ -3,10 +3,12 @@ package dictionary;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
@@ -41,7 +43,7 @@ public class Extract {
 
     public static void readInDictionary(Path path) {
         try {
-            Files.readAllLines(path).stream()
+            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                     .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
                     .map(Extract::getWordFromLine)
                     .forEach(Extract::putWordToMaps);
@@ -76,10 +78,25 @@ public class Extract {
         return getWordFromChinese(String.valueOf(c));
     }
 
-    public static Word getWordFromChinese(String chineseWord) {
-        if (simplifiedMapping.containsKey(chineseWord))
-            return simplifiedMapping.get(chineseWord);
-        return traditionalMapping.get(chineseWord);
+    public static Word getWordFromChinese(String s) {
+        var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
+        if (Objects.nonNull(word))
+            return word;
+
+        if (mightBeErhua(s)) {
+            var stripped = sanitiseErhua(s);
+            return simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+        }
+
+        return null;
+    }
+
+    private static boolean mightBeErhua(String word) {
+        return word.lastIndexOf("儿") == word.length() -1;
+    }
+
+    private static String sanitiseErhua(String word) {
+        return word.substring(0, word.lastIndexOf("儿"));
     }
 
     public static Word getWordFromTraditionalChinese(String chineseWord) {
