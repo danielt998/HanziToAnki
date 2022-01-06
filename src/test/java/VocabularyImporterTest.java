@@ -24,9 +24,6 @@ class VocabularyImporterTest {
 
     @Test
     void getAccumulativeHSKVocabularyTest() {
-
-        var x = VocabularyImporter.getAccumulativeHSKVocabulary(6);
-
         // Note - accumulative counts are 352, 654, 1254, 2554, and 5054
         // The difference is presumably due to some HSK words not being in dictionary
         assertEquals(149, VocabularyImporter.getAccumulativeHSKVocabulary(1).size());
