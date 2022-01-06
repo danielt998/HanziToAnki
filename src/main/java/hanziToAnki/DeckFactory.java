@@ -17,10 +17,11 @@ public class DeckFactory {
     }
 
     private static String getWordAsDeckLine(Word word) {
-        return word.simplified() +
-                DELIMITER + word.definition() +
-                DELIMITER + getPinyinWithHTML(word) +
-                DELIMITER + getSimpWithToneInfo(word);
+        return String.join(DELIMITER,
+            word.simplified(),
+            word.definition(),
+            getPinyinWithHTML(word)
+        );
     }
 
     private static String getPinyinWithHTML(Word word) {
@@ -38,9 +39,5 @@ public class DeckFactory {
 
     private static String getOpeningHTMLTag(int tone) {
         return "<span class=\"tone" + tone + "\">";
-    }
-
-    private static String getSimpWithToneInfo(Word word) {
-        return "";
     }
 }
