@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
 public class VocabularyImporter {
     private static final String VOCAB_DIRECTORY = "vocab_lists/HSK";
 
-    public static Set<ChineseWord> getAccumulativeHSKVocabulary(int HSKLevel) {
-        Set<ChineseWord> accumulativeVocabulary = new HashSet<>();
+    public static Set<Word> getAccumulativeHSKVocabulary(int HSKLevel) {
+        Set<Word> accumulativeVocabulary = new HashSet<>();
         for (int level = 1; level <= HSKLevel; level++) {
             accumulativeVocabulary.addAll(getHSKVocabularyOneLevel(level));
         }
         return accumulativeVocabulary;
     }
 
-    private static Set<ChineseWord> getHSKVocabularyOneLevel(int level) {
+    private static Set<Word> getHSKVocabularyOneLevel(int level) {
         return getWordsFromNewlineSeparatedFile(VOCAB_DIRECTORY + level);
     }
 
-    private static Set<ChineseWord> getWordsFromNewlineSeparatedFile(String filename) {
+    private static Set<Word> getWordsFromNewlineSeparatedFile(String filename) {
         try {
             URI uri = VocabularyImporter.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
@@ -37,7 +37,7 @@ public class VocabularyImporter {
         }
     }
 
-    public static Set<ChineseWord> getWordsFromStringList(List<String> lines) {
+    public static Set<Word> getWordsFromStringList(List<String> lines) {
         return lines.stream()
                 .map(Extract::getWordFromChinese)
                 .filter(Objects::nonNull)

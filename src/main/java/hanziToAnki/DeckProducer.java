@@ -2,6 +2,7 @@ package hanziToAnki;
 
 import dictionary.VocabularyImporter;
 import dictionary.Word;
+import hanziToAnki.decks.DeckFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,8 @@ public class DeckProducer {
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            return DeckFactory.generateDeck(words).getLines();
+            var deck = DeckFactory.getDeck(words);
+            return deck.generate(words);
         }
 
         // We may support Memrise, Pleco, etc. at a later date

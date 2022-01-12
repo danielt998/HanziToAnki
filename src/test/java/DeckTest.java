@@ -1,4 +1,5 @@
 import dictionary.ChineseWord;
+import dictionary.Word;
 import fixtures.WordFixtures;
 import hanziToAnki.decks.DeckFactory;
 import org.junit.jupiter.api.Assertions;
@@ -13,10 +14,9 @@ class DeckTest {
         ChineseWord word1 = WordFixtures.aWord();
         ChineseWord word2 = WordFixtures.aWord();
 
-        var words = Set.of(word1, word2);
+        Set<Word> words = Set.of(word1, word2);
         var deck = DeckFactory.getDeck(words);
-        deck.generate(words);
 
-        Assertions.assertEquals(2, deck.getLines().size());
+        Assertions.assertEquals(2, deck.generate(words).size());
     }
 }

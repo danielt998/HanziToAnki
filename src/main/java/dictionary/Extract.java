@@ -1,5 +1,6 @@
 package dictionary;
 
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -66,12 +67,15 @@ public class Extract {
         String trad = remRem[0];
         String simp = remRem[1];
 
-        return new Word(trad, simp, pinyinNoTones, pinyinWithTones, definition);
+        return new ChineseWord(trad, simp, pinyinNoTones, pinyinWithTones, definition);
     }
 
     private static void putWordToMaps(Word word) { // helper function for tidy stream
-        simplifiedMapping.put(word.simplified(), word);
-        traditionalMapping.put(word.traditional(), word);
+    if (word instanceof ChineseWord) {
+        var w = (ChineseWord) word;
+          simplifiedMapping.put(w.simplified(), word);
+          traditionalMapping.put(w.traditional(), word);
+        }
     }
 
     public static Word getWordFromChinese(char c) {

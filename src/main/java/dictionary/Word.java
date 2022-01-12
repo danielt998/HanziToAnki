@@ -1,6 +1,6 @@
 package dictionary;
 
-public interface IWord {
+public interface Word {
 
     public String getSpecialOutput();
 }

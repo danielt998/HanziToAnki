@@ -1,7 +1,4 @@
 import dictionary.Extract;
-import hanziToAnki.Deck;
-import hanziToAnki.DeckFactory;
-import fixtures.WordFixtures;
 import hanziToAnki.decks.Deck;
 import hanziToAnki.decks.DeckFactory;
 import hanziToAnki.decks.EmptyDeck;
@@ -30,8 +27,8 @@ public class DeckFactoryTest {
                 .map(Extract::getWordFromChinese)
                 .collect(Collectors.toSet());
 
-        Deck deck = DeckFactory.generateDeck(words);
-        String deckString = String.join("\n", deck.getLines());
+        Deck deck = DeckFactory.getDeck(words);
+        String deckString = String.join("\n", deck.generate(words));
 
         var resStream = this.getClass().getResourceAsStream("validWordsDeck.txt");
         var expected = new String(resStream.readAllBytes(), StandardCharsets.UTF_8);
