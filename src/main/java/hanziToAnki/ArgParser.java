@@ -1,11 +1,10 @@
 package hanziToAnki;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.io.FilenameUtils;
 
 public class ArgParser {
 
@@ -24,8 +23,6 @@ public class ArgParser {
                 .map(OutputFormat::name)
                 .collect(Collectors.joining(", ")));
     }
-
-    public record ParsedArgs(ExportOptions options, List<String>fileNames, String outputFileName) {}
 
     public static ParsedArgs parseArgs(String[] args) {
         List<String> fileNames = new ArrayList<>();
@@ -62,4 +59,6 @@ public class ArgParser {
         var options = new ExportOptions(useWordList, allWords, hskLevelToExtract, outputFormat);
         return new ParsedArgs(options, fileNames, outputFileName);
     }
+
+    public record ParsedArgs(ExportOptions options, List<String>fileNames, String outputFileName) {}
 }
