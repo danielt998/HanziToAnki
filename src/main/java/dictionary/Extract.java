@@ -3,10 +3,12 @@ package dictionary;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
@@ -31,8 +33,8 @@ import java.util.Map;
 public class Extract {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
-    private static final Map<String, ChineseWord> simplifiedMapping = new HashMap<>();
-    private static final Map<String, ChineseWord> traditionalMapping = new HashMap<>();
+    private static final Map<String, Word> simplifiedMapping = new HashMap<>();
+    private static final Map<String, Word> traditionalMapping = new HashMap<>();
 
     public static void readInDictionary() throws URISyntaxException {
         URI defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
@@ -41,7 +43,7 @@ public class Extract {
 
     public static void readInDictionary(Path path) {
         try {
-            Files.readAllLines(path).stream()
+            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                     .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
                     .map(Extract::getWordFromLine)
                     .forEach(Extract::putWordToMaps);
@@ -50,7 +52,7 @@ public class Extract {
         }
     }
 
-    private static ChineseWord getWordFromLine(String line) {
+    private static Word getWordFromLine(String line) {
         String[] str = line.split(" /");
         String definition = str[1];
 
@@ -64,29 +66,44 @@ public class Extract {
         String trad = remRem[0];
         String simp = remRem[1];
 
-        return new ChineseWord(trad, simp, pinyinNoTones, pinyinWithTones, definition);
+        return new Word(trad, simp, pinyinNoTones, pinyinWithTones, definition);
     }
 
-    private static void putWordToMaps(ChineseWord word) { // helper function for tidy stream
+    private static void putWordToMaps(Word word) { // helper function for tidy stream
         simplifiedMapping.put(word.simplified(), word);
         traditionalMapping.put(word.traditional(), word);
     }
 
-    public static ChineseWord getWordFromChinese(char c) {
+    public static Word getWordFromChinese(char c) {
         return getWordFromChinese(String.valueOf(c));
     }
 
-    public static ChineseWord getWordFromChinese(String chineseWord) {
-        if (simplifiedMapping.containsKey(chineseWord))
-            return simplifiedMapping.get(chineseWord);
+    public static Word getWordFromChinese(String s) {
+        var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
+        if (Objects.nonNull(word))
+            return word;
+
+        if (mightBeErhua(s)) {
+            var stripped = sanitiseErhua(s);
+            return simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+        }
+
+        return null;
+    }
+
+    private static boolean mightBeErhua(String word) {
+        return word.lastIndexOf("儿") == word.length() -1;
+    }
+
+    private static String sanitiseErhua(String word) {
+        return word.substring(0, word.lastIndexOf("儿"));
+    }
+
+    public static Word getWordFromTraditionalChinese(String chineseWord) {
         return traditionalMapping.get(chineseWord);
     }
 
-    public static ChineseWord getWordFromTraditionalChinese(String chineseWord) {
-        return traditionalMapping.get(chineseWord);
-    }
-
-    public static ChineseWord getWordFromSimplifiedChinese(String chineseWord) {
+    public static Word getWordFromSimplifiedChinese(String chineseWord) {
         return simplifiedMapping.get(chineseWord);
     }
 
