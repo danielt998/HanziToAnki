@@ -33,14 +33,13 @@ public class MainGUIController {
     @FXML
     public void export() {
         String outputName = outputFullFilename.getText();
-        List<String> allText = new ArrayList<>();
 
         if (outputName.equals("")) {
             showError("Please enter an output file name");
             return;
         }
 
-        allText.addAll(Arrays.asList(inputText.getText().split("\n")));
+        List<String> allText = new ArrayList<>(Arrays.asList(inputText.getText().split("\n")));
         for (File file : files) {
             allText.addAll(FileUtils.fileToStringArray(file));
         }
