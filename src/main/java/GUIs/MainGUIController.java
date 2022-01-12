@@ -1,9 +1,6 @@
 package GUIs;
 
-import hanziToAnki.ExportOptions;
-import hanziToAnki.FileUtils;
-import hanziToAnki.Main;
-import hanziToAnki.OutputFormat;
+import hanziToAnki.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -19,7 +16,7 @@ public class MainGUIController {
     @FXML Button fileSelectorOutputButton;
     @FXML ComboBox<String> howToHandleHanzi;
 //    @FXML var pronunciationCheckBox: CheckBox? = null
-    private final List<File> files = new ArrayList<File>();
+    private final List<File> files = new ArrayList<>();
 
     @FXML
     public void selectOutput() {
@@ -36,21 +33,20 @@ public class MainGUIController {
     @FXML
     public void export() {
         String outputName = outputFullFilename.getText();
-        List<String> allText = new ArrayList<>();
 
         if (outputName.equals("")) {
             showError("Please enter an output file name");
             return;
         }
 
-        allText.addAll(Arrays.asList(inputText.getText().split("\n")));
+        List<String> allText = new ArrayList<>(Arrays.asList(inputText.getText().split("\n")));
         for (File file : files) {
             allText.addAll(FileUtils.fileToStringArray(file));
         }
 
         OutputFormat outputFormat = OutputFormat.ANKI; // default, just use for now...
         ExportOptions options = new ExportOptions(false, true, 0, outputFormat);
-        Main.produceDeck(allText, options, outputName);
+        DeckProducer.produceDeck(allText, options, outputName);
         showGenerationCompleteAlert(outputName);
     }
 
