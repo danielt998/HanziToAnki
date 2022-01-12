@@ -4,7 +4,6 @@ import dictionary.ChineseWord;
 import dictionary.Word;
 import hanziToAnki.decks.Deck;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -13,14 +12,12 @@ public class ChineseDeck implements Deck {
     private static final String CLOSING_HTML_TAG = "</span>";
 
     public List<String> generate(Set<Word> words) {
-        var deck = new ArrayList<String>();
-        for (Word word : words) {
-            deck.add(getWordAsDeckLine(word));
-        }
-        return deck;
+        return words.stream()
+                .map(this::getWordAsDeckLine)
+                .toList();
     }
 
-    private static String getWordAsDeckLine(Word word) {
+    private String getWordAsDeckLine(Word word) {
         var w = (ChineseWord) word;
         return String.join(DELIMITER,
             w.simplified(),
