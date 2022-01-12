@@ -29,8 +29,12 @@ public class FileUtils {
             String contentType = new Tika().detect(file);
 
             switch (contentType) {
-                case ZIP, ZIP_COMPRESSED -> { return getZipLines(file); }
-                case GZIP, X_GZIP -> { return getGZipLines(file); }
+                case ZIP, ZIP_COMPRESSED -> {
+                    return getZipLines(file);
+                }
+                case GZIP, X_GZIP -> {
+                    return getGZipLines(file);
+                }
                 default -> {
                     System.out.println("Mediatype detected: " + contentType + ", attempting to read lines");
                     return Files.readAllLines(file.toPath());

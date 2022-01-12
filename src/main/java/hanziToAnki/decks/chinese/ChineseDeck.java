@@ -20,9 +20,9 @@ public class ChineseDeck implements Deck {
     private String getWordAsDeckLine(Word word) {
         var w = (ChineseWord) word;
         return String.join(DELIMITER,
-            w.simplified(),
-            w.definition(),
-            getPinyinWithHTML(w)
+                w.simplified(),
+                w.definition(),
+                getPinyinWithHTML(w)
         );
     }
 

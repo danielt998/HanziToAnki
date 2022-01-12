@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static hanziToAnki.OutputFormat.*;
+import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 

@@ -15,7 +15,7 @@ public class ToneHelper {
     }};
 
     private static char getCharWithTone(char originalChar, int tone) {
-        if (tone < 1 || tone > 5){
+        if (tone < 1 || tone > 5) {
             System.err.println("An unknown tone was encountered: " + tone + "defaulting to untoned syllable");
             return originalChar;
         }
@@ -33,7 +33,7 @@ public class ToneHelper {
             return charAfter;
         return Character.toUpperCase(charAfter);
     }
-    
+
     private static boolean isCharTonable(char testChar) {
         return lettersWithToneMarks.get(testChar) != null;
     }
@@ -44,8 +44,7 @@ public class ToneHelper {
         int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
         if (syllable.contains("iu")) {
             return syllable.replace('u', getCharWithTone('u', tone)).substring(0, syllable.length() - 1);
-        }
-        else for (char vowel: "AaOoEeIiUuÜü".toCharArray()) {
+        } else for (char vowel : "AaOoEeIiUuÜü".toCharArray()) {
             if (syllable.contains("" + vowel)) {
                 return syllable.replace(vowel, getCharWithTone(vowel, tone)).substring(0, syllable.length() - 1);
             }

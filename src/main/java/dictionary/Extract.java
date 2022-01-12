@@ -62,7 +62,6 @@ public class Extract {
         String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
 
 
-
         String[] remRem = rem[0].split(" ");
         String trad = remRem[0];
         String simp = remRem[1];
@@ -71,10 +70,9 @@ public class Extract {
     }
 
     private static void putWordToMaps(Word word) { // helper function for tidy stream
-    if (word instanceof ChineseWord) {
-        var w = (ChineseWord) word;
-          simplifiedMapping.put(w.simplified(), word);
-          traditionalMapping.put(w.traditional(), word);
+        if (word instanceof ChineseWord w) {
+            simplifiedMapping.put(w.simplified(), word);
+            traditionalMapping.put(w.traditional(), word);
         }
     }
 
@@ -96,7 +94,7 @@ public class Extract {
     }
 
     private static boolean mightBeErhua(String word) {
-        return word.lastIndexOf("儿") == word.length() -1;
+        return word.lastIndexOf("儿") == word.length() - 1;
     }
 
     private static String sanitiseErhua(String word) {

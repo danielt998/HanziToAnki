@@ -13,8 +13,7 @@ public record ChineseWord(String traditional,
 
     // so we can sort Set<ChineseWord> to be alphabetically ordered
     @Override
-    public String toString()
-    {
+    public String toString() {
         return pinyin();
     }
 }

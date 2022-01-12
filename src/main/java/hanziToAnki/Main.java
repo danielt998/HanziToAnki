@@ -1,16 +1,8 @@
 package hanziToAnki;
 
 import dictionary.Extract;
-import dictionary.VocabularyImporter;
-import dictionary.Word;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) throws URISyntaxException {
