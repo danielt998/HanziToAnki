@@ -1,7 +1,5 @@
 import dictionary.Extract;
 import hanziToAnki.ChineseDeckFactory;
-import hanziToAnki.Deck;
-import hanziToAnki.DeckFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
