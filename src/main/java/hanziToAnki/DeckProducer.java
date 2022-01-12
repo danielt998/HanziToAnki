@@ -27,7 +27,8 @@ public class DeckProducer {
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            return DeckFactory.generateDeck(words).getLines();
+            DeckFactory deckFactory = new ChineseDeckFactory();
+            return deckFactory.generateDeck(words);
         }
 
         // We may support Memrise, Pleco, etc. at a later date

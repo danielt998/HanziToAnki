@@ -1,4 +1,5 @@
 import dictionary.Extract;
+import hanziToAnki.ChineseDeckFactory;
 import hanziToAnki.Deck;
 import hanziToAnki.DeckFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,8 +26,9 @@ public class DeckFactoryTest {
                 .map(Extract::getWordFromChinese)
                 .collect(Collectors.toSet());
 
-        Deck deck = DeckFactory.generateDeck(words);
-        String deckString = String.join("\n", deck.getLines());
+        var deckFactory = new ChineseDeckFactory();
+        var deck = deckFactory.generateDeck(words);
+        String deckString = String.join("\n", deck);
 
         var resStream = this.getClass().getResourceAsStream("validWordsDeck.txt");
         var expected = new String(resStream.readAllBytes(), StandardCharsets.UTF_8);
