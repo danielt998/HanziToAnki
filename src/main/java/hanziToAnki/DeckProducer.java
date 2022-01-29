@@ -46,7 +46,7 @@ public class DeckProducer {
     }
 
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {
-        if (options.useWordList()) {
+        if (options.useWordList()) { // todo think of more meaningful, easy-to-understand options for our users
             return lines.stream()
                     .map(s-> extractor.getWord(s))
                     .filter(Objects::nonNull)
