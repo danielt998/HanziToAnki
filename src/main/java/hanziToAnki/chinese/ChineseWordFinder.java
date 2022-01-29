@@ -1,31 +1,37 @@
-package hanziToAnki;
+package hanziToAnki.chinese;
 
-import dictionary.Extract;
-import dictionary.Word;
+import hanziToAnki.DictionaryExtractor;
+import hanziToAnki.Word;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AnkiDeckProducer {
+public class ChineseWordFinder {
 
-    public static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list) {
+    private final DictionaryExtractor extractor;
+
+    public ChineseWordFinder(DictionaryExtractor extractor) {
+        this.extractor = extractor;
+    }
+
+    public Set<Word> findMonoBiTriGrams(List<String> list) {
         char[] charArray = getCharsFromList(list);
-        return getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
+        return findMonoBiTriGrams(charArray);
     }
 
-    public static Set<Word> getAnkiOutputFromSingleChars(List<String> lines) {
+    public Set<Word> findMonograms(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
-        return getAnkiOutputFromSingleCharsWithCharArr(charArray);
+        return findMonograms(charArray);
     }
 
-    private static Set<Word> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[] charArray) {
+    private Set<Word> findMonoBiTriGrams(char[] charArray) {
         Set<Word> words = new HashSet<>();
         for (int i = 0; i < charArray.length; i++) {
             String word = "" + charArray[i];
             boolean wordUsed = false;
             if (i + 1 < charArray.length) {
-                Word wordTwoChars = Extract.getWordFromChinese(word + charArray[i + 1]);
+                Word wordTwoChars = extractor.getWord(word + charArray[i + 1]);
                 if (wordTwoChars != null) {
                     words.add(wordTwoChars);
                     wordUsed = true;
@@ -33,7 +39,7 @@ public class AnkiDeckProducer {
                 }
             }
             if (i + 2 - 1 < charArray.length) {//TODO:fix this
-                Word wordThreeChars = Extract.getWordFromChinese(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
+                Word wordThreeChars = extractor.getWord(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
                 if (wordThreeChars != null) {
                     words.add(wordThreeChars);
                     wordUsed = true;
@@ -42,7 +48,7 @@ public class AnkiDeckProducer {
             }
             if (!wordUsed) {//if character is not used as part of any other word, we print it
                 //TODO:consider whether this should be the behaviour and how arguments might be restructured
-                Word wordSingleChar = Extract.getWordFromChinese(word);
+                Word wordSingleChar = extractor.getWord(word);
                 if (wordSingleChar != null) {
                     words.add(wordSingleChar);
                 }
@@ -51,16 +57,16 @@ public class AnkiDeckProducer {
         return words;
     }
 
-    private static Set<Word> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray) {
+    private Set<Word> findMonograms(char[] charArray) {
         Set<Word> words = new HashSet<>();
         for (char c : charArray) {
-            Word word = Extract.getWordFromChinese(c);
+            Word word = extractor.getWord(c);
             words.add(word);
         }
         return words;
     }
 
-    private static char[] getCharsFromList(List<String> lines) {
+    private char[] getCharsFromList(List<String> lines) { // TODO refactor
         StringBuilder fullString = new StringBuilder();
         for (String line : lines) {
             fullString.append(line);

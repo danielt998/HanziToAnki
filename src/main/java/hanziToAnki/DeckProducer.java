@@ -1,22 +1,29 @@
 package hanziToAnki;
 
-import dictionary.VocabularyImporter;
-import dictionary.Word;
-import hanziToAnki.decks.DeckFactory;
+import hanziToAnki.chinese.ChineseWordFinder;
+import hanziToAnki.chinese.ChineseGrader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 
-    public static List<String> produceDeck(String filename, ExportOptions exportOptions, String outputFileName) {
+    private final DictionaryExtractor extractor;
+
+    public DeckProducer(DictionaryExtractor extractor) {
+        this.extractor = extractor;
+    }
+
+    public List<String> produceDeck(String filename, ExportOptions exportOptions, String outputFileName) {
         return produceDeck(FileUtils.fileToStringArray(filename), exportOptions, outputFileName);
     }
 
-    public static List<String> produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
+    public List<String> produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
@@ -24,12 +31,13 @@ public class DeckProducer {
             return new ArrayList<>();
         }
 
-        var wordsToExclude = VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.hskLevelToExclude());
+        Grader grader = new ChineseGrader(extractor);
+        var wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            var deck = DeckFactory.getDeck(words);
-            return deck.generate(words);
+            var deckStyler = DeckStylerFactory.getDeck(words);
+            return deckStyler.style(words);
         }
 
         // We may support Memrise, Pleco, etc. at a later date
@@ -37,15 +45,20 @@ public class DeckProducer {
         return new ArrayList<>();
     }
 
-    private static Set<Word> generateWords(List<String> lines, ExportOptions options) {
-        if (options.useWordList()) {
-            return VocabularyImporter.getWordsFromStringList(lines);
+    private Set<Word> generateWords(List<String> lines, ExportOptions options) {
+        if (options.useWordList()) { // todo think of more meaningful, easy-to-understand options for our users
+            return lines.stream()
+                    .map(s-> extractor.getWord(s))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
         }
+        // TODO use our other options for grade-filtering (HSK level for Chinese)
 
+        ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
         if (options.useAllWords()) {
-            return AnkiDeckProducer.getAnkiOutputForOneTwoThreeCharWords(lines);
+            return wordFinder.findMonoBiTriGrams(lines);
         }
 
-        return AnkiDeckProducer.getAnkiOutputFromSingleChars(lines);
+        return wordFinder.findMonograms(lines);
     }
 }

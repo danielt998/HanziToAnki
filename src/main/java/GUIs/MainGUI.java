@@ -1,9 +1,8 @@
 package GUIs;
 
-import dictionary.Extract;
+import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
@@ -20,7 +19,7 @@ public class MainGUI extends Application {
     }
 
     public final void initialiseDictionary() throws URISyntaxException {
-        Extract.readInDictionary();
+//        ChineseDictionaryExtractor.readInDictionary();
     }
 
     public void start(Stage givenStage) throws URISyntaxException, IOException {

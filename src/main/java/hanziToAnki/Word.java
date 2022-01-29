@@ -1,4 +1,4 @@
-package dictionary;
+package hanziToAnki;
 
 public interface Word {
 

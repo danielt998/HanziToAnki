@@ -1,18 +1,17 @@
-package hanziToAnki.decks;
+package hanziToAnki;
 
-import dictionary.ChineseWord;
-import dictionary.Word;
-import hanziToAnki.decks.chinese.ChineseDeck;
+import hanziToAnki.chinese.ChineseWord;
+import hanziToAnki.chinese.ChineseDeckStyler;
 
 import java.util.Set;
 
-public class DeckFactory {
+public class DeckStylerFactory {
 
-    public static Deck getDeck(Set<Word> words) {
+    public static DeckStyler getDeck(Set<Word> words) {
         if (areChinese(words)) {
-            return new ChineseDeck();
+            return new ChineseDeckStyler();
         } else {
-            return new EmptyDeck();
+            return new EmptyDeckStyler();
         }
     }
 
