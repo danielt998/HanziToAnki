@@ -1,10 +1,9 @@
-import hanziToAnki.Deck;
+import hanziToAnki.DeckStyler;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
-import hanziToAnki.DeckFactory;
-import hanziToAnki.EmptyDeck;
+import hanziToAnki.DeckStylerFactory;
+import hanziToAnki.EmptyDeckStyler;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DeckFactoryTest {
+public class DeckStylerFactoryTest {
 
     @Test
     void testSomeValidWords() throws IOException, URISyntaxException {
@@ -26,8 +25,8 @@ public class DeckFactoryTest {
                 .map(s-> extractor.getWord(s))
                 .collect(Collectors.toSet());
 
-        Deck deck = DeckFactory.getDeck(words);
-        String deckString = String.join("\n", deck.generate(words));
+        DeckStyler deckStyler = DeckStylerFactory.getDeck(words);
+        String deckString = String.join("\n", deckStyler.style(words));
 
         var resStream = this.getClass().getResourceAsStream("validWordsDeck.txt");
         var expected = new String(resStream.readAllBytes(), StandardCharsets.UTF_8);
@@ -37,8 +36,8 @@ public class DeckFactoryTest {
 
     @Test
     void noWordsGivesEmptyDeck() {
-        Deck deck = DeckFactory.getDeck(null);
-        Assertions.assertTrue(deck instanceof EmptyDeck);
+        DeckStyler deckStyler = DeckStylerFactory.getDeck(null);
+        Assertions.assertTrue(deckStyler instanceof EmptyDeckStyler);
     }
 
 }

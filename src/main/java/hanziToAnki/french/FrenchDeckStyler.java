@@ -1,14 +1,14 @@
 package hanziToAnki.french;
 
-import hanziToAnki.Deck;
+import hanziToAnki.DeckStyler;
 import hanziToAnki.Word;
 
 import java.util.List;
 import java.util.Set;
 
-public class FrenchDeck implements Deck {
+public class FrenchDeckStyler implements DeckStyler {
     @Override
-    public List<String> generate(Set<Word> words) {
+    public List<String> style(Set<Word> words) {
         return null;
     }
 }

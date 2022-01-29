@@ -3,7 +3,7 @@ package hanziToAnki;
 import java.util.List;
 import java.util.Set;
 
-public interface Deck {
+public interface DeckStyler {
 
-    List<String> generate(Set<Word> words);
+    List<String> style(Set<Word> words);
 }

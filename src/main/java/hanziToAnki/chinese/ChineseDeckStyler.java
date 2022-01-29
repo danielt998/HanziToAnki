@@ -1,16 +1,16 @@
 package hanziToAnki.chinese;
 
-import hanziToAnki.Deck;
+import hanziToAnki.DeckStyler;
 import hanziToAnki.Word;
 
 import java.util.List;
 import java.util.Set;
 
-public class ChineseDeck implements Deck {
+public class ChineseDeckStyler implements DeckStyler {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
 
-    public List<String> generate(Set<Word> words) {
+    public List<String> style(Set<Word> words) {
         return words.stream()
                 .map(this::getWordAsDeckLine)
                 .toList();

@@ -1,13 +1,13 @@
 import hanziToAnki.chinese.ChineseWord;
 import hanziToAnki.Word;
 import fixtures.WordFixtures;
-import hanziToAnki.DeckFactory;
+import hanziToAnki.DeckStylerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-class DeckTest {
+class DeckStylerTest {
 
     @Test
     void readsLinesFromFile() {
@@ -15,8 +15,8 @@ class DeckTest {
         ChineseWord word2 = WordFixtures.aWord();
 
         Set<Word> words = Set.of(word1, word2);
-        var deck = DeckFactory.getDeck(words);
+        var deck = DeckStylerFactory.getDeck(words);
 
-        Assertions.assertEquals(2, deck.generate(words).size());
+        Assertions.assertEquals(2, deck.style(words).size());
     }
 }
