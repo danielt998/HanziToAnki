@@ -41,17 +41,13 @@ public class ChineseGrader implements Grader {
         try {
             URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
-            return noGrading(Files.readAllLines(path));
+            return Files.readAllLines(path).stream()
+                    .map(s-> extractor.getWord(s))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace(); // We should throw these up and display in GUI
             return Set.of();
         }
-    }
-
-    public Set<Word> noGrading(List<String> lines) {
-        return lines.stream()
-                .map(s-> extractor.getWord(s))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
     }
 }

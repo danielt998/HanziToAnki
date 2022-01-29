@@ -5,7 +5,9 @@ import hanziToAnki.chinese.ChineseGrader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static hanziToAnki.OutputFormat.ANKI;
 
@@ -45,8 +47,10 @@ public class DeckProducer {
 
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {
         if (options.useWordList()) {
-            Grader grader = new ChineseGrader(extractor);
-            return grader.noGrading(lines);
+            return lines.stream()
+                    .map(s-> extractor.getWord(s))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
         }
         // TODO use our other options for grade-filtering (HSK level for Chinese)
 
