@@ -29,7 +29,7 @@ public class DeckProducer {
             return new ArrayList<>();
         }
 
-        Grader grader = new ChineseGrader(null);
+        Grader grader = new ChineseGrader(extractor);
         var wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
         words.removeAll(wordsToExclude);
 
