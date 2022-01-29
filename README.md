@@ -23,6 +23,9 @@ Features:
 
 Please feel free to make suggestions, open/comment on issues, or share code!
 
+## Tests
+You can either run tests with IntelliJ, or with `./gradlew test`
+
 
 ## License 
 This project uses a modified version of the CEDICT Chinese dictionary, which can be found here:
