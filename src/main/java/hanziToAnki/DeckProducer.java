@@ -36,8 +36,8 @@ public class DeckProducer {
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            var deck = DeckStylerFactory.getDeck(words);
-            return deck.style(words);
+            var deckStyler = DeckStylerFactory.getDeck(words);
+            return deckStyler.style(words);
         }
 
         // We may support Memrise, Pleco, etc. at a later date
