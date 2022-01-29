@@ -7,25 +7,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ChineseAnkiExporter {
+public class ChineseWordFinder {
 
     private final DictionaryExtractor extractor;
 
-    public ChineseAnkiExporter(DictionaryExtractor extractor) {
+    public ChineseWordFinder(DictionaryExtractor extractor) {
         this.extractor = extractor;
     }
 
-    public Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list) {
+    public Set<Word> findMonoBiTriGrams(List<String> list) {
         char[] charArray = getCharsFromList(list);
-        return getAnkiOutputForOneTwoThreeCharWordsWithCharArr(charArray);
+        return findMonoBiTriGrams(charArray);
     }
 
-    public Set<Word> getAnkiOutputFromSingleChars(List<String> lines) {
+    public Set<Word> findMonograms(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
-        return getAnkiOutputFromSingleCharsWithCharArr(charArray);
+        return findMonograms(charArray);
     }
 
-    private Set<Word> getAnkiOutputForOneTwoThreeCharWordsWithCharArr(char[] charArray) {
+    private Set<Word> findMonoBiTriGrams(char[] charArray) {
         Set<Word> words = new HashSet<>();
         for (int i = 0; i < charArray.length; i++) {
             String word = "" + charArray[i];
@@ -57,7 +57,7 @@ public class ChineseAnkiExporter {
         return words;
     }
 
-    private Set<Word> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray) {
+    private Set<Word> findMonograms(char[] charArray) {
         Set<Word> words = new HashSet<>();
         for (char c : charArray) {
             Word word = extractor.getWord(c);
@@ -66,7 +66,7 @@ public class ChineseAnkiExporter {
         return words;
     }
 
-    private char[] getCharsFromList(List<String> lines) {
+    private char[] getCharsFromList(List<String> lines) { // TODO refactor
         StringBuilder fullString = new StringBuilder();
         for (String line : lines) {
             fullString.append(line);

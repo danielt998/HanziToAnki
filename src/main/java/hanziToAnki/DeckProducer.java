@@ -1,6 +1,6 @@
 package hanziToAnki;
 
-import hanziToAnki.chinese.ChineseAnkiExporter;
+import hanziToAnki.chinese.ChineseWordFinder;
 import hanziToAnki.chinese.ChineseGrader;
 
 import java.util.ArrayList;
@@ -50,11 +50,11 @@ public class DeckProducer {
         }
         // TODO use our other options for grade-filtering (HSK level for Chinese)
 
-        ChineseAnkiExporter exporter = new ChineseAnkiExporter(extractor);
+        ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
         if (options.useAllWords()) {
-            return exporter.getAnkiOutputForOneTwoThreeCharWords(lines);
+            return wordFinder.getAnkiOutputForOneTwoThreeCharWords(lines);
         }
 
-        return exporter.getAnkiOutputFromSingleChars(lines);
+        return wordFinder.findMonograms(lines);
     }
 }
