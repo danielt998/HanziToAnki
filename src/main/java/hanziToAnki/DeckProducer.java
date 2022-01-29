@@ -52,7 +52,7 @@ public class DeckProducer {
 
         ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
         if (options.useAllWords()) {
-            return wordFinder.getAnkiOutputForOneTwoThreeCharWords(lines);
+            return wordFinder.findMonoBiTriGrams(lines);
         }
 
         return wordFinder.findMonograms(lines);
