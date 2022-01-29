@@ -11,6 +11,12 @@ import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 
+    private final DictionaryExtractor extractor;
+
+    public DeckProducer(DictionaryExtractor extractor) {
+        this.extractor = extractor;
+    }
+
     public List<String> produceDeck(String filename, ExportOptions exportOptions, String outputFileName) {
         return produceDeck(FileUtils.fileToStringArray(filename), exportOptions, outputFileName);
     }
@@ -38,13 +44,13 @@ public class DeckProducer {
     }
 
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {
-        ChineseAnkiExporter exporter = new ChineseAnkiExporter(null); // TODO pass in a dictionary extractor
-
         if (options.useWordList()) {
-            Grader grader = new ChineseGrader(null); // TODO pass in a dictionary extractor
+            Grader grader = new ChineseGrader(extractor);
             return grader.noGrading(lines);
         }
+        // TODO use our other options for grade-filtering (HSK level for Chinese)
 
+        ChineseAnkiExporter exporter = new ChineseAnkiExporter(extractor);
         if (options.useAllWords()) {
             return exporter.getAnkiOutputForOneTwoThreeCharWords(lines);
         }

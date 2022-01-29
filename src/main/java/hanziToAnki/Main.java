@@ -1,6 +1,5 @@
 package hanziToAnki;
 
-import hanziToAnki.chinese.ChineseAnkiExporter;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 
 import java.net.URISyntaxException;
@@ -12,10 +11,10 @@ public class Main {
             return;
         }
 
-        DictionaryExtractor extractor = new ChineseDictionaryExtractor();
+        DictionaryExtractor extractor = new ChineseDictionaryExtractor(); // later, user specifies "fr" language and we use factories to get right implementations
         extractor.readInDictionary();
 
-        DeckProducer deckProducer = new DeckProducer();
+        DeckProducer deckProducer = new DeckProducer(extractor);
 
         var parsedArgs = ArgParser.parseArgs(args);
         for (String fileName : parsedArgs.fileNames()) {
