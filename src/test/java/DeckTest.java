@@ -1,7 +1,7 @@
-import dictionary.ChineseWord;
-import dictionary.Word;
+import hanziToAnki.chinese.ChineseWord;
+import hanziToAnki.Word;
 import fixtures.WordFixtures;
-import hanziToAnki.decks.DeckFactory;
+import hanziToAnki.DeckFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,6 @@
 package hanziToAnki;
 
-import hanziToAnki.decks.chinese.ToneHelper;
+import hanziToAnki.chinese.ToneHelper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 

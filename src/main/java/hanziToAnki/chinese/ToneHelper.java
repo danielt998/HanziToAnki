@@ -1,4 +1,4 @@
-package hanziToAnki.decks.chinese;
+package hanziToAnki.chinese;
 
 import java.util.HashMap;
 import java.util.Map;

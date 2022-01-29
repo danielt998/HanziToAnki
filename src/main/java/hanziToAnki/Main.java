@@ -1,6 +1,6 @@
 package hanziToAnki;
 
-import dictionary.Extract;
+import hanziToAnki.chinese.ChineseDictionaryExtractor;
 
 import java.net.URISyntaxException;
 
@@ -11,7 +11,7 @@ public class Main {
             return;
         }
 
-        Extract.readInDictionary();
+        ChineseDictionaryExtractor.readInDictionary();
 
         var parsedArgs = ArgParser.parseArgs(args);
         for (String fileName : parsedArgs.fileNames()) {

@@ -1,4 +1,6 @@
-package dictionary;
+package hanziToAnki.chinese;
+
+import hanziToAnki.Word;
 
 public record ChineseWord(String traditional,
                           String simplified,

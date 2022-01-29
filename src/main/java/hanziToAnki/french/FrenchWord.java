@@ -1,4 +1,6 @@
-package dictionary;
+package hanziToAnki.french;
+
+import hanziToAnki.Word;
 
 public record FrenchWord(String french,
                          String english) implements Word {

@@ -1,8 +1,7 @@
 package hanziToAnki;
 
-import dictionary.VocabularyImporter;
-import dictionary.Word;
-import hanziToAnki.decks.DeckFactory;
+import hanziToAnki.chinese.ChineseAnkiExporter;
+import hanziToAnki.chinese.ChineseGrader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class DeckProducer {
             return new ArrayList<>();
         }
 
-        var wordsToExclude = VocabularyImporter.getAccumulativeHSKVocabulary(exportOptions.hskLevelToExclude());
+        var wordsToExclude = ChineseGrader.getAccumulativeHSKVocabulary(exportOptions.hskLevelToExclude());
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
@@ -39,13 +38,13 @@ public class DeckProducer {
 
     private static Set<Word> generateWords(List<String> lines, ExportOptions options) {
         if (options.useWordList()) {
-            return VocabularyImporter.getWordsFromStringList(lines);
+            return ChineseGrader.getWordsFromStringList(lines);
         }
 
         if (options.useAllWords()) {
-            return AnkiDeckProducer.getAnkiOutputForOneTwoThreeCharWords(lines);
+            return ChineseAnkiExporter.getAnkiOutputForOneTwoThreeCharWords(lines);
         }
 
-        return AnkiDeckProducer.getAnkiOutputFromSingleChars(lines);
+        return ChineseAnkiExporter.getAnkiOutputFromSingleChars(lines);
     }
 }

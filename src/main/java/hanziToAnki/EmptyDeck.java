@@ -1,6 +1,6 @@
-package hanziToAnki.decks;
+package hanziToAnki;
 
-import dictionary.Word;
+import hanziToAnki.Word;
 
 import java.util.List;
 import java.util.Set;

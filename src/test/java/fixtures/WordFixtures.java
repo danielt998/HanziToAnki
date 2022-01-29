@@ -1,6 +1,6 @@
 package fixtures;
 
-import dictionary.ChineseWord;
+import hanziToAnki.chinese.ChineseWord;
 
 public class WordFixtures {
 

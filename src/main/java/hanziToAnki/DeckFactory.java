@@ -1,8 +1,7 @@
-package hanziToAnki.decks;
+package hanziToAnki;
 
-import dictionary.ChineseWord;
-import dictionary.Word;
-import hanziToAnki.decks.chinese.ChineseDeck;
+import hanziToAnki.chinese.ChineseWord;
+import hanziToAnki.chinese.ChineseDeck;
 
 import java.util.Set;
 

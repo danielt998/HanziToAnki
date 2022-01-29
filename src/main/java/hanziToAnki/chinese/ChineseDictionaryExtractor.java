@@ -1,5 +1,7 @@
-package dictionary;
+package hanziToAnki.chinese;
 
+
+import hanziToAnki.Word;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,14 +33,14 @@ import java.util.Objects;
   also,** multiple words have same pinyin** - for the moment, this will return only the first result
   Capitals are causing issues too...
 */
-public class Extract {
+public class ChineseDictionaryExtractor {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
     private static final Map<String, Word> simplifiedMapping = new HashMap<>();
     private static final Map<String, Word> traditionalMapping = new HashMap<>();
 
     public static void readInDictionary() throws URISyntaxException {
-        URI defaultDictionaryPath = Extract.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
+        URI defaultDictionaryPath = ChineseDictionaryExtractor.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
         readInDictionary(Path.of(defaultDictionaryPath));
     }
 
@@ -46,8 +48,8 @@ public class Extract {
         try {
             Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                     .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
-                    .map(Extract::getWordFromLine)
-                    .forEach(Extract::putWordToMaps);
+                    .map(ChineseDictionaryExtractor::getWordFromLine)
+                    .forEach(ChineseDictionaryExtractor::putWordToMaps);
         } catch (IOException e) {
             System.out.println("Could not load dictionary file at " + path);
         }

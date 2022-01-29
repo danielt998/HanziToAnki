@@ -1,7 +1,7 @@
-import dictionary.Extract;
-import hanziToAnki.decks.Deck;
-import hanziToAnki.decks.DeckFactory;
-import hanziToAnki.decks.EmptyDeck;
+import hanziToAnki.Deck;
+import hanziToAnki.chinese.ChineseDictionaryExtractor;
+import hanziToAnki.DeckFactory;
+import hanziToAnki.EmptyDeck;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,13 +18,13 @@ public class DeckFactoryTest {
 
     @BeforeAll
     static void setUp() throws URISyntaxException {
-        Extract.readInDictionary();
+        ChineseDictionaryExtractor.readInDictionary();
     }
 
     @Test
     void testSomeValidWords() throws IOException {
         var words = Stream.of("爱", "吧", "阿姨")
-                .map(Extract::getWordFromChinese)
+                .map(ChineseDictionaryExtractor::getWordFromChinese)
                 .collect(Collectors.toSet());
 
         Deck deck = DeckFactory.getDeck(words);

@@ -1,13 +1,13 @@
-package hanziToAnki;
+package hanziToAnki.chinese;
 
-import dictionary.Extract;
-import dictionary.Word;
+import hanziToAnki.Word;
+import hanziToAnki.chinese.ChineseDictionaryExtractor;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AnkiDeckProducer {
+public class ChineseAnkiExporter {
 
     public static Set<Word> getAnkiOutputForOneTwoThreeCharWords(List<String> list) {
         char[] charArray = getCharsFromList(list);
@@ -25,7 +25,7 @@ public class AnkiDeckProducer {
             String word = "" + charArray[i];
             boolean wordUsed = false;
             if (i + 1 < charArray.length) {
-                Word wordTwoChars = Extract.getWordFromChinese(word + charArray[i + 1]);
+                Word wordTwoChars = ChineseDictionaryExtractor.getWordFromChinese(word + charArray[i + 1]);
                 if (wordTwoChars != null) {
                     words.add(wordTwoChars);
                     wordUsed = true;
@@ -33,7 +33,7 @@ public class AnkiDeckProducer {
                 }
             }
             if (i + 2 - 1 < charArray.length) {//TODO:fix this
-                Word wordThreeChars = Extract.getWordFromChinese(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
+                Word wordThreeChars = ChineseDictionaryExtractor.getWordFromChinese(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
                 if (wordThreeChars != null) {
                     words.add(wordThreeChars);
                     wordUsed = true;
@@ -42,7 +42,7 @@ public class AnkiDeckProducer {
             }
             if (!wordUsed) {//if character is not used as part of any other word, we print it
                 //TODO:consider whether this should be the behaviour and how arguments might be restructured
-                Word wordSingleChar = Extract.getWordFromChinese(word);
+                Word wordSingleChar = ChineseDictionaryExtractor.getWordFromChinese(word);
                 if (wordSingleChar != null) {
                     words.add(wordSingleChar);
                 }
@@ -54,7 +54,7 @@ public class AnkiDeckProducer {
     private static Set<Word> getAnkiOutputFromSingleCharsWithCharArr(char[] charArray) {
         Set<Word> words = new HashSet<>();
         for (char c : charArray) {
-            Word word = Extract.getWordFromChinese(c);
+            Word word = ChineseDictionaryExtractor.getWordFromChinese(c);
             words.add(word);
         }
         return words;

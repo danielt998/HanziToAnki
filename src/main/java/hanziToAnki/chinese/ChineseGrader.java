@@ -1,4 +1,6 @@
-package dictionary;
+package hanziToAnki.chinese;
+
+import hanziToAnki.Word;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class VocabularyImporter {
+public class ChineseGrader {
     private static final String VOCAB_DIRECTORY = "vocab_lists/HSK";
 
     public static Set<Word> getAccumulativeHSKVocabulary(int HSKLevel) {
@@ -28,7 +30,7 @@ public class VocabularyImporter {
 
     private static Set<Word> getWordsFromNewlineSeparatedFile(String filename) {
         try {
-            URI uri = VocabularyImporter.class.getClassLoader().getResource(filename).toURI();
+            URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
             return getWordsFromStringList(Files.readAllLines(path));
         } catch (URISyntaxException | IOException e) {
@@ -39,7 +41,7 @@ public class VocabularyImporter {
 
     public static Set<Word> getWordsFromStringList(List<String> lines) {
         return lines.stream()
-                .map(Extract::getWordFromChinese)
+                .map(ChineseDictionaryExtractor::getWordFromChinese)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
