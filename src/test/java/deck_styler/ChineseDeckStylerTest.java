@@ -33,6 +33,4 @@ public class ChineseDeckStylerTest {
 
         assertEquals(expected, deckString);
     }
-
-
 }
