@@ -1,6 +1,8 @@
 import dictionary.Extract;
-import hanziToAnki.Deck;
-import hanziToAnki.DeckFactory;
+import hanziToAnki.decks.Deck;
+import hanziToAnki.decks.DeckFactory;
+import hanziToAnki.decks.EmptyDeck;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,13 +27,19 @@ public class DeckFactoryTest {
                 .map(Extract::getWordFromChinese)
                 .collect(Collectors.toSet());
 
-        Deck deck = DeckFactory.generateDeck(words);
-        String deckString = String.join("\n", deck.getLines());
+        Deck deck = DeckFactory.getDeck(words);
+        String deckString = String.join("\n", deck.generate(words));
 
         var resStream = this.getClass().getResourceAsStream("validWordsDeck.txt");
         var expected = new String(resStream.readAllBytes(), StandardCharsets.UTF_8);
 
         assertEquals(expected, deckString);
+    }
+
+    @Test
+    void noWordsGivesEmptyDeck() {
+        Deck deck = DeckFactory.getDeck(null);
+        Assertions.assertTrue(deck instanceof EmptyDeck);
     }
 
 }

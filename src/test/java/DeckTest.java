@@ -1,17 +1,22 @@
-import hanziToAnki.Deck;
+import dictionary.ChineseWord;
+import dictionary.Word;
+import fixtures.WordFixtures;
+import hanziToAnki.decks.DeckFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import java.util.List;
+
+import java.util.Set;
 
 class DeckTest {
 
     @Test
     void readsLinesFromFile() {
-        Deck deck = new Deck();
-        deck.addLine("This is a line");
-        deck.addLine("This is another line, aEIORxfi;lhmgzfAD," + "another");
+        ChineseWord word1 = WordFixtures.aWord();
+        ChineseWord word2 = WordFixtures.aWord();
 
-        List<String> lines = deck.getLines();
-        Assertions.assertEquals(2, lines.size());
+        Set<Word> words = Set.of(word1, word2);
+        var deck = DeckFactory.getDeck(words);
+
+        Assertions.assertEquals(2, deck.generate(words).size());
     }
 }

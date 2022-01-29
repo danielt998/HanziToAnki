@@ -2,12 +2,13 @@ package hanziToAnki;
 
 import dictionary.VocabularyImporter;
 import dictionary.Word;
+import hanziToAnki.decks.DeckFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static hanziToAnki.OutputFormat.*;
+import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 
@@ -27,7 +28,8 @@ public class DeckProducer {
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            return DeckFactory.generateDeck(words).getLines();
+            var deck = DeckFactory.getDeck(words);
+            return deck.generate(words);
         }
 
         // We may support Memrise, Pleco, etc. at a later date

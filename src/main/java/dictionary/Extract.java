@@ -1,5 +1,6 @@
 package dictionary;
 
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -61,17 +62,18 @@ public class Extract {
         String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
 
 
-
         String[] remRem = rem[0].split(" ");
         String trad = remRem[0];
         String simp = remRem[1];
 
-        return new Word(trad, simp, pinyinNoTones, pinyinWithTones, definition);
+        return new ChineseWord(trad, simp, pinyinNoTones, pinyinWithTones, definition);
     }
 
     private static void putWordToMaps(Word word) { // helper function for tidy stream
-        simplifiedMapping.put(word.simplified(), word);
-        traditionalMapping.put(word.traditional(), word);
+        if (word instanceof ChineseWord w) {
+            simplifiedMapping.put(w.simplified(), word);
+            traditionalMapping.put(w.traditional(), word);
+        }
     }
 
     public static Word getWordFromChinese(char c) {
@@ -92,7 +94,7 @@ public class Extract {
     }
 
     private static boolean mightBeErhua(String word) {
-        return word.lastIndexOf("儿") == word.length() -1;
+        return word.lastIndexOf("儿") == word.length() - 1;
     }
 
     private static String sanitiseErhua(String word) {

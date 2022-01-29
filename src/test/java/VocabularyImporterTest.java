@@ -1,5 +1,6 @@
 import dictionary.Extract;
 import dictionary.VocabularyImporter;
+import dictionary.ChineseWord;
 import dictionary.Word;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,8 +40,9 @@ class VocabularyImporterTest {
         List<String> hskMixed = List.of("爱", "吧", "阿姨");
 
         // Collect Set to sorted List so order is always guaranteed
-        List<Word> hskWords = VocabularyImporter.getWordsFromStringList(hskMixed).stream()
-                .sorted(Comparator.comparing(Word::getSpecialOutput))
+        List<ChineseWord> hskWords = VocabularyImporter.getWordsFromStringList(hskMixed).stream()
+                .sorted(Comparator.comparing(Object::toString))
+                .map(w -> (ChineseWord) w)
                 .collect(Collectors.toList());
 
         assertEquals("ai", hskWords.get(0).pinyin());

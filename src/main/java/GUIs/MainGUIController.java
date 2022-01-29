@@ -1,21 +1,33 @@
 package GUIs;
 
-import hanziToAnki.*;
+import hanziToAnki.DeckProducer;
+import hanziToAnki.ExportOptions;
+import hanziToAnki.FileUtils;
+import hanziToAnki.OutputFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+
+import javax.swing.*;
 import java.io.File;
-import java.util.*;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainGUIController {
-    @FXML ComboBox<String> outputSelector;
-    @FXML TextArea inputText;
-    @FXML TextField outputFullFilename;
-    @FXML Button fileSelectorInputButton;
-    @FXML Button fileSelectorOutputButton;
-    @FXML ComboBox<String> howToHandleHanzi;
-//    @FXML var pronunciationCheckBox: CheckBox? = null
+    @FXML
+    ComboBox<String> outputSelector;
+    @FXML
+    TextArea inputText;
+    @FXML
+    TextField outputFullFilename;
+    @FXML
+    Button fileSelectorInputButton;
+    @FXML
+    Button fileSelectorOutputButton;
+    @FXML
+    ComboBox<String> howToHandleHanzi;
+    //    @FXML var pronunciationCheckBox: CheckBox? = null
     private final List<File> files = new ArrayList<>();
 
     @FXML
@@ -28,7 +40,8 @@ public class MainGUIController {
     }
 
     @FXML
-    public void initialize() {}
+    public void initialize() {
+    }
 
     @FXML
     public void export() {
