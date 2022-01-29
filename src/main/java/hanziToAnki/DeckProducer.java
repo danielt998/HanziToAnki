@@ -11,11 +11,11 @@ import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 
-    public static List<String> produceDeck(String filename, ExportOptions exportOptions, String outputFileName) {
+    public List<String> produceDeck(String filename, ExportOptions exportOptions, String outputFileName) {
         return produceDeck(FileUtils.fileToStringArray(filename), exportOptions, outputFileName);
     }
 
-    public static List<String> produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
+    public List<String> produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
@@ -23,7 +23,8 @@ public class DeckProducer {
             return new ArrayList<>();
         }
 
-        var wordsToExclude = ChineseGrader.getAccumulativeHSKVocabulary(exportOptions.hskLevelToExclude());
+        Grader grader = new ChineseGrader(null);
+        var wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
@@ -36,15 +37,18 @@ public class DeckProducer {
         return new ArrayList<>();
     }
 
-    private static Set<Word> generateWords(List<String> lines, ExportOptions options) {
+    private Set<Word> generateWords(List<String> lines, ExportOptions options) {
+        ChineseAnkiExporter exporter = new ChineseAnkiExporter(null); // TODO pass in a dictionary extractor
+
         if (options.useWordList()) {
-            return ChineseGrader.getWordsFromStringList(lines);
+            Grader grader = new ChineseGrader(null); // TODO pass in a dictionary extractor
+            return grader.noGrading(lines);
         }
 
         if (options.useAllWords()) {
-            return ChineseAnkiExporter.getAnkiOutputForOneTwoThreeCharWords(lines);
+            return exporter.getAnkiOutputForOneTwoThreeCharWords(lines);
         }
 
-        return ChineseAnkiExporter.getAnkiOutputFromSingleChars(lines);
+        return exporter.getAnkiOutputFromSingleChars(lines);
     }
 }

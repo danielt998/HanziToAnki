@@ -1,4 +1,5 @@
 import hanziToAnki.Deck;
+import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import hanziToAnki.DeckFactory;
 import hanziToAnki.EmptyDeck;
@@ -16,15 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeckFactoryTest {
 
-    @BeforeAll
-    static void setUp() throws URISyntaxException {
-        ChineseDictionaryExtractor.readInDictionary();
-    }
-
     @Test
-    void testSomeValidWords() throws IOException {
+    void testSomeValidWords() throws IOException, URISyntaxException {
+        DictionaryExtractor extractor = new ChineseDictionaryExtractor();
+        extractor.readInDictionary();
+
         var words = Stream.of("爱", "吧", "阿姨")
-                .map(ChineseDictionaryExtractor::getWordFromChinese)
+                .map(s-> extractor.getWord(s))
                 .collect(Collectors.toSet());
 
         Deck deck = DeckFactory.getDeck(words);

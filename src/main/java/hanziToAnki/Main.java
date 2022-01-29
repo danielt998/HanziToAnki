@@ -1,5 +1,6 @@
 package hanziToAnki;
 
+import hanziToAnki.chinese.ChineseAnkiExporter;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 
 import java.net.URISyntaxException;
@@ -11,11 +12,14 @@ public class Main {
             return;
         }
 
-        ChineseDictionaryExtractor.readInDictionary();
+        DictionaryExtractor extractor = new ChineseDictionaryExtractor();
+        extractor.readInDictionary();
+
+        DeckProducer deckProducer = new DeckProducer();
 
         var parsedArgs = ArgParser.parseArgs(args);
         for (String fileName : parsedArgs.fileNames()) {
-            var outputLines = DeckProducer.produceDeck(fileName, parsedArgs.options(), parsedArgs.outputFileName());
+            var outputLines = deckProducer.produceDeck(fileName, parsedArgs.options(), parsedArgs.outputFileName());
             FileUtils.writeToFile(outputLines, parsedArgs.outputFileName());
         }
     }

@@ -1,6 +1,7 @@
 package hanziToAnki.chinese;
 
 
+import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 
 import java.io.IOException;
@@ -33,29 +34,50 @@ import java.util.Objects;
   also,** multiple words have same pinyin** - for the moment, this will return only the first result
   Capitals are causing issues too...
 */
-public class ChineseDictionaryExtractor {
+public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
-    private static final Map<String, Word> simplifiedMapping = new HashMap<>();
-    private static final Map<String, Word> traditionalMapping = new HashMap<>();
 
-    public static void readInDictionary() throws URISyntaxException {
-        URI defaultDictionaryPath = ChineseDictionaryExtractor.class.getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
+    private Map<String, Word> simplifiedMapping = new HashMap<>();
+    private Map<String, Word> traditionalMapping = new HashMap<>();
+
+    @Override
+    public void readInDictionary() throws URISyntaxException {
+        URI defaultDictionaryPath = this.getClass().getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
         readInDictionary(Path.of(defaultDictionaryPath));
     }
 
-    public static void readInDictionary(Path path) {
+    @Override
+    public Word getWord(char c) {
+        return getWord(String.valueOf(c));
+    }
+
+    @Override
+    public Word getWord(String s) {
+        var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
+        if (Objects.nonNull(word))
+            return word;
+
+        if (mightBeErhua(s)) {
+            var stripped = sanitiseErhua(s);
+            return simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+        }
+
+        return null;
+    }
+
+    public void readInDictionary(Path path) {
         try {
             Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                     .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
-                    .map(ChineseDictionaryExtractor::getWordFromLine)
-                    .forEach(ChineseDictionaryExtractor::putWordToMaps);
+                    .map(this::getWordFromLine)
+                    .forEach(this::putWordToMaps);
         } catch (IOException e) {
             System.out.println("Could not load dictionary file at " + path);
         }
     }
 
-    private static Word getWordFromLine(String line) {
+    private Word getWordFromLine(String line) {
         String[] str = line.split(" /");
         String definition = str[1];
 
@@ -71,66 +93,30 @@ public class ChineseDictionaryExtractor {
         return new ChineseWord(trad, simp, pinyinNoTones, pinyinWithTones, definition);
     }
 
-    private static void putWordToMaps(Word word) { // helper function for tidy stream
+    private void putWordToMaps(Word word) { // helper function for tidy stream
         if (word instanceof ChineseWord w) {
             simplifiedMapping.put(w.simplified(), word);
             traditionalMapping.put(w.traditional(), word);
         }
     }
 
-    public static Word getWordFromChinese(char c) {
-        return getWordFromChinese(String.valueOf(c));
-    }
 
-    public static Word getWordFromChinese(String s) {
-        var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
-        if (Objects.nonNull(word))
-            return word;
 
-        if (mightBeErhua(s)) {
-            var stripped = sanitiseErhua(s);
-            return simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
-        }
-
-        return null;
-    }
-
-    private static boolean mightBeErhua(String word) {
+    private boolean mightBeErhua(String word) {
         return word.lastIndexOf("儿") == word.length() - 1;
     }
 
-    private static String sanitiseErhua(String word) {
+    private String sanitiseErhua(String word) {
         return word.substring(0, word.lastIndexOf("儿"));
     }
 
-    public static Word getWordFromTraditionalChinese(String chineseWord) {
+    public Word getWordFromTraditionalChinese(String chineseWord) {
         return traditionalMapping.get(chineseWord);
     }
 
-    public static Word getWordFromSimplifiedChinese(String chineseWord) {
+    public Word getWordFromSimplifiedChinese(String chineseWord) {
         return simplifiedMapping.get(chineseWord);
     }
 
-/*TODO:resurrect
-  //LINEAR COMPLEXITY
-  public static String getEnglish(String chineseWord){
-    for (dictHandler.Word word : dictionary){
-      if(word.getSimplifiedChinese().equals(chineseWord)
-                      || word.getTraditionalChinese().equals(chineseWord)){
-        return word.getDefinition();
-      }
-    }
-    return "Chinese word not found";
-  }
-  public static String getPinyinWithTones(String chineseWord){
-    for (dictHandler.Word word : dictionary){
-      if(word.getSimplifiedChinese().equals(chineseWord)
-                      || word.getTraditionalChinese().equals(chineseWord)){
-        return word.getPinyinWithTones();
-      }
-    }
-    return "Chinese word not found";
-  }
-  */
 
 }

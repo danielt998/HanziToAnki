@@ -19,7 +19,7 @@ public class MainGUI extends Application {
     }
 
     public final void initialiseDictionary() throws URISyntaxException {
-        ChineseDictionaryExtractor.readInDictionary();
+//        ChineseDictionaryExtractor.readInDictionary();
     }
 
     public void start(Stage givenStage) throws URISyntaxException, IOException {
