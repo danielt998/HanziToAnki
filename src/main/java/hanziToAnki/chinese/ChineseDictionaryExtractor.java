@@ -43,7 +43,7 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
     @Override
     public void readInDictionary() throws URISyntaxException {
-        URI defaultDictionaryPath = this.getClass().getResource(DEFAULT_DICTIONARY_FILENAME).toURI();
+        URI defaultDictionaryPath = this.getClass().getResource("/dictionary/" + DEFAULT_DICTIONARY_FILENAME).toURI();
         readInDictionary(Path.of(defaultDictionaryPath));
     }
 
