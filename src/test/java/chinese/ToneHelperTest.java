@@ -1,4 +1,4 @@
-package hanziToAnki;
+package chinese;
 
 import hanziToAnki.chinese.ToneHelper;
 import org.junit.jupiter.params.ParameterizedTest;

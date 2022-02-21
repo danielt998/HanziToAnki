@@ -1,4 +1,4 @@
-package fixtures;
+package chinese;
 
 import hanziToAnki.chinese.ChineseWord;
 
