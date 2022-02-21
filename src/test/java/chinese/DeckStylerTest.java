@@ -1,4 +1,4 @@
-package deck_styler;
+package chinese;
 
 import hanziToAnki.*;
 import hanziToAnki.chinese.ChineseDeckStyler;
@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ChineseDeckStylerTest {
+public class DeckStylerTest {
 
     @Test
     void correctStylingTest() throws IOException {

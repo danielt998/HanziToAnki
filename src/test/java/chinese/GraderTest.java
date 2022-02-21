@@ -1,4 +1,4 @@
-package grader;
+package chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Grader;
@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ChineseGraderTest {
+class GraderTest {
     private static Grader grader;
 
     @BeforeAll
