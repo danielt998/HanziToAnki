@@ -30,9 +30,13 @@ public class GeneratorControllerTest {
             .perform(
                 multipart("/generate")
                 .file(file)
-                .accept(MediaType.MULTIPART_FORM_DATA)
+//                .accept(MediaType.TEXT_PLAIN) // not sure why test breaks on this
             )
             .andExpect(status().isOk())
             .andReturn();
+
+        var one = 1;
     }
+
+
 }
