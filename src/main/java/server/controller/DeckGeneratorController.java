@@ -22,7 +22,7 @@ public class DeckGeneratorController {
     //https://github.com/IdiosApps/gradedReaderBuilderServer/blob/master/src/main/java/com/idiosApps/gradedReaderBuilderServer/BuildController.java
     @PostMapping("/generate")
     public void generate(@RequestParam("uploadFile") MultipartFile uploadFile,
-                         @RequestParam("outputType") String outputType,
+//                         @RequestParam("outputType") String outputType,
                          HttpServletResponse response) throws IOException, URISyntaxException {
 
         // TODO get from UI
