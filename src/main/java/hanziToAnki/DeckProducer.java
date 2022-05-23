@@ -19,11 +19,11 @@ public class DeckProducer {
         this.extractor = extractor;
     }
 
-    public List<String> produceDeck(String filename, ExportOptions exportOptions, String outputFileName) {
-        return produceDeck(FileUtils.fileToStringArray(filename), exportOptions, outputFileName);
+    public List<String> produceDeck(String filename, ExportOptions exportOptions) {
+        return produceDeck(FileUtils.fileToStringArray(filename), exportOptions);
     }
 
-    public List<String> produceDeck(List<String> lines, ExportOptions exportOptions, String outputFileName) {
+    public List<String> produceDeck(List<String> lines, ExportOptions exportOptions) {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
