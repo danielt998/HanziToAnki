@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Hanzi2Anki homepage</title>
+    <title>Flashcard Generator</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-Upload file, select language, etc. etc. and hit "generate!"
+<span>Complete the settings and generate your flashcards!</span><br><br>
+<form method="POST" action="/generate" enctype="multipart/form-data">
+    <table>
+        <tr>
+            <td><form:label path="uploadFile">Upload a file to create flashcards from:</form:label></td>
+            <td><input type="file" name="uploadFile" /></td>
+        </tr>
+        <span>Language:</span><br>
+        <tr>
+            <input type="radio" id="zh-cn" name="outputType" value="zh-cn">
+            <label for="zh-cn">Chinese (zh-cn)</label><br>
+            <input type="radio" id="todo" name="outputType" value="todo">
+            <label for="todo">Help needed for more languages</label><br>
+        </tr>
+        <br>
+        <tr>
+            <td>Generate your flashcards!<input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+</form>
+
 </body>
 </html>
