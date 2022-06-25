@@ -25,6 +25,7 @@ Please feel free to make suggestions, open/comment on issues, or share code!
 
 ## Tests
 You can either run tests with IntelliJ, or with `./gradlew test`
+If gradlew doesn't have permissions, run `chmod +x gradlew` in the root of this project.
 
 
 ## License 
