@@ -2,7 +2,6 @@ package hanziToAnki.french;
 
 import hanziToAnki.DeckStyler;
 import hanziToAnki.Word;
-
 import java.util.List;
 import java.util.Set;
 

@@ -1,20 +1,20 @@
-package GUIs;
-
-import hanziToAnki.DeckProducer;
-import hanziToAnki.ExportOptions;
-import hanziToAnki.FileUtils;
-import hanziToAnki.OutputFormat;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.stage.FileChooser;
-
-import javax.swing.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-public class MainGUIController {
+//package GUIs;
+//
+//import hanziToAnki.DeckProducer;
+//import hanziToAnki.ExportOptions;
+//import hanziToAnki.FileUtils;
+//import hanziToAnki.OutputFormat;
+//import javafx.fxml.FXML;
+//import javafx.scene.control.*;
+//import javafx.stage.FileChooser;
+//
+//import javax.swing.*;
+//import java.io.File;
+//import java.util.ArrayList;
+//import java.util.Arrays;
+//import java.util.List;
+//
+//public class MainGUIController {
     // I don't care about the GUI for now.
 //    @FXML
 //    ComboBox<String> outputSelector;
@@ -81,4 +81,4 @@ public class MainGUIController {
 //    public void showError(String title) {
 //        JOptionPane.showMessageDialog(null, title, "Error", JOptionPane.ERROR_MESSAGE);
 //    }
-}
+//}

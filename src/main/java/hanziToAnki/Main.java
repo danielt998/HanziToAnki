@@ -1,7 +1,6 @@
 package hanziToAnki;
 
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
-
 import java.net.URISyntaxException;
 
 public class Main {
@@ -11,7 +10,8 @@ public class Main {
             return;
         }
 
-        DictionaryExtractor extractor = new ChineseDictionaryExtractor(); // later, user specifies "fr" language and we use factories to get right implementations
+        // later, user specifies "fr" language and we use factories to get right implementations
+        DictionaryExtractor extractor = new ChineseDictionaryExtractor();
         extractor.readInDictionary();
 
         DeckProducer deckProducer = new DeckProducer(extractor);
