@@ -11,5 +11,5 @@ jobs:
         uses: nikitasavinov/checkstyle-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          level: 'error'
+          level: error
           fail_on_error: true
