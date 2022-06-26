@@ -3,7 +3,6 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,8 +54,9 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     @Override
     public Word getWord(String s) {
         var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
-        if (Objects.nonNull(word))
+        if (Objects.nonNull(word)) {
             return word;
+        }
 
         if (mightBeErhua(s)) {
             var stripped = sanitiseErhua(s);
@@ -66,7 +66,7 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
         return null;
     }
 
-    public void readInDictionary(Path path) {
+    private void readInDictionary(Path path) {
         try {
             Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                     .filter(line -> line.charAt(0) != COMMENT_CHARACTER)

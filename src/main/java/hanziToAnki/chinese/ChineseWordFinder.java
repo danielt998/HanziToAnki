@@ -2,7 +2,6 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +37,8 @@ public class ChineseWordFinder {
                     i++;
                 }
             }
-            if (i + 2 - 1 < charArray.length) {//TODO:fix this
+            //TODO:fix this
+            if (i + 2 - 1 < charArray.length) {
                 Word wordThreeChars = extractor.getWord(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
                 if (wordThreeChars != null) {
                     words.add(wordThreeChars);
@@ -46,7 +46,8 @@ public class ChineseWordFinder {
                     i++;
                 }
             }
-            if (!wordUsed) {//if character is not used as part of any other word, we print it
+            //if character is not used as part of any other word, we print it
+            if (!wordUsed) {
                 //TODO:consider whether this should be the behaviour and how arguments might be restructured
                 Word wordSingleChar = extractor.getWord(word);
                 if (wordSingleChar != null) {

@@ -2,7 +2,6 @@ package hanziToAnki;
 
 import hanziToAnki.chinese.ChineseGrader;
 import hanziToAnki.chinese.ChineseWordFinder;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +26,8 @@ public class DeckProducer {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
-            System.out.println("Please provide UTF-8 encoded files - other encodings (e.g. GBK, Big5 not currently supported");
+            System.out.println("Please provide UTF-8 encoded files -"
+                    + " other encodings (e.g. GBK, Big5 not currently supported");
             return new ArrayList<>();
         }
 

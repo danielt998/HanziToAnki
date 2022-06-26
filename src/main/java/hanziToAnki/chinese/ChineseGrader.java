@@ -24,15 +24,15 @@ public class ChineseGrader implements Grader {
     }
 
     @Override
-    public Set<Word> getAccumulativeVocabulary(int HSKLevel) {
+    public Set<Word> getAccumulativeVocabulary(int HskLevel) {
         Set<Word> accumulativeVocabulary = new HashSet<>();
-        for (int level = 1; level <= HSKLevel; level++) {
-            accumulativeVocabulary.addAll(getHSKVocabularyOneLevel(level));
+        for (int level = 1; level <= HskLevel; level++) {
+            accumulativeVocabulary.addAll(getHskVocabularyOneLevel(level));
         }
         return accumulativeVocabulary;
     }
 
-    private Set<Word> getHSKVocabularyOneLevel(int level) {
+    private Set<Word> getHskVocabularyOneLevel(int level) {
         return getWordsFromNewlineSeparatedFile(VOCAB_DIRECTORY + level);
     }
 

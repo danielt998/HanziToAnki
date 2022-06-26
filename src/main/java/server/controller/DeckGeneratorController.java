@@ -6,6 +6,8 @@ import hanziToAnki.ExportOptions;
 import hanziToAnki.FileUtils;
 import hanziToAnki.OutputFormat;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import utils.TemporaryDirectory;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 @RestController
 public class DeckGeneratorController {
