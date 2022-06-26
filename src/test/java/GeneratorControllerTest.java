@@ -18,7 +18,7 @@ public class GeneratorControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void canUploadSomeWord() throws Exception {
+    public void canUploadAWord() throws Exception {
         var file = new MockMultipartFile(
                 "uploadFile",
                 "爱".getBytes(StandardCharsets.UTF_8)
