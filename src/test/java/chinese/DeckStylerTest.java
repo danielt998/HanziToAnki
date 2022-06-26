@@ -2,7 +2,7 @@ package chinese;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import hanziToAnki.*;
+import hanziToAnki.Word;
 import hanziToAnki.chinese.ChineseDeckStyler;
 import hanziToAnki.chinese.ChineseWord;
 import java.io.IOException;

@@ -1,8 +1,11 @@
 package hanziToAnki;
 
-import org.apache.tika.Tika;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.tika.Tika;
 
 public class FileUtils {
     private static final String ZIP_COMPRESSED = "application/x-zip-compressed";
@@ -33,7 +37,7 @@ public class FileUtils {
                     return getZipLines(file);
                 }
                 case GZIP, X_GZIP -> {
-                    return getGZipLines(file);
+                    return getGzipLines(file);
                 }
                 default -> {
                     System.out.println("Mediatype detected: " + contentType + ", attempting to read lines");
@@ -64,7 +68,7 @@ public class FileUtils {
     }
 
     // Probably single file with .gz compression
-    private static List<String> getGZipLines(File file) {
+    private static List<String> getGzipLines(File file) {
         try {
             GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(file));
             return readLinesFromStream(gzipInputStream);

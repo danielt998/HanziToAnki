@@ -14,14 +14,23 @@ public class ChineseWordFinder {
         this.extractor = extractor;
     }
 
-    public Set<Word> findMonoBiTriGrams(List<String> list) {
-        char[] charArray = getCharsFromList(list);
-        return findMonoBiTriGrams(charArray);
-    }
-
     public Set<Word> findMonograms(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
         return findMonograms(charArray);
+    }
+
+    private Set<Word> findMonograms(char[] charArray) {
+        Set<Word> words = new HashSet<>();
+        for (char c : charArray) {
+            Word word = extractor.getWord(c);
+            words.add(word);
+        }
+        return words;
+    }
+
+    public Set<Word> findMonoBiTriGrams(List<String> list) {
+        char[] charArray = getCharsFromList(list);
+        return findMonoBiTriGrams(charArray);
     }
 
     private Set<Word> findMonoBiTriGrams(char[] charArray) {
@@ -54,15 +63,6 @@ public class ChineseWordFinder {
                     words.add(wordSingleChar);
                 }
             }
-        }
-        return words;
-    }
-
-    private Set<Word> findMonograms(char[] charArray) {
-        Set<Word> words = new HashSet<>();
-        for (char c : charArray) {
-            Word word = extractor.getWord(c);
-            words.add(word);
         }
         return words;
     }

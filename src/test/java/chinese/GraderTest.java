@@ -1,15 +1,15 @@
 package chinese;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Grader;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import hanziToAnki.chinese.ChineseGrader;
+import java.net.URISyntaxException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.net.URISyntaxException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GraderTest {
     private static Grader grader;
@@ -22,7 +22,7 @@ class GraderTest {
     }
 
     @Test
-    void getAccumulativeHSKVocabularyTest() {
+    void getAccumulativeHskVocabularyTest() {
         // Note - accumulative counts are 352, 654, 1254, 2554, and 5054
         // The difference is presumably due to some HSK words not being in dictionary
         assertEquals(149, grader.getAccumulativeVocabulary(1).size());

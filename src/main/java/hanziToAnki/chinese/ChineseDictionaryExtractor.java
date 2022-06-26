@@ -46,6 +46,17 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
         readInDictionary(Path.of(defaultDictionaryPath));
     }
 
+    private void readInDictionary(Path path) {
+        try {
+            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
+                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
+                    .map(this::getWordFromLine)
+                    .forEach(this::putWordToMaps);
+        } catch (IOException e) {
+            System.out.println("Could not load dictionary file at " + path);
+        }
+    }
+
     @Override
     public Word getWord(char c) {
         return getWord(String.valueOf(c));
@@ -64,17 +75,6 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
         }
 
         return null;
-    }
-
-    private void readInDictionary(Path path) {
-        try {
-            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
-                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
-                    .map(this::getWordFromLine)
-                    .forEach(this::putWordToMaps);
-        } catch (IOException e) {
-            System.out.println("Could not load dictionary file at " + path);
-        }
     }
 
     private Word getWordFromLine(String line) {
@@ -108,14 +108,4 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private String sanitiseErhua(String word) {
         return word.substring(0, word.lastIndexOf("儿"));
     }
-
-    public Word getWordFromTraditionalChinese(String chineseWord) {
-        return traditionalMapping.get(chineseWord);
-    }
-
-    public Word getWordFromSimplifiedChinese(String chineseWord) {
-        return simplifiedMapping.get(chineseWord);
-    }
-
-
 }

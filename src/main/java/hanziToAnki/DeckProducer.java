@@ -1,5 +1,7 @@
 package hanziToAnki;
 
+import static hanziToAnki.OutputFormat.ANKI;
+
 import hanziToAnki.chinese.ChineseGrader;
 import hanziToAnki.chinese.ChineseWordFinder;
 import java.util.ArrayList;
@@ -8,7 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 

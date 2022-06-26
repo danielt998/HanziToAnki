@@ -3,7 +3,6 @@ package hanziToAnki.chinese;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Grader;
 import hanziToAnki.Word;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,9 +23,9 @@ public class ChineseGrader implements Grader {
     }
 
     @Override
-    public Set<Word> getAccumulativeVocabulary(int HskLevel) {
+    public Set<Word> getAccumulativeVocabulary(int hskLevel) {
         Set<Word> accumulativeVocabulary = new HashSet<>();
-        for (int level = 1; level <= HskLevel; level++) {
+        for (int level = 1; level <= hskLevel; level++) {
             accumulativeVocabulary.addAll(getHskVocabularyOneLevel(level));
         }
         return accumulativeVocabulary;
@@ -41,7 +40,7 @@ public class ChineseGrader implements Grader {
             URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
             return Files.readAllLines(path).stream()
-                    .map(s -> extractor.getWord(s))
+                    .map(extractor::getWord)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
         } catch (URISyntaxException | IOException e) {

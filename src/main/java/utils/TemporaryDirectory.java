@@ -30,7 +30,8 @@ public class TemporaryDirectory implements Closeable {
     }
 
     public TemporaryFile getFileFromMultipart(MultipartFile multipartFile) throws IOException {
-        TemporaryFile temporaryFile = new TemporaryFile((Files.createTempFile(directory, UUID.randomUUID().toString(), TMP_EXT)));
+        TemporaryFile temporaryFile = new TemporaryFile(
+                (Files.createTempFile(directory, UUID.randomUUID().toString(), TMP_EXT)));
 
         if (Objects.isNull(multipartFile) || multipartFile.isEmpty()) {
             return temporaryFile; // empty file (title, names) - nothing will be written to .tex file
