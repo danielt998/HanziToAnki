@@ -1,11 +1,10 @@
-# HanziToAnki
-## Intro
+# Introduction
 
 Pass HanziToAnki a file via command-line or GUI, and generate clashcards Anki/Pleco(to-do)/Memrise(to-do) flashcards.
 
 You can generate the flashcards from any Chinese input - a news article you're studying, song lyrics, or even your exported WeChat logs!
 
-CLI options:
+Command-line options:
 * -w --word-list: Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
 * -s --single-characters:\tExtract only single characters from the file
 * -o <output filename> Override the default output file name
@@ -23,14 +22,18 @@ Features:
 
 Please feel free to make suggestions, open/comment on issues, or share code!
 
-## Tests
-You can either run tests with IntelliJ, or with `./gradlew test`
-If gradlew doesn't have permissions, run `chmod +x gradlew` in the root of this project.
-
-## Development
+# Development
 Feel free to fork, create branches, and raise PRs.
 
-We run a few automated checks with Github Actions in our PRs, so we recommend checking test pass and code formatting is happy before raising a PR.
+## Tests
+You can either run tests with IntelliJ, or with `./gradlew test`
+
+If gradlew doesn't have permissions, run `chmod +x gradlew` in the root of this project.
+
+## Code formatting
+We run a few automated checks with Github Actions in our PRs. We recommend doing the following before raising a PR:
+- checking test pass
+- formatting code
 
 With the CheckStyle plugin, you can import the repository's `google_checks.xml` file. The IDE should use this for formatting checks.
 
