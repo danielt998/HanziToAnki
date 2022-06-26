@@ -27,6 +27,13 @@ Please feel free to make suggestions, open/comment on issues, or share code!
 You can either run tests with IntelliJ, or with `./gradlew test`
 If gradlew doesn't have permissions, run `chmod +x gradlew` in the root of this project.
 
+## Development
+Feel free to fork, create branches, and raise PRs.
+
+We run a few automated checks with Github Actions in our PRs, so we recommend checking test pass and code formatting is happy before raising a PR.
+
+With the CheckStyle plugin, you can import the repository's `google_checks.xml` file. The IDE should use this for formatting checks.
+
 
 ## License 
 This project uses a modified version of the CEDICT Chinese dictionary, which can be found here:
