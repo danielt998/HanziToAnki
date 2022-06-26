@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class DictionaryExtractorTest {
 
     @Test
-    void canExtractAWord() throws URISyntaxException {
+    void canExtractSomeWord() throws URISyntaxException {
         DictionaryExtractor extractor = new ChineseDictionaryExtractor();
         extractor.readInDictionary();
 
