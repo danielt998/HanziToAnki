@@ -3,7 +3,6 @@ package utils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +11,7 @@ import java.util.UUID;
 
 public class TemporaryDirectory implements Closeable {
     private static final String TMP_EXT = ".tmp";
-    private Path directory;
+    private final Path directory;
 
     public TemporaryDirectory() throws IOException {
         directory = Files.createTempDirectory(null);

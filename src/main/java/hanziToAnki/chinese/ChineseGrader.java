@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ public class ChineseGrader implements Grader {
             URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
             return Files.readAllLines(path).stream()
-                    .map(s-> extractor.getWord(s))
+                    .map(s -> extractor.getWord(s))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
         } catch (URISyntaxException | IOException e) {

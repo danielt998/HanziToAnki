@@ -38,8 +38,8 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
 
-    private Map<String, Word> simplifiedMapping = new HashMap<>();
-    private Map<String, Word> traditionalMapping = new HashMap<>();
+    private final Map<String, Word> simplifiedMapping = new HashMap<>();
+    private final Map<String, Word> traditionalMapping = new HashMap<>();
 
     @Override
     public void readInDictionary() throws URISyntaxException {
@@ -99,7 +99,6 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
             traditionalMapping.put(w.traditional(), word);
         }
     }
-
 
 
     private boolean mightBeErhua(String word) {

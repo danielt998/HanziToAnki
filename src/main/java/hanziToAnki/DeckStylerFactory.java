@@ -1,7 +1,7 @@
 package hanziToAnki;
 
-import hanziToAnki.chinese.ChineseWord;
 import hanziToAnki.chinese.ChineseDeckStyler;
+import hanziToAnki.chinese.ChineseWord;
 
 import java.util.Set;
 

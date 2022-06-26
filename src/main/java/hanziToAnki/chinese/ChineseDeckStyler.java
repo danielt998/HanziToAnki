@@ -10,21 +10,6 @@ public class ChineseDeckStyler implements DeckStyler {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
 
-    public List<String> style(Set<Word> words) {
-        return words.stream()
-                .map(this::getWordAsDeckLine)
-                .toList();
-    }
-
-    private String getWordAsDeckLine(Word word) {
-        var w = (ChineseWord) word;
-        return String.join(DELIMITER,
-                w.simplified(),
-                w.definition(),
-                getPinyinWithHTML(w)
-        );
-    }
-
     private static String getPinyinWithHTML(ChineseWord word) {
         String pinyin = word.pinyinTones();
         String[] syllables = pinyin.split(" ");
@@ -40,5 +25,20 @@ public class ChineseDeckStyler implements DeckStyler {
 
     private static String getOpeningHTMLTag(int tone) {
         return "<span class=\"tone" + tone + "\">";
+    }
+
+    public List<String> style(Set<Word> words) {
+        return words.stream()
+                .map(this::getWordAsDeckLine)
+                .toList();
+    }
+
+    private String getWordAsDeckLine(Word word) {
+        var w = (ChineseWord) word;
+        return String.join(DELIMITER,
+                w.simplified(),
+                w.definition(),
+                getPinyinWithHTML(w)
+        );
     }
 }

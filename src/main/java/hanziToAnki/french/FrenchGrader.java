@@ -3,7 +3,6 @@ package hanziToAnki.french;
 import hanziToAnki.Grader;
 import hanziToAnki.Word;
 
-import java.util.List;
 import java.util.Set;
 
 public class FrenchGrader implements Grader {

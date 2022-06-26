@@ -1,6 +1,5 @@
 package GUIs;
 
-import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
