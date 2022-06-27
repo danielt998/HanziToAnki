@@ -1,15 +1,15 @@
 package hanziToAnki;
 
-import hanziToAnki.chinese.ChineseWordFinder;
-import hanziToAnki.chinese.ChineseGrader;
+import static hanziToAnki.OutputFormat.ANKI;
 
+import hanziToAnki.chinese.ChineseGrader;
+import hanziToAnki.chinese.ChineseWordFinder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static hanziToAnki.OutputFormat.ANKI;
 
 public class DeckProducer {
 
@@ -27,7 +27,8 @@ public class DeckProducer {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
-            System.out.println("Please provide UTF-8 encoded files - other encodings (e.g. GBK, Big5 not currently supported");
+            System.out.println("Please provide UTF-8 encoded files -"
+                    + " other encodings (e.g. GBK, Big5 not currently supported");
             return new ArrayList<>();
         }
 
@@ -48,7 +49,7 @@ public class DeckProducer {
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {
         if (options.useWordList()) { // todo think of more meaningful, easy-to-understand options for our users
             return lines.stream()
-                    .map(s-> extractor.getWord(s))
+                    .map(s -> extractor.getWord(s))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
         }

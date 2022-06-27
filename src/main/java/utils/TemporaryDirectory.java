@@ -1,18 +1,16 @@
 package utils;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 public class TemporaryDirectory implements Closeable {
     private static final String TMP_EXT = ".tmp";
-    private Path directory;
+    private final Path directory;
 
     public TemporaryDirectory() throws IOException {
         directory = Files.createTempDirectory(null);
@@ -32,10 +30,12 @@ public class TemporaryDirectory implements Closeable {
     }
 
     public TemporaryFile getFileFromMultipart(MultipartFile multipartFile) throws IOException {
-        TemporaryFile temporaryFile = new TemporaryFile((Files.createTempFile(directory, UUID.randomUUID().toString(), TMP_EXT)));
+        TemporaryFile temporaryFile = new TemporaryFile(
+                (Files.createTempFile(directory, UUID.randomUUID().toString(), TMP_EXT)));
 
-        if (Objects.isNull(multipartFile) || multipartFile.isEmpty())
+        if (Objects.isNull(multipartFile) || multipartFile.isEmpty()) {
             return temporaryFile; // empty file (title, names) - nothing will be written to .tex file
+        }
 
         multipartFile.transferTo(temporaryFile);
         return temporaryFile;

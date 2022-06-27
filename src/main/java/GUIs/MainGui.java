@@ -1,17 +1,15 @@
 package GUIs;
 
-import hanziToAnki.chinese.ChineseDictionaryExtractor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
-public class MainGUI extends Application {
+public class MainGui extends Application {
     public static Stage stage;
 
     public final void main(String args) {

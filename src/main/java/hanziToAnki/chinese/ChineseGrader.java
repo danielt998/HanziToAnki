@@ -3,14 +3,12 @@ package hanziToAnki.chinese;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Grader;
 import hanziToAnki.Word;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,15 +23,15 @@ public class ChineseGrader implements Grader {
     }
 
     @Override
-    public Set<Word> getAccumulativeVocabulary(int HSKLevel) {
+    public Set<Word> getAccumulativeVocabulary(int hskLevel) {
         Set<Word> accumulativeVocabulary = new HashSet<>();
-        for (int level = 1; level <= HSKLevel; level++) {
-            accumulativeVocabulary.addAll(getHSKVocabularyOneLevel(level));
+        for (int level = 1; level <= hskLevel; level++) {
+            accumulativeVocabulary.addAll(getHskVocabularyOneLevel(level));
         }
         return accumulativeVocabulary;
     }
 
-    private Set<Word> getHSKVocabularyOneLevel(int level) {
+    private Set<Word> getHskVocabularyOneLevel(int level) {
         return getWordsFromNewlineSeparatedFile(VOCAB_DIRECTORY + level);
     }
 
@@ -42,7 +40,7 @@ public class ChineseGrader implements Grader {
             URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
             return Files.readAllLines(path).stream()
-                    .map(s-> extractor.getWord(s))
+                    .map(extractor::getWord)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
         } catch (URISyntaxException | IOException e) {

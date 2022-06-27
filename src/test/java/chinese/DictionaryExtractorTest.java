@@ -2,15 +2,14 @@ package chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
+import java.net.URISyntaxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.net.URISyntaxException;
 
 class DictionaryExtractorTest {
 
     @Test
-    void canExtractAWord() throws URISyntaxException {
+    void canExtractSomeWord() throws URISyntaxException {
         DictionaryExtractor extractor = new ChineseDictionaryExtractor();
         extractor.readInDictionary();
 

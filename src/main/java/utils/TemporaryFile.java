@@ -1,11 +1,10 @@
 package utils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import org.jetbrains.annotations.NotNull;
 
 public class TemporaryFile extends File implements Closeable {
     private File file;

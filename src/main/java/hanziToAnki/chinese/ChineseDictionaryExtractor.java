@@ -3,7 +3,6 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,13 +37,24 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
 
-    private Map<String, Word> simplifiedMapping = new HashMap<>();
-    private Map<String, Word> traditionalMapping = new HashMap<>();
+    private final Map<String, Word> simplifiedMapping = new HashMap<>();
+    private final Map<String, Word> traditionalMapping = new HashMap<>();
 
     @Override
     public void readInDictionary() throws URISyntaxException {
         URI defaultDictionaryPath = this.getClass().getResource("/dictionary/" + DEFAULT_DICTIONARY_FILENAME).toURI();
         readInDictionary(Path.of(defaultDictionaryPath));
+    }
+
+    private void readInDictionary(Path path) {
+        try {
+            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
+                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
+                    .map(this::getWordFromLine)
+                    .forEach(this::putWordToMaps);
+        } catch (IOException e) {
+            System.out.println("Could not load dictionary file at " + path);
+        }
     }
 
     @Override
@@ -55,8 +65,9 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     @Override
     public Word getWord(String s) {
         var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
-        if (Objects.nonNull(word))
+        if (Objects.nonNull(word)) {
             return word;
+        }
 
         if (mightBeErhua(s)) {
             var stripped = sanitiseErhua(s);
@@ -64,17 +75,6 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
         }
 
         return null;
-    }
-
-    public void readInDictionary(Path path) {
-        try {
-            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
-                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
-                    .map(this::getWordFromLine)
-                    .forEach(this::putWordToMaps);
-        } catch (IOException e) {
-            System.out.println("Could not load dictionary file at " + path);
-        }
     }
 
     private Word getWordFromLine(String line) {
@@ -101,7 +101,6 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     }
 
 
-
     private boolean mightBeErhua(String word) {
         return word.lastIndexOf("儿") == word.length() - 1;
     }
@@ -109,14 +108,4 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private String sanitiseErhua(String word) {
         return word.substring(0, word.lastIndexOf("儿"));
     }
-
-    public Word getWordFromTraditionalChinese(String chineseWord) {
-        return traditionalMapping.get(chineseWord);
-    }
-
-    public Word getWordFromSimplifiedChinese(String chineseWord) {
-        return simplifiedMapping.get(chineseWord);
-    }
-
-
 }
