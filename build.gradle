@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'idea'
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
@@ -55,4 +55,12 @@ tasks.withType(Test) {
 
 tasks.withType(JavaExec) {
     jvmArgs += '--enable-preview'
+}
+
+task stage {
+    dependsOn build
+}
+
+jar {
+    baseName = 'heroku-gradle-spring-boot'
 }
