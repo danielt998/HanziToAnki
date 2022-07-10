@@ -29,6 +29,11 @@ To run the Spring Boot app, run `./gradlew run`.
 If you get an error about "Invalid source release", check that `echo $JAVA_HOME` points to your JDK. 
 We recommend [sdkman](https://sdkman.io/install) for setting up Java.
 
+To make a heroku-like local deployment, run:
+```
+./gradlew stage
+heroku local web
+```
 ## Tests
 You can either run tests with IntelliJ, or with `./gradlew test`
 
