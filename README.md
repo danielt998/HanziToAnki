@@ -25,7 +25,7 @@ Please feel free to make suggestions, open/comment on issues, or share code!
 # Development
 Feel free to fork, create branches, and raise PRs.
 
-To run the Spring Boot app, run `./gradlew bootRun`.
+To run the Spring Boot app, run `./gradlew run`.
 If you get an error about "Invalid source release", check that `echo $JAVA_HOME` points to your JDK. 
 We recommend [sdkman](https://sdkman.io/install) for setting up Java.
 
