@@ -71,3 +71,10 @@ jar {
     archiveFileName = "heroku-gradle-spring-boot.jar"
     baseName = 'heroku-gradle-spring-boot'
 }
+
+task copyToLib(type: Copy) {
+    into "$buildDir/libs"
+    from(configurations.runtimeClasspath)
+}
+
+stage.dependsOn(copyToLib)
