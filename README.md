@@ -25,10 +25,14 @@ Please feel free to make suggestions, open/comment on issues, or share code!
 # Development
 Feel free to fork, create branches, and raise PRs.
 
+To run the Spring Boot app, run `./gradlew bootRun`.
+If you get an error about "Invalid source release", check that `echo $JAVA_HOME` points to your JDK. 
+We recommend [sdkman](https://sdkman.io/install) for setting up Java.
+
 ## Tests
 You can either run tests with IntelliJ, or with `./gradlew test`
 
-If gradlew doesn't have permissions, run `chmod +x gradlew` in the root of this project.
+If gradlew doesn't have permissions, run `chmod +x gradlew` (or `chmod +x gradlew.bat` on Windows) in the root of this project.
 
 ## Code formatting
 We run a few automated checks with Github Actions in our PRs. We recommend doing the following before raising a PR:
