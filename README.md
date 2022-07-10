@@ -4,12 +4,12 @@ Pass HanziToAnki a file via command-line or GUI, and generate clashcards Anki/Pl
 
 You can generate the flashcards from any Chinese input - a news article you're studying, song lyrics, or even your exported WeChat logs!
 
-Command-line options:
-* -w --word-list: Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
-* -s --single-characters:\tExtract only single characters from the file
-* -o <output filename> Override the default output file name
-* -f --format <output format> Override the default output file name
-* -hsk <hsk level> Remove any words in any HSK levels up to and including the given one
+*Command-line* options:
+* `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
+* `-s --single-characters` Extract only single characters from the file
+* `-o <output filename>` Override the default output file name
+* `-f --format <output format>` Override the default output file name
+* `-hsk <hsk level>` Remove any words in any HSK levels up to and including the given one
 
 Features:
 * Both simplified and traditional hanzi can be provided
