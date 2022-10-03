@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.tika:tika-core:2.4.1'
+    implementation 'org.apache.tika:tika-core:2.5.0'
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'junit:junit:4.13.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.1'
