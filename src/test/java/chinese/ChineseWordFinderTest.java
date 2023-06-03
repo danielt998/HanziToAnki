@@ -37,22 +37,29 @@ class ChineseWordFinderTest {
 
     @Test
     void defaultStrategyReturnsTrigram() {
-
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("中国人"));
+        assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"))), words);
     }
 
     @Test
     void defaultStrategyReturnsMonogramPlusBigram() {
-
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("是中国"));
+        assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国"), extractor.getWord("是"))), words);
     }
 
     @Test
     void defaultStrategyReturnsBigramPlusMonogram() {
-
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("中国是"));
+        assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国"), extractor.getWord("是"))), words);
     }
 
     @Test
     void defaultStrategyReturnsMonograms() {
-
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.ALL_COMBINATIONS_TWO_OR_MORE_FALLBACK_TO_SINGLE, List.of("我是人"));
+        assertEquals(new HashSet(Arrays.asList(extractor.getWord("我"),
+                        extractor.getWord("是"),
+                        extractor.getWord("人"))),
+                words);
     }
 
     @Test
