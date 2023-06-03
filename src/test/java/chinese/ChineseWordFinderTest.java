@@ -19,6 +19,10 @@ class ChineseWordFinderTest {
     private static ChineseWordFinder finder;
     private static ChineseDictionaryExtractor extractor;
 
+    //TODO: add tests for
+    //      BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP
+    // and  BIGRAM_AND_MONOGRAM_ONLY_OVERLAP
+
     @BeforeAll
     public static void setup() throws URISyntaxException {
         extractor = new ChineseDictionaryExtractor();
@@ -36,20 +40,28 @@ class ChineseWordFinderTest {
     }
 
     @Test
-    void defaultStrategyReturnsTrigram() {
+    void triBiMonogramsStrategyReturnsTrigramAndNoBigrams() {
         Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("中国人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"))), words);
     }
 
     @Test
+    void defaultStrategyReturnsTrigramAndBigrams() {
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("中国人"));
+        assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"),
+                extractor.getWord("中国"),
+                extractor.getWord("国人"))), words);
+    }
+
+    @Test
     void defaultStrategyReturnsMonogramPlusBigram() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("是中国"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("是中国"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国"), extractor.getWord("是"))), words);
     }
 
     @Test
     void defaultStrategyReturnsBigramPlusMonogram() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("中国是"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("中国是"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国"), extractor.getWord("是"))), words);
     }
 
@@ -121,4 +133,6 @@ class ChineseWordFinderTest {
                         extractor.getWord("人"))),
                 words);
     }
+
+
 }
