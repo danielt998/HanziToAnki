@@ -8,10 +8,28 @@ import java.util.Set;
 
 public class ChineseWordFinder {
 
+    //using ABC as an example
+    public enum Strategy {
+        SINGLE_CHAR_ONLY, // A, B, C
+        ALL_COMBINATIONS_TWO_OR_MORE, // ABC, AB, BC
+        ALL_COMBINATIONS_TWO_OR_MORE_FALLBACK_TO_SINGLE, // As above, but if no matches, fall back to A, B, C
+        ALL_COMBINATIONS, // ABC, AB, BC, A, B, C
+        // Should be the default?
+        LONGEST_WORDS_ONLY, // ABC, if ABC not valid, AB and BC, is those not valid, A, B, C
+        // TODO: consider some strategies that look at the frequency order
+    }
+
     private final DictionaryExtractor extractor;
 
     public ChineseWordFinder(DictionaryExtractor extractor) {
         this.extractor = extractor;
+    }
+
+    public Set<Word> findWords(Strategy strategy, List<String> lines) {
+        return switch (strategy) {
+            case SINGLE_CHAR_ONLY -> findMonograms(lines);
+            default ->  throw new RuntimeException("fail");
+        };
     }
 
     public Set<Word> findMonograms(List<String> lines) {
