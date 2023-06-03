@@ -3,7 +3,6 @@ package hanziToAnki.chinese;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 
-import javax.swing.plaf.synth.SynthRootPaneUI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,64 +29,86 @@ public class ChineseWordFinder {
     public Set<Word> findWords(Strategy strategy, List<String> lines) {
         return switch (strategy) {
             case SINGLE_CHAR_ONLY -> findMonograms(lines);
-            case ALL_COMBINATIONS_TWO_OR_MORE -> findAllCombinationsTwoOrMore(lines);
-            default ->  throw new RuntimeException("fail");
+            case ALL_COMBINATIONS_TWO_OR_MORE -> findAllCombinationsTwoOrMore(lines, false);
+            case ALL_COMBINATIONS_TWO_OR_MORE_FALLBACK_TO_SINGLE -> findAllCombinationsTwoOrMore(lines, true);
+            case ALL_COMBINATIONS -> findAllCombinations(lines);
+            case LONGEST_WORDS_ONLY -> findLongestWords(lines);
+            default -> throw new RuntimeException("fail");
         };
     }
 
-    public Set<Word> findMonograms(List<String> lines) {
+    private Set<Word> findLongestWords(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
-        return findMonograms(charArray);
+        return findLongestWords(charArray);
     }
 
-    private Set<Word> findMonograms(char[] charArray) {
-        Set<Word> words = new HashSet<>();
-        for (char c : charArray) {
-            Word word = extractor.getWord(c);
-            words.add(word);
-        }
-        return words;
-    }
-
-    private Set<Word> findAllCombinationsTwoOrMore(List<String> lines) {
-        char[] charArray = getCharsFromList(lines);
-        return findAllCombinationsTwoOrMore(charArray);
-    }
-
-    private Set<Word> findAllCombinationsTwoOrMore(char[] charArray) {
+    private Set<Word> findLongestWords(char[] charArray) {
         Set<Word> allWords = new HashSet<Word>();
-        for (int i = 0; i <charArray.length - 2; i++) {
-            Set<Word> bigrams = findBigrams(charArray, i, 3);
-            Set<Word> trigram = findTrigrams(charArray, i, 3);
-            if (bigrams != null) {
-                allWords.addAll(bigrams);
-            }
-            if (trigram != null){
-                allWords.addAll(trigram);
+        for (int i = 0; i < charArray.length - 2; i++) {
+            for (int n = 3; n > 0; n--) {//assuming start at 3 TODO:make even more generic?
+                Set<Word> nGrams =  findNGrams(charArray, i, 3, n);
+                if (!nGrams.isEmpty()){
+                    allWords.addAll(nGrams);
+                    break;
+                }
             }
         }
         return allWords;
     }
 
-    //TODO: merge below two methods to findNGrams?
-    private Set<Word> findTrigrams(char[] charArray, int startIndex, int searchWindowLength) {
-        Set<Word> words = new HashSet<Word>();
-        for (int i = 0; i < searchWindowLength - 2; i++) {
-            Word trigram = extractor.getWord("" + charArray[startIndex] + charArray[startIndex + 1] + charArray[startIndex + 2]);
-            if (trigram != null) {
-                words.add(trigram);
-            }
-        }
-        return words;
+    public Set<Word> findMonograms(List<String> lines) {
+        char[] charArray = getCharsFromList(lines);
+        return findNGrams(charArray, 0, charArray.length, 1);
     }
 
-    private Set<Word> findBigrams(char[] charArray, int startIndex, int searchWindowLength) {
-        // S
+    private Set<Word> findAllCombinations(List<String> lines) {
+        char[] charArray = getCharsFromList(lines);
+        return findAllCombinations(charArray);
+    }
+
+    private Set<Word> findAllCombinationsTwoOrMore(List<String> lines, boolean fallbackToSingle) {
+        char[] charArray = getCharsFromList(lines);
+        return findAllCombinationsTwoOrMore(charArray, fallbackToSingle);
+    }
+
+    private Set<Word> findAllCombinations(char[] charArray) {
+        Set<Word> allWords = new HashSet<Word>();
+        for (int i = 0; i < charArray.length - 2; i++) {
+            Set<Word> bigrams = findNGrams(charArray, i, 3, 2);
+            Set<Word> trigrams = findNGrams(charArray, i, 3, 3);
+            Set<Word> monograms = findNGrams(charArray, i, 3, 1);
+            allWords.addAll(bigrams);
+            allWords.addAll(trigrams);
+            allWords.addAll(monograms);
+        }
+        return allWords;
+    }
+
+    private Set<Word> findAllCombinationsTwoOrMore(char[] charArray, boolean fallbackToSingle) {
+        Set<Word> allWords = new HashSet<Word>();
+        for (int i = 0; i < charArray.length - 2; i++) {
+            Set<Word> bigrams = findNGrams(charArray, i, 3, 2);
+            Set<Word> trigrams = findNGrams(charArray, i, 3, 3);
+            allWords.addAll(bigrams);
+            allWords.addAll(trigrams);
+            if (fallbackToSingle && allWords.isEmpty()) {
+                allWords.addAll(findNGrams(charArray, i, 3, 1));
+            }
+        }
+        return allWords;
+    }
+
+    private Set<Word> findNGrams(char[] charArray, int startIndex, int searchWindowLength, int n) {
         Set<Word> words = new HashSet<Word>();
-        for (int i = 0; i < searchWindowLength - 1; i++) {
-            Word wordTwoChars = extractor.getWord("" + charArray[startIndex + i] + charArray[startIndex + i + 1]);
-            if (wordTwoChars != null) {
-                words.add(wordTwoChars);
+        for (int i = 0; i < searchWindowLength - (n - 1); i++) {
+            String nGramString = "";
+            for (int j = 0; j < n; j++) {
+                nGramString = nGramString + charArray[startIndex + i + j];
+            }
+
+            Word nGram = extractor.getWord(nGramString);
+            if (nGram != null) {
+                words.add(nGram);
             }
         }
         return words;
@@ -97,7 +118,6 @@ public class ChineseWordFinder {
         char[] charArray = getCharsFromList(list);
         return findMonoBiTriGrams(charArray);
     }
-
 
 
     //TODO: delete this and replace with shiny new methods
