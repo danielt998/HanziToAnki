@@ -2,6 +2,8 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
+
+import javax.swing.plaf.synth.SynthRootPaneUI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +30,7 @@ public class ChineseWordFinder {
     public Set<Word> findWords(Strategy strategy, List<String> lines) {
         return switch (strategy) {
             case SINGLE_CHAR_ONLY -> findMonograms(lines);
+            case ALL_COMBINATIONS_TWO_OR_MORE -> findAllCombinationsTwoOrMore(lines);
             default ->  throw new RuntimeException("fail");
         };
     }
@@ -46,11 +49,58 @@ public class ChineseWordFinder {
         return words;
     }
 
+    private Set<Word> findAllCombinationsTwoOrMore(List<String> lines) {
+        char[] charArray = getCharsFromList(lines);
+        return findAllCombinationsTwoOrMore(charArray);
+    }
+
+    private Set<Word> findAllCombinationsTwoOrMore(char[] charArray) {
+        Set<Word> allWords = new HashSet<Word>();
+        for (int i = 0; i <charArray.length - 2; i++) {
+            Set<Word> bigrams = findBigrams(charArray, i, 3);
+            Set<Word> trigram = findTrigrams(charArray, i, 3);
+            if (bigrams != null) {
+                allWords.addAll(bigrams);
+            }
+            if (trigram != null){
+                allWords.addAll(trigram);
+            }
+        }
+        return allWords;
+    }
+
+    //TODO: merge below two methods to findNGrams?
+    private Set<Word> findTrigrams(char[] charArray, int startIndex, int searchWindowLength) {
+        Set<Word> words = new HashSet<Word>();
+        for (int i = 0; i < searchWindowLength - 2; i++) {
+            Word trigram = extractor.getWord("" + charArray[startIndex] + charArray[startIndex + 1] + charArray[startIndex + 2]);
+            if (trigram != null) {
+                words.add(trigram);
+            }
+        }
+        return words;
+    }
+
+    private Set<Word> findBigrams(char[] charArray, int startIndex, int searchWindowLength) {
+        // S
+        Set<Word> words = new HashSet<Word>();
+        for (int i = 0; i < searchWindowLength - 1; i++) {
+            Word wordTwoChars = extractor.getWord("" + charArray[startIndex + i] + charArray[startIndex + i + 1]);
+            if (wordTwoChars != null) {
+                words.add(wordTwoChars);
+            }
+        }
+        return words;
+    }
+
     public Set<Word> findMonoBiTriGrams(List<String> list) {
         char[] charArray = getCharsFromList(list);
         return findMonoBiTriGrams(charArray);
     }
 
+
+
+    //TODO: delete this and replace with shiny new methods
     private Set<Word> findMonoBiTriGrams(char[] charArray) {
         Set<Word> words = new HashSet<>();
         for (int i = 0; i < charArray.length; i++) {

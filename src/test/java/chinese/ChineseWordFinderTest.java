@@ -45,7 +45,7 @@ class ChineseWordFinderTest {
     }
 
     @Test
-    void allCombinationsTwoOrMoreFalbackToSingle_NoFallbackTest() {
+    void allCombinationsTwoOrMoreFallbackToSingle_NoFallbackTest() {
         Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.ALL_COMBINATIONS_TWO_OR_MORE, List.of("中国人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"),
                         extractor.getWord("中国"),
@@ -54,7 +54,7 @@ class ChineseWordFinderTest {
     }
 
     @Test
-    void allCombinationsTwoOrMoreFalbackToSingle_WithFallbackTest() {
+    void allCombinationsTwoOrMoreFallbackToSingle_WithFallbackTest() {
         Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.ALL_COMBINATIONS_TWO_OR_MORE, List.of("我是人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("我"),
                         extractor.getWord("是"),
