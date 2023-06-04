@@ -111,7 +111,7 @@ public class ChineseWordFinder {
 
     private Set<Word> newFindTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, boolean includeBigrams, boolean
             includeTrigrams) {
-        Set<Word> words = new LinkedHashSet<>();
+        Set<Word> words = new LinkedHashSet<>(); // TODO: Add a test to confirm that order is preserved (might fail with a normal HashSet)
         List<List<Word>> wordsForChars = getWordList(charArray);
 
         for (List<Word> wordList: wordsForChars) {
