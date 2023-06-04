@@ -5,6 +5,7 @@ import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ChineseWordFinder {
 
@@ -50,7 +51,7 @@ public class ChineseWordFinder {
     }
 
     private Set<Word> findLongestWords(char[] charArray) {
-        Set<Word> allWords = new HashSet<Word>();
+        Set<Word> allWords = new LinkedHashSet<Word>();
         for (int i = 0; i < charArray.length - 2; i++) {
             for (int n = 3; n > 0; n--) {//assuming start at 3 TODO:make even more generic?
                 Set<Word> nGrams =  findNGrams(charArray, i, 3, n);
@@ -69,7 +70,7 @@ public class ChineseWordFinder {
     }
 
     private Set<Word> findAllCombinationsTwoOrMore(char[] charArray, boolean fallbackToSingle) {
-        Set<Word> allWords = new HashSet<>();
+        Set<Word> allWords = new LinkedHashSet<>();
         for (int i = 0; i < charArray.length - 2; i++) {
             Set<Word> bigrams = findNGrams(charArray, i, 3, 2);
             Set<Word> trigrams = findNGrams(charArray, i, 3, 3);
@@ -83,7 +84,7 @@ public class ChineseWordFinder {
     }
 
     private Set<Word> findNGrams(char[] charArray, int startIndex, int searchWindowLength, int n) {
-        Set<Word> words = new HashSet<>();
+        Set<Word> words = new LinkedHashSet<>();
         for (int i = 0; i < searchWindowLength - (n - 1); i++) {
             String nGramString = "";
             for (int j = 0; j < n; j++) {
@@ -110,7 +111,7 @@ public class ChineseWordFinder {
 
     private Set<Word> newFindTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, boolean includeBigrams, boolean
             includeTrigrams) {
-        Set<Word> words = new HashSet<>();
+        Set<Word> words = new LinkedHashSet<>();
         List<List<Word>> wordsForChars = getWordList(charArray);
 
         for (List<Word> wordList: wordsForChars) {
