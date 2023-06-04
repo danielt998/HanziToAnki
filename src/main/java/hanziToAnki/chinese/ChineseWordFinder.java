@@ -5,7 +5,6 @@ import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ChineseWordFinder {
 
@@ -17,10 +16,6 @@ public class ChineseWordFinder {
         BIGRAM_AND_MONOGRAM_ONLY_OVERLAP, // AB, BC, A, B, C
         SINGLE_CHAR_ONLY, // A, B, C
         ALL_COMBINATIONS, // ABC, AB, BC, A, B, C
-        // Note the below strategies will sometimes miss characters
-        ALL_COMBINATIONS_TWO_OR_MORE, // ABC, AB, BC - but consider no trigram and single digram, one char will get missed
-        ALL_COMBINATIONS_TWO_OR_MORE_FALLBACK_TO_SINGLE, // As above, but if no matches, fall back to A, B, C
-        LONGEST_WORDS_ONLY, // ABC, if ABC not valid, AB and BC, is those not valid, A, B, C
         // TODO: consider some strategies that look at the frequency order
     }
 
@@ -34,69 +29,19 @@ public class ChineseWordFinder {
         char[] charArray = getCharsFromList(lines);
 
         return switch (strategy) {
-            case SINGLE_CHAR_ONLY -> newFindTriBiMonograms(charArray, false, false, false, false);
-            case TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP -> newFindTriBiMonograms(charArray, true, false, true, true);
-            case TRI_BI_MONOGRAMS_USE_ALL_CHARS -> newFindTriBiMonograms(charArray, false, false, true, true);
-            case ALL_COMBINATIONS -> newFindTriBiMonograms(charArray, true, true, true, true);
-            case BIGRAM_AND_MONOGRAM_ONLY_OVERLAP -> newFindTriBiMonograms(charArray, false, true, true, false);
-            case BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP -> newFindTriBiMonograms(charArray, false, false, true, false);
-
-            ///below ar all dumb things that don't necessarily cover all chars
-            case ALL_COMBINATIONS_TWO_OR_MORE -> findAllCombinationsTwoOrMore(charArray, false);
-            case ALL_COMBINATIONS_TWO_OR_MORE_FALLBACK_TO_SINGLE -> findAllCombinationsTwoOrMore(charArray, true);
-
-            case LONGEST_WORDS_ONLY -> findLongestWords(charArray);
+            case SINGLE_CHAR_ONLY -> findTriBiMonograms(charArray, false, false, false, false);
+            case TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP -> findTriBiMonograms(charArray, true, false, true, true);
+            case TRI_BI_MONOGRAMS_USE_ALL_CHARS -> findTriBiMonograms(charArray, false, false, true, true);
+            case ALL_COMBINATIONS -> findTriBiMonograms(charArray, true, true, true, true);
+            case BIGRAM_AND_MONOGRAM_ONLY_OVERLAP -> findTriBiMonograms(charArray, false, true, true, false);
+            case BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP -> findTriBiMonograms(charArray, false, false, true, false);
             default -> throw new RuntimeException("fail");
         };
     }
 
-    private Set<Word> findLongestWords(char[] charArray) {
-        Set<Word> allWords = new LinkedHashSet<Word>();
-        for (int i = 0; i < charArray.length - 2; i++) {
-            for (int n = 3; n > 0; n--) {//assuming start at 3 TODO:make even more generic?
-                Set<Word> nGrams =  findNGrams(charArray, i, 3, n);
-                if (!nGrams.isEmpty()){
-                    allWords.addAll(nGrams);
-                    break;
-                }
-            }
-        }
-        return allWords;
-    }
-
     public Set<Word> findMonograms(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
-        return findNGrams(charArray, 0, charArray.length, 1);
-    }
-
-    private Set<Word> findAllCombinationsTwoOrMore(char[] charArray, boolean fallbackToSingle) {
-        Set<Word> allWords = new LinkedHashSet<>();
-        for (int i = 0; i < charArray.length - 2; i++) {
-            Set<Word> bigrams = findNGrams(charArray, i, 3, 2);
-            Set<Word> trigrams = findNGrams(charArray, i, 3, 3);
-            allWords.addAll(bigrams);
-            allWords.addAll(trigrams);
-            if (fallbackToSingle && allWords.isEmpty()) {
-                allWords.addAll(findNGrams(charArray, i, 3, 1));
-            }
-        }
-        return allWords;
-    }
-
-    private Set<Word> findNGrams(char[] charArray, int startIndex, int searchWindowLength, int n) {
-        Set<Word> words = new LinkedHashSet<>();
-        for (int i = 0; i < searchWindowLength - (n - 1); i++) {
-            String nGramString = "";
-            for (int j = 0; j < n; j++) {
-                nGramString = nGramString + charArray[startIndex + i + j];
-            }
-
-            Word nGram = extractor.getWord(nGramString);
-            if (nGram != null) {
-                words.add(nGram);
-            }
-        }
-        return words;
+        return findTriBiMonograms(charArray, false, false, false, false);
     }
 
     private List<Word> getNgrams(List<Word> wordList, int n) {
@@ -109,7 +54,7 @@ public class ChineseWordFinder {
         return newWordList;
     }
 
-    private Set<Word> newFindTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, boolean includeBigrams, boolean
+    private Set<Word> findTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, boolean includeBigrams, boolean
             includeTrigrams) {
         Set<Word> words = new LinkedHashSet<>(); // TODO: Add a test to confirm that order is preserved (might fail with a normal HashSet)
         List<List<Word>> wordsForChars = getWordList(charArray);
