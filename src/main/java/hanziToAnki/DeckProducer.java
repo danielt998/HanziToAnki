@@ -57,7 +57,7 @@ public class DeckProducer {
 
         ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
         if (options.useAllWords()) {
-            return wordFinder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, lines);
+            return wordFinder.findWords(ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, lines);
         }
 
         return wordFinder.findMonograms(lines);

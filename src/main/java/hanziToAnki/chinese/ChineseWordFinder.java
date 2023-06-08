@@ -9,14 +9,22 @@ import java.util.*;
 public class ChineseWordFinder {
 
     //using ABC as an example
-    public enum Strategy {
-        TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, //default - ABC, AB, BC
-        TRI_BI_MONOGRAMS_USE_ALL_CHARS, // ABC
-        BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP, // AB, BC
-        BIGRAM_AND_MONOGRAM_ONLY_OVERLAP, // AB, BC, A, B, C
-        SINGLE_CHAR_ONLY, // A, B, C
-        ALL_COMBINATIONS, // ABC, AB, BC, A, B, C
+    public enum STRATEGY {
+        TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP(0), //default - ABC, AB, BC
+        TRI_BI_MONOGRAMS_USE_ALL_CHARS(1), // ABC
+        BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP(2), // AB, BC
+        BIGRAM_AND_MONOGRAM_ONLY_OVERLAP(3), // AB, BC, A, B, C
+        SINGLE_CHAR_ONLY(4), // A, B, C
+        ALL_COMBINATIONS(5); // ABC, AB, BC, A, B, C
         // TODO: consider some strategies that look at the frequency order
+
+        private final int value;
+
+        STRATEGY(final int givenValue) {
+            value = givenValue;
+        }
+
+        public int getValue() { return value; }
     }
 
     private final DictionaryExtractor extractor;
@@ -25,7 +33,7 @@ public class ChineseWordFinder {
         this.extractor = extractor;
     }
 
-    public Set<Word> findWords(Strategy strategy, List<String> lines) {
+    public Set<Word> findWords(STRATEGY strategy, List<String> lines) {
         char[] charArray = getCharsFromList(lines);
 
         return switch (strategy) {

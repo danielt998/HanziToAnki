@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import hanziToAnki.chinese.ChineseWordFinder;
 import org.apache.commons.io.FilenameUtils;
 
 public class ArgParser {
@@ -18,6 +20,8 @@ public class ArgParser {
         System.out.println("\t-s --single-characters:\tdictHandler.Extract only single characters from the file.");
         System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
                 + " the given one.");
+        System.out.println("\t-t --strategy <strategy>\tSpecify the word finding strategy. See" +
+                " ChineseWordFinder.Strategy enum for details.");
         System.out.println("\t-o <output filename> Override the default output file name");
         System.out.println("\t-f --format <output format> Override the default output file name\n"
                 + "\t\tChoices are: " + Stream.of(OutputFormat.values())
@@ -33,6 +37,7 @@ public class ArgParser {
         boolean useWordList = false;
         boolean allWords = true;
         int hskLevelToExtract = 0;
+        ChineseWordFinder.STRATEGY strategy = 0;
 
         for (int argNo = 0; argNo < args.length - 1; argNo++) {
             switch (args[argNo]) {
@@ -46,6 +51,7 @@ public class ArgParser {
                 }
                 case "-hsk" -> hskLevelToExtract = Integer.parseInt(args[++argNo]);
                 case "-o" -> outputFileName = args[++argNo];
+                case "-t", "--strategy" -> strategy = ChineseWordFinder.STRATEGY(Integer.parseInt(args[++argNo]));
                 case "-f", "--format" -> {
                     String format = args[++argNo].toLowerCase();
                     outputFormat = switch (format) {

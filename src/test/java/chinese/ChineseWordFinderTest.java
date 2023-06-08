@@ -32,7 +32,7 @@ class ChineseWordFinderTest {
 
     @Test
     void singleCharOnlyTest() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.SINGLE_CHAR_ONLY, List.of("中国人"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.STRATEGY.SINGLE_CHAR_ONLY, List.of("中国人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中"),
                         extractor.getWord("国"),
                         extractor.getWord("人"))),
@@ -41,13 +41,13 @@ class ChineseWordFinderTest {
 
     @Test
     void triBiMonogramsStrategyReturnsTrigramAndNoBigrams() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("中国人"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS, List.of("中国人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"))), words);
     }
 
     @Test
     void defaultStrategyReturnsTrigramAndBigrams() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("中国人"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("中国人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"),
                 extractor.getWord("中国"),
                 extractor.getWord("国人"))), words);
@@ -55,19 +55,19 @@ class ChineseWordFinderTest {
 
     @Test
     void defaultStrategyReturnsMonogramPlusBigram() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("是中国"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("是中国"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国"), extractor.getWord("是"))), words);
     }
 
     @Test
     void defaultStrategyReturnsBigramPlusMonogram() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("中国是"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, List.of("中国是"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国"), extractor.getWord("是"))), words);
     }
 
     @Test
     void allCombinationsTest() {
-        Set<Word> words = finder.findWords(ChineseWordFinder.Strategy.ALL_COMBINATIONS, List.of("中国人"));
+        Set<Word> words = finder.findWords(ChineseWordFinder.STRATEGY.ALL_COMBINATIONS, List.of("中国人"));
         assertEquals(new HashSet(Arrays.asList(extractor.getWord("中国人"),
                         extractor.getWord("中国"),
                         extractor.getWord("国人"),
