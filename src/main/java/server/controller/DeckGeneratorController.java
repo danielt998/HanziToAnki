@@ -32,7 +32,7 @@ public class DeckGeneratorController {
     ) throws IOException, URISyntaxException {
 
         // TODO get from UI
-        var options = new ExportOptions(true, true, false,0,
+        var options = new ExportOptions(true, true, 0,
                 ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, OutputFormat.ANKI);
 
         try (TemporaryDirectory tempDirectory = new TemporaryDirectory()) {
