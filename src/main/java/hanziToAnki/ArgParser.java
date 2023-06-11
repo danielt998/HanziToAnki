@@ -18,6 +18,7 @@ public class ArgParser {
                 "\t-w --word-list:\tRead from an input file containing a list of words, separated"
                         + " by line breaks. Without this flag, individual characters are extracted.");
         System.out.println("\t-s --single-characters:\tdictHandler.Extract only single characters from the file.");
+        System.out.println("\t-p --pipes\tUse stdin and stdout to allow use with pipes");
         System.out.println("\t-hsk <hsk level> Remove any words in any HSK levels up to and including"
                 + " the given one.");
         System.out.println("\t-t --strategy <strategy>\tSpecify the word finding strategy. See" +
@@ -36,6 +37,7 @@ public class ArgParser {
         OutputFormat outputFormat = OutputFormat.ANKI;
         boolean useWordList = false;
         boolean allWords = true;
+        boolean pipes = false;
         int hskLevelToExclude = 0;
         ChineseWordFinder.STRATEGY strategy = ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
 
@@ -49,6 +51,7 @@ public class ArgParser {
                     allWords = false;
                     useWordList = false;
                 }
+                case "-p", "--pipes" -> pipes = true;
                 case "-hsk" -> hskLevelToExclude = Integer.parseInt(args[++argNo]);
                 case "-o" -> outputFileName = args[++argNo];
                 case "-t", "--strategy" -> strategy = ChineseWordFinder.STRATEGY.getStrategy(Integer.parseInt(args[++argNo]));
@@ -64,7 +67,7 @@ public class ArgParser {
             }
         }
 
-        var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat);
+        var options = new ExportOptions(useWordList, allWords, pipes, hskLevelToExclude, strategy, outputFormat);
         return new ParsedArgs(options, fileNames, outputFileName);
     }
 
