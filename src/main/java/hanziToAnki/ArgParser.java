@@ -32,7 +32,7 @@ public class ArgParser {
     public static ParsedArgs parseArgs(String[] args) {
         List<String> fileNames = new ArrayList<>();
         fileNames.add(args[args.length - 1]);
-        String outputFileName = FilenameUtils.removeExtension(fileNames.get(0)) + ".csv";
+        String outputFileName = FilenameUtils.removeExtension(fileNames.get(0)) + ".tsv";
         OutputFormat outputFormat = OutputFormat.ANKI;
         boolean useWordList = false;
         boolean allWords = true;
