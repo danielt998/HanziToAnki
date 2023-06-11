@@ -8,6 +8,8 @@ import hanziToAnki.OutputFormat;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import hanziToAnki.chinese.ChineseWordFinder;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,8 @@ public class DeckGeneratorController {
     ) throws IOException, URISyntaxException {
 
         // TODO get from UI
-        var options = new ExportOptions(true, true, 0, OutputFormat.ANKI);
+        var options = new ExportOptions(true, true, 0,
+                ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, OutputFormat.ANKI);
 
         try (TemporaryDirectory tempDirectory = new TemporaryDirectory()) {
 

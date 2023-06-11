@@ -36,8 +36,8 @@ public class ArgParser {
         OutputFormat outputFormat = OutputFormat.ANKI;
         boolean useWordList = false;
         boolean allWords = true;
-        int hskLevelToExtract = 0;
-        ChineseWordFinder.STRATEGY strategy = 0;
+        int hskLevelToExclude = 0;
+        ChineseWordFinder.STRATEGY strategy = ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
 
         for (int argNo = 0; argNo < args.length - 1; argNo++) {
             switch (args[argNo]) {
@@ -49,9 +49,9 @@ public class ArgParser {
                     allWords = false;
                     useWordList = false;
                 }
-                case "-hsk" -> hskLevelToExtract = Integer.parseInt(args[++argNo]);
+                case "-hsk" -> hskLevelToExclude = Integer.parseInt(args[++argNo]);
                 case "-o" -> outputFileName = args[++argNo];
-                case "-t", "--strategy" -> strategy = ChineseWordFinder.STRATEGY(Integer.parseInt(args[++argNo]));
+                case "-t", "--strategy" -> strategy = ChineseWordFinder.STRATEGY.getStrategy(Integer.parseInt(args[++argNo]));
                 case "-f", "--format" -> {
                     String format = args[++argNo].toLowerCase();
                     outputFormat = switch (format) {
@@ -64,7 +64,7 @@ public class ArgParser {
             }
         }
 
-        var options = new ExportOptions(useWordList, allWords, hskLevelToExtract, outputFormat);
+        var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat);
         return new ParsedArgs(options, fileNames, outputFileName);
     }
 

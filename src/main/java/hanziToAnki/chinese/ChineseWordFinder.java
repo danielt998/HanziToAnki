@@ -18,13 +18,20 @@ public class ChineseWordFinder {
         ALL_COMBINATIONS(5); // ABC, AB, BC, A, B, C
         // TODO: consider some strategies that look at the frequency order
 
-        private final int value;
+        private final int strategyIndex;
 
         STRATEGY(final int givenValue) {
-            value = givenValue;
+            strategyIndex = givenValue;
         }
 
-        public int getValue() { return value; }
+        public static STRATEGY getStrategy(int givenStrategy) {
+            for (STRATEGY strategy: STRATEGY.values()) {
+                if (strategy.strategyIndex == givenStrategy){
+                    return strategy;
+                }
+            }
+            throw new IllegalArgumentException("Strategy not found");
+        }
     }
 
     private final DictionaryExtractor extractor;
