@@ -1,12 +1,38 @@
 package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
+
 import hanziToAnki.Word;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 
 public class ChineseWordFinder {
+
+    //using ABC as an example
+    public enum STRATEGY {
+        TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP(0), //default - ABC, AB, BC
+        TRI_BI_MONOGRAMS_USE_ALL_CHARS(1), // ABC
+        BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP(2), // AB, BC
+        BIGRAM_AND_MONOGRAM_ONLY_OVERLAP(3), // AB, BC, A, B, C
+        SINGLE_CHAR_ONLY(4), // A, B, C
+        ALL_COMBINATIONS(5); // ABC, AB, BC, A, B, C
+        // TODO: consider some strategies that look at the frequency order
+
+        private final int strategyIndex;
+
+        STRATEGY(final int givenValue) {
+            strategyIndex = givenValue;
+        }
+
+        public static STRATEGY getStrategy(int givenStrategy) {
+            for (STRATEGY strategy: STRATEGY.values()) {
+                if (strategy.strategyIndex == givenStrategy){
+                    return strategy;
+                }
+            }
+            throw new IllegalArgumentException("Strategy not found");
+        }
+    }
 
     private final DictionaryExtractor extractor;
 
@@ -14,57 +40,95 @@ public class ChineseWordFinder {
         this.extractor = extractor;
     }
 
+    public Set<Word> findWords(STRATEGY strategy, List<String> lines) {
+        char[] charArray = getCharsFromList(lines);
+
+        return switch (strategy) {
+            case SINGLE_CHAR_ONLY -> findTriBiMonograms(charArray, false, false, false, false);
+            case TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP -> findTriBiMonograms(charArray, true, false, true, true);
+            case TRI_BI_MONOGRAMS_USE_ALL_CHARS -> findTriBiMonograms(charArray, false, false, true, true);
+            case ALL_COMBINATIONS -> findTriBiMonograms(charArray, true, true, true, true);
+            case BIGRAM_AND_MONOGRAM_ONLY_OVERLAP -> findTriBiMonograms(charArray, false, true, true, false);
+            case BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP -> findTriBiMonograms(charArray, false, false, true, false);
+            default -> throw new RuntimeException("fail");
+        };
+    }
+
     public Set<Word> findMonograms(List<String> lines) {
         char[] charArray = getCharsFromList(lines);
-        return findMonograms(charArray);
+        return findTriBiMonograms(charArray, false, false, false, false);
     }
 
-    private Set<Word> findMonograms(char[] charArray) {
-        Set<Word> words = new HashSet<>();
-        for (char c : charArray) {
-            Word word = extractor.getWord(c);
-            words.add(word);
+    private List<Word> getNgrams(List<Word> wordList, int n) {
+        List<Word> newWordList = new ArrayList<>();
+        for (Word word: wordList) {
+            if(((hanziToAnki.chinese.ChineseWord)word).simplified().length() == n) {
+                newWordList.add(word);
+            }
+        }
+        return newWordList;
+    }
+
+    private Set<Word> findTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, boolean includeBigrams, boolean
+            includeTrigrams) {
+        Set<Word> words = new LinkedHashSet<>(); // TODO: Add a test to confirm that order is preserved (might fail with a normal HashSet)
+        List<List<Word>> wordsForChars = getWordList(charArray);
+
+        for (List<Word> wordList: wordsForChars) {
+            List<Word> trigrams = getNgrams(wordList, 3);
+            List<Word> bigrams = getNgrams(wordList, 2);
+            List<Word> monograms = getNgrams(wordList, 1);
+
+            if (trigrams.size() != 0 && includeTrigrams) {
+                words.addAll(trigrams);
+                if (bigramOverlap) {
+                    words.addAll(bigrams);
+                }
+                if (monogramOverlap) {
+                    words.addAll(monograms);
+                }
+            } else if (bigrams.size() != 0 && includeTrigrams) {
+                words.addAll(bigrams);
+                if(monogramOverlap) {
+                    words.addAll(monograms);
+                }
+            } else {
+                words.addAll(monograms);
+            }
         }
         return words;
     }
 
-    public Set<Word> findMonoBiTriGrams(List<String> list) {
-        char[] charArray = getCharsFromList(list);
-        return findMonoBiTriGrams(charArray);
-    }
-
-    private Set<Word> findMonoBiTriGrams(char[] charArray) {
-        Set<Word> words = new HashSet<>();
+    private List<List<Word>> getWordList(char[] charArray) {
+        List<List<Word>> wordsForChars = new ArrayList<List<Word>>(charArray.length);
         for (int i = 0; i < charArray.length; i++) {
-            String word = "" + charArray[i];
-            boolean wordUsed = false;
-            if (i + 1 < charArray.length) {
-                Word wordTwoChars = extractor.getWord(word + charArray[i + 1]);
-                if (wordTwoChars != null) {
-                    words.add(wordTwoChars);
-                    wordUsed = true;
-                    i++;
-                }
-            }
-            //TODO:fix this
-            if (i + 2 - 1 < charArray.length) {
-                Word wordThreeChars = extractor.getWord(word + charArray[i + 1 - 1] + charArray[i + 2 - 1]);
-                if (wordThreeChars != null) {
-                    words.add(wordThreeChars);
-                    wordUsed = true;
-                    i++;
-                }
-            }
-            //if character is not used as part of any other word, we print it
-            if (!wordUsed) {
-                //TODO:consider whether this should be the behaviour and how arguments might be restructured
-                Word wordSingleChar = extractor.getWord(word);
-                if (wordSingleChar != null) {
-                    words.add(wordSingleChar);
-                }
-            }
+            wordsForChars.add(new ArrayList<>());
         }
-        return words;
+        for (int i = 0; i < charArray.length; i++) {
+            //TODO:genericise
+            //trigrams
+            if (i + 2 < charArray.length) {
+                Word wordThreeChars = (Word) extractor.getWord("" + charArray[i] + charArray[i + 1] + charArray[i + 2]);
+                if (wordThreeChars != null) {
+                    wordsForChars.get(i).add(wordThreeChars);
+                    wordsForChars.get(i + 1).add(wordThreeChars);
+                    wordsForChars.get(i + 2).add(wordThreeChars);
+                }
+            }
+
+            //bigrams
+            if (i + 1 < charArray.length) {
+                Word word = extractor.getWord("" + charArray[i] + charArray[i + 1]);
+                if (word != null) {
+                    wordsForChars.get(i).add(word);
+                    wordsForChars.get(i+1).add(word);
+                }
+            }
+
+            //monogram
+            wordsForChars.get(i).add(extractor.getWord(charArray[i]));
+        }
+        return wordsForChars;
     }
 
     private char[] getCharsFromList(List<String> lines) { // TODO refactor

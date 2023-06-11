@@ -57,7 +57,7 @@ public class DeckProducer {
 
         ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
         if (options.useAllWords()) {
-            return wordFinder.findMonoBiTriGrams(lines);
+            return wordFinder.findWords(options.strategy(), lines);
         }
 
         return wordFinder.findMonograms(lines);
