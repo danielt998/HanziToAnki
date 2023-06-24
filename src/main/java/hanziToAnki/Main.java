@@ -18,7 +18,7 @@ public class Main {
 
         var parsedArgs = ArgParser.parseArgs(args);
         for (String fileName : parsedArgs.fileNames()) {
-            var outputLines = deckProducer.produceDeck(fileName, parsedArgs.options());
+            var outputLines = deckProducer.producePlainTextDeck(fileName, parsedArgs.options());
             FileUtils.writeToFile(outputLines, parsedArgs.outputFileName());
         }
     }
