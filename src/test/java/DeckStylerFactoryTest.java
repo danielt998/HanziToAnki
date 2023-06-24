@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class DeckStylerFactoryTest {
     @Test
     void noWordsGivesEmptyDeck() {
-        PlainTextDeckStyler deckStyler = DeckStylerFactory.getDeck(null);
+        PlainTextDeckStyler deckStyler = DeckStylerFactory.getDeckStyler(null);
         Assertions.assertTrue(deckStyler instanceof EmptyDeckStyler);
     }
 }

@@ -17,7 +17,7 @@ public class DeckStylerFactory {
         }
     }
 
-    public static PlainTextDeckStyler getDeck(Set<Word> words) {
+    public static PlainTextDeckStyler getDeckStyler(Set<Word> words) {
         if (areChinese(words)) {
             return new ChineseAnkiDeckStyler();
         } else {

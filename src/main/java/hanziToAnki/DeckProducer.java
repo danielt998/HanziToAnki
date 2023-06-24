@@ -52,7 +52,7 @@ public class DeckProducer {
         excludeWords(words, exportOptions);
 
         if (exportOptions.outputFormat() == ANKI) {
-            var deckStyler = DeckStylerFactory.getDeck(words);
+            var deckStyler = DeckStylerFactory.getDeckStyler(words);
             return deckStyler.style(words);
         }
 
