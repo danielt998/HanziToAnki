@@ -46,7 +46,7 @@ public class DeckGeneratorController {
             var localFile = tempDirectory.getFileFromMultipart(uploadFile);
             var flashcardFile = tempDirectory.getFile();
 
-            var outputLines = deckProducer.produceDeck(
+            var outputLines = deckProducer.producePlainTextDeck(
                     localFile.getAbsolutePath(),
                     options
             );

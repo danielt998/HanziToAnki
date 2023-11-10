@@ -57,6 +57,7 @@ public class ArgParser {
                     outputFormat = switch (format) {
                         case "pleco" -> OutputFormat.PLECO;
                         case "memrise" -> OutputFormat.MEMRISE;
+                        case "paper" -> OutputFormat.PAPER;
                         default -> OutputFormat.ANKI;
                     };
                 }

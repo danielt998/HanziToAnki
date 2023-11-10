@@ -3,7 +3,7 @@ package chinese;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import hanziToAnki.Word;
-import hanziToAnki.chinese.ChineseDeckStyler;
+import hanziToAnki.chinese.ChineseAnkiDeckStyler;
 import hanziToAnki.chinese.ChineseWord;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +28,7 @@ public class DeckStylerTest {
         words.add(baWord);
         words.add(ayiWord);
 
-        var deckStyler = new ChineseDeckStyler();
+        var deckStyler = new ChineseAnkiDeckStyler();
         var styledLines = deckStyler.style(words);
         String deckString = String.join("\n", styledLines);
 

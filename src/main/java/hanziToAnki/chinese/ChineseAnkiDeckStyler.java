@@ -1,11 +1,11 @@
 package hanziToAnki.chinese;
 
-import hanziToAnki.DeckStyler;
+import hanziToAnki.deckStyler.PlainTextDeckStyler;
 import hanziToAnki.Word;
 import java.util.List;
 import java.util.Set;
 
-public class ChineseDeckStyler implements DeckStyler {
+public class ChineseAnkiDeckStyler implements PlainTextDeckStyler {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
 
