@@ -1,3 +1,5 @@
+#notetype:Chinese
+Hanzi	English	Pinyin
 爱	to love/to be fond of/to like/affection/to be inclined (to do sth)/to tend to (happen)/	<span class="tone4">ài</span>
 吧	(modal particle indicating suggestion or surmise)/...right?/...OK?/...I presume./	<span class="tone5">ba</span>
 阿姨	maternal aunt/step-mother/childcare worker/nursemaid/woman of similar age to one's parents (term of address used by child)/CL:個|个[ge4]/	<span class="tone1">ā</span><span class="tone2">yí</span>

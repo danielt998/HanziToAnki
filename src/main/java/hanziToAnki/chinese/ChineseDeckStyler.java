@@ -12,7 +12,7 @@ public class ChineseDeckStyler implements DeckStyler {
     private static final String CLOSING_HTML_TAG = "</span>";
     private static final List<String> HEADERS = Arrays.asList(
             "#notetype:Chinese",
-            "Hanzi	eng	pinyin"
+            "Hanzi	English	Pinyin"
     );
 
 
