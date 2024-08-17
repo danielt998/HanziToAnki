@@ -11,6 +11,11 @@ You can generate the flashcards from any Chinese input - a news article you're s
 * `-f --format <output format>` Override the default output file name
 * `-hsk <hsk level>` Remove any words in any HSK levels up to and including the given one
 
+Note if using Gradle, you can do:
+```bash
+./gradlew run --args="<whatever>"
+```
+
 Features:
 * Both simplified and traditional hanzi can be provided
 * English definitions provided by CC-CEDICT
@@ -25,7 +30,6 @@ Please feel free to make suggestions, open/comment on issues, or share code!
 # Development
 Feel free to fork, create branches, and raise PRs.
 
-To run the Spring Boot app, run `./gradlew run`.
 If you get an error about "Invalid source release", check that `echo $JAVA_HOME` points to your JDK. 
 We recommend [sdkman](https://sdkman.io/install) for setting up Java.
 
