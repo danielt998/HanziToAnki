@@ -6,10 +6,16 @@ You can generate the flashcards from any Chinese input - a news article you're s
 
 *Command-line* options:
 * `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
-* `-s --single-characters` Extract only single characters from the file
+* `-s --single-characters` Extract only single characters from the file 
+* `-hsk <hsk level>` Remove any words in any HSK levels up to and including the given one
+* `-t --strategy <strategy>` Specify the word finding strategy. See ChineseWordFinder.Strategy enum for details
 * `-o <output filename>` Override the default output file name
 * `-f --format <output format>` Override the default output file name
-* `-hsk <hsk level>` Remove any words in any HSK levels up to and including the given one
+
+Note if using Gradle, you can do:
+```bash
+./gradlew run --args="<whatever>"
+```
 
 Features:
 * Both simplified and traditional hanzi can be provided
@@ -25,7 +31,6 @@ Please feel free to make suggestions, open/comment on issues, or share code!
 # Development
 Feel free to fork, create branches, and raise PRs.
 
-To run the Spring Boot app, run `./gradlew run`.
 If you get an error about "Invalid source release", check that `echo $JAVA_HOME` points to your JDK. 
 We recommend [sdkman](https://sdkman.io/install) for setting up Java.
 
