@@ -2,12 +2,19 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DeckStyler;
 import hanziToAnki.Word;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ChineseDeckStyler implements DeckStyler {
     private static final String DELIMITER = "\t";
     private static final String CLOSING_HTML_TAG = "</span>";
+    private static final List<String> HEADERS = Arrays.asList(
+            "#notetype:Chinese",
+            "Hanzi	English	Pinyin"
+    );
+
 
     private static String getPinyinWithHtml(ChineseWord word) {
         String pinyin = word.pinyinTones();
@@ -27,9 +34,10 @@ public class ChineseDeckStyler implements DeckStyler {
     }
 
     public List<String> style(Set<Word> words) {
-        return words.stream()
+        List<String> wordList = words.stream()
                 .map(this::getWordAsDeckLine)
                 .toList();
+        return Stream.of(HEADERS, wordList).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     private String getWordAsDeckLine(Word word) {
