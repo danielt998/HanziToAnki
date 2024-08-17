@@ -3,9 +3,8 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'idea'
-    id 'org.springframework.boot' version '3.3.2'
+    id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'com.adarshr.test-logger' version '4.0.0'
 }
 
 group 'org.example'
@@ -21,7 +20,6 @@ repositories {
 dependencies {
     implementation 'org.apache.tika:tika-core:2.9.2'
     implementation 'org.jetbrains:annotations:24.1.0'
-    implementation 'junit:junit:4.13.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.10.3'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -33,7 +31,7 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-mainClassName = 'server.Application' //'GUIStarter'
+mainClassName = 'hanziToAnki.Main' //'server.Application' or 'GUIStarter' are also available
 
 compileJava {options.encoding = "UTF-8"} // overcome ü cp-1252 issues
 compileTestJava {options.encoding = "UTF-8"}
