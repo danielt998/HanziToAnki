@@ -49,8 +49,6 @@ We run a few automated checks with Github Actions in our PRs. We recommend doing
 - checking test pass
 - formatting code
 
-With the CheckStyle plugin, you can import the repository's `google_checks.xml` file. The IDE should use this for formatting checks.
-
 
 ## License 
 This project uses a modified version of the CEDICT Chinese dictionary, which can be found here:
