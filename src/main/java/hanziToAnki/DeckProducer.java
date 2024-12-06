@@ -28,7 +28,7 @@ public class DeckProducer {
 
         if (words.isEmpty() && !lines.isEmpty()) {
             System.out.println("Please provide UTF-8 encoded files -"
-                    + " other encodings (e.g. GBK, Big5 not currently supported");
+                    + " other encodings (e.g. GBK, Big5) are not currently supported");
             return new ArrayList<>();
         }
 
@@ -37,7 +37,7 @@ public class DeckProducer {
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            var deckStyler = DeckStylerFactory.getDeck(words);
+            var deckStyler = DeckStylerFactory.getDeckStyler(words, exportOptions.hanziType());
             return deckStyler.style(words);
         }
 

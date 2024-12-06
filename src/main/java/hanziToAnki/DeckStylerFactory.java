@@ -6,9 +6,9 @@ import java.util.Set;
 
 public class DeckStylerFactory {
 
-    public static DeckStyler getDeck(Set<Word> words) {
+    public static DeckStyler getDeckStyler(Set<Word> words, ChineseDeckStyler.HanziType hanziType) {
         if (areChinese(words)) {
-            return new ChineseDeckStyler();
+            return new ChineseDeckStyler(hanziType);
         } else {
             return new EmptyDeckStyler();
         }

@@ -28,7 +28,7 @@ public class DeckStylerTest {
         words.add(baWord);
         words.add(ayiWord);
 
-        var deckStyler = new ChineseDeckStyler();
+        var deckStyler = new ChineseDeckStyler(ChineseDeckStyler.HanziType.SIMP);
         var styledLines = deckStyler.style(words);
         String deckString = String.join("\n", styledLines);
 
