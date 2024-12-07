@@ -11,6 +11,7 @@ You can generate the flashcards from any Chinese input - a news article you're s
 * `-t --strategy <strategy>` Specify the word finding strategy. See ChineseWordFinder.Strategy enum for details
 * `-o <output filename>` Override the default output file name
 * `-f --format <output format>` Override the default output file name
+* `-c --char-type <char type>` Specify the type of character (TRAD, SIMP or SIMP_AND_TRAD)
 
 Note if using Gradle, you can do:
 ```bash

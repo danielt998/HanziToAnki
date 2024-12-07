@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import hanziToAnki.chinese.ChineseDeckStyler;
 import hanziToAnki.chinese.ChineseWordFinder;
 import org.apache.commons.io.FilenameUtils;
 
@@ -27,6 +28,10 @@ public class ArgParser {
                 + "\t\tChoices are: " + Stream.of(OutputFormat.values())
                 .map(OutputFormat::name)
                 .collect(Collectors.joining(", ")));
+        System.out.println("\t-c --char-type <char type> Specify the type of character\n"
+        + "\t\tChoices are: " + Stream.of(ChineseDeckStyler.HanziType.values())
+                .map(ChineseDeckStyler.HanziType::name)
+                .collect(Collectors.joining(", ")));
     }
 
     public static ParsedArgs parseArgs(String[] args) {
@@ -34,6 +39,7 @@ public class ArgParser {
         fileNames.add(args[args.length - 1]);
         String outputFileName = FilenameUtils.removeExtension(fileNames.get(0)) + ".tsv";
         OutputFormat outputFormat = OutputFormat.ANKI;
+        ChineseDeckStyler.HanziType charType = ChineseDeckStyler.HanziType.SIMP;
         boolean useWordList = false;
         boolean allWords = true;
         int hskLevelToExclude = 0;
@@ -60,11 +66,20 @@ public class ArgParser {
                         default -> OutputFormat.ANKI;
                     };
                 }
+                case "-c", "--char-type" -> {
+                    String type = args[++argNo].toLowerCase();
+                    charType = switch (type) {
+                        case "simp", "simplified" -> ChineseDeckStyler.HanziType.SIMP;
+                        case "trad", "traditional" -> ChineseDeckStyler.HanziType.TRAD;
+                        case "both" -> ChineseDeckStyler.HanziType.SIMP_AND_TRAD;
+                        default -> ChineseDeckStyler.HanziType.SIMP;
+                    };
+                }
                 default -> fileNames.add(args[argNo]); // no flag specified - so this is the output file
             }
         }
 
-        var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat);
+        var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat, charType);
         return new ParsedArgs(options, fileNames, outputFileName);
     }
 

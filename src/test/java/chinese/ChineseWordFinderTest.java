@@ -3,14 +3,15 @@ package chinese;
 import hanziToAnki.Word;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import hanziToAnki.chinese.ChineseWordFinder;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
