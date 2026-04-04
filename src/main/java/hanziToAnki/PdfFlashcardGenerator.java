@@ -124,6 +124,7 @@ public class PdfFlashcardGenerator {
         // === BACK SIDE (Bottom): Pinyin + Definition ===
         int backY = midY + PADDING;
         int backHeight = (CARD_HEIGHT - MARGIN) / 2;
+        int backBottom = y + CARD_HEIGHT - MARGIN; // Bottom boundary of card
         
         // Draw pinyin
         g2d.setFont(FONT_PINYIN);
@@ -144,10 +145,10 @@ public class PdfFlashcardGenerator {
         int defY = pinyinY + 12;
         int maxWidth = CARD_WIDTH - MARGIN - 2 * PADDING;
         
-        drawWrappedText(g2d, definition, defX, defY, maxWidth, FONT_DEFINITION);
+        drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, FONT_DEFINITION);
     }
     
-    private void drawWrappedText(Graphics2D g2d, String text, int x, int y, int maxWidth, Font font) {
+    private void drawWrappedText(Graphics2D g2d, String text, int x, int y, int maxWidth, int maxY, Font font) {
         if (text == null || text.trim().isEmpty()) {
             return;
         }
@@ -155,14 +156,15 @@ public class PdfFlashcardGenerator {
         FontMetrics fm = g2d.getFontMetrics(font);
         int lineHeight = fm.getHeight();
         int currentY = y;
-        int maxLines = 5;
-        int lineCount = 0;
         
         String[] words = text.split(" ");
         StringBuilder line = new StringBuilder();
         
         for (String word : words) {
-            if (lineCount >= maxLines) break;
+            // Check if we have space for another line
+            if (currentY + lineHeight > maxY) {
+                break;
+            }
             
             // Try adding word to current line
             String testLine = line.length() == 0 ? word : line + " " + word;
@@ -174,12 +176,13 @@ public class PdfFlashcardGenerator {
                 // Word doesn't fit on current line
                 if (line.length() > 0) {
                     // Flush current line first
-                    g2d.drawString(line.toString(), x, currentY);
-                    currentY += lineHeight;
-                    lineCount++;
+                    if (currentY + lineHeight <= maxY) {
+                        g2d.drawString(line.toString(), x, currentY);
+                        currentY += lineHeight;
+                    } else {
+                        break;
+                    }
                 }
-                
-                if (lineCount >= maxLines) break;
                 
                 // Try to fit word on next line
                 line = new StringBuilder();
@@ -192,21 +195,24 @@ public class PdfFlashcardGenerator {
                     // Word is too long, break it at character level
                     StringBuilder charBuffer = new StringBuilder();
                     for (char c : word.toCharArray()) {
-                        if (lineCount >= maxLines) break;
+                        if (currentY + lineHeight > maxY) {
+                            break;
+                        }
                         
                         String testChar = charBuffer.toString() + c;
                         if (fm.stringWidth(testChar) <= maxWidth) {
                             charBuffer.append(c);
                         } else {
                             // Flush line
-                            if (charBuffer.length() > 0) {
+                            if (charBuffer.length() > 0 && currentY + lineHeight <= maxY) {
                                 g2d.drawString(charBuffer.toString(), x, currentY);
                                 currentY += lineHeight;
-                                lineCount++;
                             }
                             charBuffer = new StringBuilder(String.valueOf(c));
                             
-                            if (lineCount >= maxLines) break;
+                            if (currentY + lineHeight > maxY) {
+                                break;
+                            }
                         }
                     }
                     line = charBuffer;
@@ -214,8 +220,8 @@ public class PdfFlashcardGenerator {
             }
         }
         
-        // Draw remaining text
-        if (line.length() > 0 && lineCount < maxLines) {
+        // Draw remaining text if it fits
+        if (line.length() > 0 && currentY + lineHeight <= maxY) {
             g2d.drawString(line.toString(), x, currentY);
         }
     }
