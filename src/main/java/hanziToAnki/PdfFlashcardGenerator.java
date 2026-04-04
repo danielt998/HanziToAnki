@@ -24,25 +24,28 @@ import org.slf4j.LoggerFactory;
 public class PdfFlashcardGenerator {
     private static final Logger logger = LoggerFactory.getLogger(PdfFlashcardGenerator.class);
     
+    // Scaling factor for higher resolution (2x = 288 DPI instead of 144 DPI)
+    private static final int SCALE = 2;
+    
     // Letter page dimensions (8.5" x 11" in points)
-    private static final int PAGE_WIDTH = 612;
-    private static final int PAGE_HEIGHT = 792;
+    private static final int PAGE_WIDTH = 612 * SCALE;
+    private static final int PAGE_HEIGHT = 792 * SCALE;
     
     // Index card dimensions: 3" x 5" in points (1 inch = 72 points)
-    private static final int CARD_WIDTH = 216;  // 3 * 72
-    private static final int CARD_HEIGHT = 360; // 5 * 72
-    private static final int MARGIN = 12;
-    private static final int PADDING = 8;
+    private static final int CARD_WIDTH = 216 * SCALE;  // 3 * 72
+    private static final int CARD_HEIGHT = 360 * SCALE; // 5 * 72
+    private static final int MARGIN = 12 * SCALE;
+    private static final int PADDING = 8 * SCALE;
     
     // Layout: 2 columns x 2 rows per page
     private static final int CARDS_PER_ROW = 2;
     private static final int ROWS_PER_PAGE = 2;
     private static final int CARDS_PER_PAGE = CARDS_PER_ROW * ROWS_PER_PAGE;
     
-    // Fonts
-    private static final Font FONT_CHINESE = new Font("SimSun", Font.PLAIN, 72);
-    private static final Font FONT_PINYIN = new Font("Arial", Font.PLAIN, 16);
-    private static final Font FONT_DEFINITION = new Font("Arial", Font.PLAIN, 11);
+    // Fonts (scaled)
+    private static final Font FONT_CHINESE = new Font("SimSun", Font.PLAIN, 72 * SCALE);
+    private static final Font FONT_PINYIN = new Font("Arial", Font.PLAIN, 16 * SCALE);
+    private static final Font FONT_DEFINITION = new Font("Arial", Font.PLAIN, 11 * SCALE);
     
     public byte[] generateFlashcardPdf(List<Word> words) throws IOException {
         // Generate images for each page
@@ -237,7 +240,8 @@ public class PdfFlashcardGenerator {
                 PDImageXObject pdImage = LosslessFactory.createFromImage(document, image);
                 
                 try (PDPageContentStream content = new PDPageContentStream(document, page)) {
-                    content.drawImage(pdImage, 0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+                    // Draw at original page size (unscaled) so PDF dimensions stay correct
+                    content.drawImage(pdImage, 0, 0, 612, 792);
                 }
             }
             
