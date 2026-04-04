@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 public class PdfFlashcardGenerator {
     private static final Logger logger = LoggerFactory.getLogger(PdfFlashcardGenerator.class);
     
-    // Scaling factor for higher resolution (2x = 288 DPI instead of 144 DPI)
-    private static final int SCALE = 2;
+    // Scaling factor for higher resolution (3x = 432 DPI instead of 144 DPI)
+    private static final int SCALE = 3;
     
     // Letter page dimensions (8.5" x 11" in points)
     private static final int PAGE_WIDTH = 612 * SCALE;
