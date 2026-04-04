@@ -1,3 +1,6 @@
 .idea
 .gradle
-buildgradle.properties
+build
+gradle.properties
+*.tsv
+chinese_union_simp.txt
