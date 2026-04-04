@@ -167,30 +167,73 @@ public class PdfFlashcardGenerator {
         int backHeight = (cardHeight - MARGIN) / 2;
         int backBottom = y + cardHeight - MARGIN; // Bottom boundary of card
         
-        // Draw pinyin with tone marks
+        // Calculate available space for pinyin and definition
+        int spacingAbovePinyin = 24;  // Space above pinyin
+        int spacingBetween = 32;      // Space between pinyin and definition
+        int spacingBelowDef = 16;     // Space below definition
+        
+        // Draw pinyin with tone marks (centered)
         g2d.setFont(fontPinyin);
         
         String pinyinWithMarks = convertPinyinToToneMarks(pinyinWithNumbers);
-        int pinyinX = x + PADDING;
-        int pinyinY = backY + 14;
+        FontMetrics pinyinFm = g2d.getFontMetrics();
+        int pinyinWidth = pinyinFm.stringWidth(pinyinWithMarks);
+        
+        // Center pinyin horizontally
+        int pinyinX = x + (cardWidth - MARGIN - pinyinWidth) / 2;
+        int pinyinY = backY + spacingAbovePinyin;
         
         if (useToneColors) {
-            drawColoredPinyin(g2d, pinyinWithNumbers, pinyinX, pinyinY, fontPinyin);
+            drawColoredPinyinCentered(g2d, pinyinWithNumbers, x, cardWidth, MARGIN, pinyinY, fontPinyin);
         } else {
             g2d.setColor(new Color(64, 64, 64)); // Dark gray
             g2d.drawString(pinyinWithMarks, pinyinX, pinyinY);
         }
         
-        // Draw definition with text wrapping - add more space between pinyin and definition
+        // Draw definition with text wrapping (centered)
         g2d.setFont(fontDefinition);
         g2d.setColor(Color.BLACK);
         
         String definition = chineseWord.definition() != null ? chineseWord.definition() : "";
-        int defX = x + PADDING;
-        int defY = pinyinY + 24;  // Increased from 12 to 24 for better spacing
+        int defY = pinyinY + spacingBetween;
         int maxWidth = cardWidth - MARGIN - 2 * PADDING;
         
-        drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, fontDefinition);
+        drawCenteredWrappedText(g2d, definition, x, cardWidth, MARGIN, defY, maxWidth, backBottom, fontDefinition);
+    }
+    
+    private void drawColoredPinyinCentered(Graphics2D g2d, String pinyinWithNumbers, int cardX, int cardWidth, int margin, int y, Font font) {
+        if (pinyinWithNumbers == null || pinyinWithNumbers.isEmpty()) {
+            return;
+        }
+        
+        String[] syllables = pinyinWithNumbers.split(" ");
+        
+        // First calculate total width
+        int totalWidth = 0;
+        FontMetrics fm = g2d.getFontMetrics();
+        for (int i = 0; i < syllables.length; i++) {
+            String marked = ToneHelper.convertNumberedSyllableToAccentedSyllable(syllables[i]);
+            totalWidth += fm.stringWidth(marked);
+            if (i < syllables.length - 1) {
+                totalWidth += fm.stringWidth(" ");
+            }
+        }
+        
+        // Center the text
+        int startX = cardX + (cardWidth - margin - totalWidth) / 2;
+        int currentX = startX;
+        
+        for (int i = 0; i < syllables.length; i++) {
+            String syllable = syllables[i];
+            int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+            g2d.setColor(ToneColor.getToneColor(tone));
+            String marked = ToneHelper.convertNumberedSyllableToAccentedSyllable(syllable);
+            g2d.drawString(marked, currentX, y);
+            currentX += fm.stringWidth(marked);
+            if (i < syllables.length - 1) {
+                currentX += fm.stringWidth(" ");
+            }
+        }
     }
     
     private int getToneFromPinyin(String pinyinWithNumbers) {
@@ -205,22 +248,90 @@ public class PdfFlashcardGenerator {
         }
     }
     
-    private void drawColoredPinyin(Graphics2D g2d, String pinyinWithNumbers, int x, int y, Font font) {
-        if (pinyinWithNumbers == null || pinyinWithNumbers.isEmpty()) {
+    private void drawCenteredWrappedText(Graphics2D g2d, String text, int cardX, int cardWidth, int margin, int y, int maxWidth, int maxY, Font font) {
+        if (text == null || text.trim().isEmpty()) {
             return;
         }
         
-        String[] syllables = pinyinWithNumbers.split(" ");
-        int currentX = x;
+        FontMetrics fm = g2d.getFontMetrics(font);
+        int lineHeight = fm.getHeight();
+        int currentY = y;
         
-        for (String syllable : syllables) {
-            int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
-            g2d.setColor(ToneColor.getToneColor(tone));
-            String marked = ToneHelper.convertNumberedSyllableToAccentedSyllable(syllable);
-            g2d.drawString(marked, currentX, y);
+        String[] words = text.split(" ");
+        StringBuilder line = new StringBuilder();
+        
+        for (String word : words) {
+            // Check if we have space for another line
+            if (currentY + lineHeight > maxY) {
+                break;
+            }
             
-            FontMetrics fm = g2d.getFontMetrics();
-            currentX += fm.stringWidth(marked) + fm.stringWidth(" ");
+            // Try adding word to current line
+            String testLine = line.length() == 0 ? word : line + " " + word;
+            int testWidth = fm.stringWidth(testLine);
+            
+            if (testWidth <= maxWidth) {
+                line = new StringBuilder(testLine);
+            } else {
+                // Word doesn't fit on current line
+                if (line.length() > 0) {
+                    // Flush current line (centered)
+                    if (currentY + lineHeight <= maxY) {
+                        String lineStr = line.toString();
+                        int lineWidth = fm.stringWidth(lineStr);
+                        int lineX = cardX + (cardWidth - margin - lineWidth) / 2;
+                        g2d.drawString(lineStr, lineX, currentY);
+                        currentY += lineHeight;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Try to fit word on next line
+                line = new StringBuilder();
+                int wordWidth = fm.stringWidth(word);
+                
+                if (wordWidth <= maxWidth) {
+                    // Word fits on its own line
+                    line.append(word);
+                } else {
+                    // Word is too long, break it at character level
+                    StringBuilder charBuffer = new StringBuilder();
+                    for (char c : word.toCharArray()) {
+                        if (currentY + lineHeight > maxY) {
+                            break;
+                        }
+                        
+                        String testChar = charBuffer.toString() + c;
+                        if (fm.stringWidth(testChar) <= maxWidth) {
+                            charBuffer.append(c);
+                        } else {
+                            // Flush line
+                            if (charBuffer.length() > 0 && currentY + lineHeight <= maxY) {
+                                String charLine = charBuffer.toString();
+                                int charLineWidth = fm.stringWidth(charLine);
+                                int charLineX = cardX + (cardWidth - margin - charLineWidth) / 2;
+                                g2d.drawString(charLine, charLineX, currentY);
+                                currentY += lineHeight;
+                            }
+                            charBuffer = new StringBuilder(String.valueOf(c));
+                            
+                            if (currentY + lineHeight > maxY) {
+                                break;
+                            }
+                        }
+                    }
+                    line = charBuffer;
+                }
+            }
+        }
+        
+        // Draw remaining text if it fits (centered)
+        if (line.length() > 0 && currentY + lineHeight <= maxY) {
+            String remaining = line.toString();
+            int remainingWidth = fm.stringWidth(remaining);
+            int remainingX = cardX + (cardWidth - margin - remainingWidth) / 2;
+            g2d.drawString(remaining, remainingX, currentY);
         }
     }
     
