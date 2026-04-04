@@ -136,7 +136,7 @@ public class ArgParser {
             outputFileName = outputFileName.replace(".tsv", ".pdf");
         }
 
-        var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat, charType);
+        ExportOptions options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat, charType);
         return new ParsedArgs(options, fileNames, outputFileName, cardStyle, useToneColors);
     }
 

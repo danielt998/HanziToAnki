@@ -1,8 +1,11 @@
 package hanziToAnki.chinese;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ToneHelper {
+    private static final Logger logger = LoggerFactory.getLogger(ToneHelper.class);
 
     private static final Map<Character, char[]> lettersWithToneMarks = Map.of(
             'a', new char[]{'ā', 'á', 'ǎ', 'à', 'a'},
@@ -14,11 +17,11 @@ public class ToneHelper {
 
     private static char getCharWithTone(char originalChar, int tone) {
         if (tone < 1 || tone > 5) {
-            System.err.println("An unknown tone was encountered: " + tone + "defaulting to untoned syllable");
+            logger.warn("Unknown tone encountered: {}, defaulting to untoned syllable", tone);
             return originalChar;
         }
         if (!isCharTonable(Character.toLowerCase(originalChar))) {
-            System.err.println("Character cannot be toned: " + originalChar);
+            logger.warn("Character cannot be toned: {}", originalChar);
             return originalChar;
         }
         if (tone == 5) {

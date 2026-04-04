@@ -101,9 +101,9 @@ public class ChineseWordFinder {
         return newWordList;
     }
 
-    private Set<Word> findTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, boolean includeBigrams, boolean
-            includeTrigrams) {
-        Set<Word> words = new LinkedHashSet<>(); // TODO: Add a test to confirm that order is preserved (might fail with a normal HashSet)
+    private Set<Word> findTriBiMonograms(char[] charArray, boolean bigramOverlap, boolean monogramOverlap, 
+            boolean includeBigrams, boolean includeTrigrams) {
+        Set<Word> words = new LinkedHashSet<>();
         List<List<Word>> wordsForChars = getWordList(charArray);
 
         for (List<Word> wordList: wordsForChars) {
@@ -111,7 +111,7 @@ public class ChineseWordFinder {
             List<Word> bigrams = getNgrams(wordList, 2);
             List<Word> monograms = getNgrams(wordList, 1);
 
-            if (trigrams.size() != 0 && includeTrigrams) {
+            if (!trigrams.isEmpty() && includeTrigrams) {
                 words.addAll(trigrams);
                 if (bigramOverlap) {
                     words.addAll(bigrams);
@@ -119,9 +119,9 @@ public class ChineseWordFinder {
                 if (monogramOverlap) {
                     words.addAll(monograms);
                 }
-            } else if (bigrams.size() != 0 && includeTrigrams) {
+            } else if (!bigrams.isEmpty() && includeTrigrams) {
                 words.addAll(bigrams);
-                if(monogramOverlap) {
+                if (monogramOverlap) {
                     words.addAll(monograms);
                 }
             } else {
@@ -138,8 +138,7 @@ public class ChineseWordFinder {
         }
         
         java.util.stream.IntStream.range(0, charArray.length).forEach(i -> {
-            //TODO:genericise
-            //trigrams
+            // Check for trigrams
             if (i + 2 < charArray.length) {
                 extractor.getWord("" + charArray[i] + charArray[i + 1] + charArray[i + 2])
                         .ifPresent(wordThreeChars -> {
@@ -164,18 +163,13 @@ public class ChineseWordFinder {
         return wordsForChars;
     }
 
-    private char[] getCharsFromList(List<String> lines) { // TODO refactor
-        StringBuilder fullString = new StringBuilder();
-        for (String line : lines) {
-            fullString.append(line);
-        }
-        char[] allChars = fullString.toString().toCharArray();
-        StringBuilder chineseCharsOnly = new StringBuilder();
-        for (char c : allChars) {
-            if (Character.UnicodeScript.of(c) == Character.UnicodeScript.HAN) {
-                chineseCharsOnly.append(c);
-            }
-        }
-        return chineseCharsOnly.toString().toCharArray();
+    private char[] getCharsFromList(List<String> lines) {
+        String fullString = String.join("", lines);
+        return fullString.chars()
+                .filter(c -> Character.UnicodeScript.of(c) == Character.UnicodeScript.HAN)
+                .mapToObj(c -> String.valueOf((char) c))
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString()
+                .toCharArray();
     }
 }

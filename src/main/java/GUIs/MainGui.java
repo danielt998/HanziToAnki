@@ -2,7 +2,6 @@ package GUIs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,17 +9,17 @@ import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
 public class MainGui extends Application {
-    public static Stage stage;
+    private static Stage stage;
 
     public final void main(String args) {
         Application.launch(args);
     }
 
-    public final void initialiseDictionary() throws URISyntaxException {
-//        ChineseDictionaryExtractor.readInDictionary();
+    public final void initialiseDictionary() {
+        // Dictionary initialization removed - no longer needed for GUI
     }
 
-    public void start(Stage givenStage) throws URISyntaxException, IOException {
+    public void start(Stage givenStage) throws IOException {
         stage = givenStage;
         this.initialiseDictionary();
         FXMLLoader loader = new FXMLLoader();

@@ -15,10 +15,9 @@ public class DeckStylerFactory {
     }
 
     private static boolean areChinese(Set<Word> words) {
-        try {
-            return words.stream().allMatch(w -> w instanceof ChineseWord);
-        } catch (NullPointerException e) {
-            return false; // hack for now, until we have Word interface and implementations
+        if (words == null || words.isEmpty()) {
+            return false;
         }
+        return words.stream().allMatch(w -> w instanceof ChineseWord);
     }
 }

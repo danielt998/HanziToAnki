@@ -9,11 +9,11 @@ import hanziToAnki.OutputFormat;
 import hanziToAnki.chinese.ChineseDeckStyler;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
 
 import hanziToAnki.chinese.ChineseWordFinder;
+import java.io.File;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,7 +38,7 @@ public class DeckGeneratorController {
             @RequestParam(value = "format", defaultValue = "ANKI") String formatStr,
             @RequestParam(value = "cardStyle", defaultValue = "INDEX_CARD_3x5") String cardStyleStr,
             @RequestParam(value = "toneColors", defaultValue = "true") boolean toneColors
-    ) throws IOException, URISyntaxException {
+    ) throws IOException {
 
         // Validate that either file or text is provided
         if ((uploadFile == null || uploadFile.isEmpty()) && (textInput == null || textInput.trim().isEmpty())) {
@@ -61,7 +61,7 @@ public class DeckGeneratorController {
         ChineseDeckStyler.HanziType hanziType = ChineseDeckStyler.HanziType.valueOf(hanziTypeStr);
 
         // useWordList=false to extract words from text (not treat lines as whole words)
-        var options = new ExportOptions(false, true, hskLevel, strategy, outputFormat, hanziType);
+        ExportOptions options = new ExportOptions(false, true, hskLevel, strategy, outputFormat, hanziType);
 
         try (TemporaryDirectory tempDirectory = new TemporaryDirectory()) {
 
@@ -70,10 +70,10 @@ public class DeckGeneratorController {
 
             DeckProducer deckProducer = new DeckProducer(extractor);
 
-            var inputFile = (uploadFile != null && !uploadFile.isEmpty()) 
+            File inputFile = (uploadFile != null && !uploadFile.isEmpty()) 
                     ? tempDirectory.getFileFromMultipart(uploadFile)
                     : tempDirectory.getFileFromText(textInput);
-            var flashcardFile = tempDirectory.getFile();
+            File flashcardFile = tempDirectory.getFile();
 
             // Parse card style
             CardStyle cardStyle;
@@ -96,7 +96,7 @@ public class DeckGeneratorController {
                 contentType = "application/pdf";
             } else {
                 // Generate text-based formats (ANKI, PLECO, MEMRISE)
-                var outputLines = deckProducer.produceDeck(
+                List<String> outputLines = deckProducer.produceDeck(
                         inputFile.getAbsolutePath(),
                         options
                 );
