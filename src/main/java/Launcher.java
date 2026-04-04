@@ -1,5 +1,6 @@
 import hanziToAnki.Main;
 import server.Application;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 /**
@@ -10,7 +11,7 @@ import java.net.URISyntaxException;
  *   java -jar HanziToAnki-1.0.0.jar input.txt    # Run CLI with file
  */
 public class Launcher {
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(String[] args) throws URISyntaxException, IOException {
         if (args.length > 0 && args[0].equals("--api")) {
             // Start API server (no args passed to Spring Boot)
             String[] springArgs = new String[args.length - 1];

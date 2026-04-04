@@ -92,7 +92,7 @@ public class FileUtils {
         try {
             Files.write(Paths.get(outputFilename), lines);
             logger.info("Successfully wrote {} lines to {}", lines.size(), outputFilename);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error writing to file: {}", outputFilename, e);
         }
     }

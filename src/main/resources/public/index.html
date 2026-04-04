@@ -452,7 +452,8 @@
                     <div class="form-section">
                         <label for="strategy">Segmentation Strategy</label>
                         <select id="strategy" name="strategy" required>
-                            <option value="0">Balanced (Default)</option>
+                            <option value="6" selected>Smart Segmentation (Default - ANSJ)</option>
+                            <option value="0">Balanced (N-gram)</option>
                             <option value="1">All Combinations</option>
                             <option value="4">Single Characters Only</option>
                             <option value="2">Bigram + Monogram (No Overlap)</option>
@@ -477,11 +478,41 @@
                     <!-- Format -->
                     <div class="form-section">
                         <label for="format">Output Format</label>
-                        <select id="format" name="format" required>
+                        <select id="format" name="format" required onchange="togglePdfOptions()">
                             <option value="ANKI">Anki TSV</option>
                             <option value="PLECO">Pleco</option>
                             <option value="MEMRISE">Memrise</option>
+                            <option value="PDF_FLASHCARDS">📄 Paper Flashcards (PDF)</option>
                         </select>
+                    </div>
+                </div>
+
+                <!-- PDF-specific options (hidden by default) -->
+                <div id="pdfOptions" style="display: none;">
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                        <label style="color: var(--text-secondary); font-size: 13px; font-weight: 600; margin-bottom: 12px; display: block;">
+                            📋 Paper Flashcard Options
+                        </label>
+                        <div class="options-grid">
+                            <!-- Card Style -->
+                            <div class="form-section">
+                                <label for="cardStyle">Card Size</label>
+                                <select id="cardStyle" name="cardStyle">
+                                    <option value="INDEX_CARD_3x5" selected>3×5 Index Card (Standard)</option>
+                                    <option value="BUSINESS_CARD">Business Card</option>
+                                    <option value="POSTCARD">Postcard</option>
+                                </select>
+                            </div>
+
+                            <!-- Tone Colors -->
+                            <div class="form-section">
+                                <label for="toneColors">Tone Colors</label>
+                                <select id="toneColors" name="toneColors">
+                                    <option value="true" selected>Enabled (Anki Colors)</option>
+                                    <option value="false">Disabled (Grayscale)</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -511,6 +542,17 @@
     </div>
 
     <script>
+        // Toggle PDF-specific options based on format selection
+        function togglePdfOptions() {
+            const format = document.getElementById('format').value;
+            const pdfOptions = document.getElementById('pdfOptions');
+            if (format === 'PDF_FLASHCARDS') {
+                pdfOptions.style.display = 'block';
+            } else {
+                pdfOptions.style.display = 'none';
+            }
+        }
+
         // Sync sidebar textarea with form input
         const sidebarTextInput = document.getElementById('sidebarTextInput');
         const textInput = document.getElementById('textInput');

@@ -31,6 +31,12 @@ dependencies {
     // SLF4J API for application code
     implementation 'org.slf4j:slf4j-api:2.0.11'
     
+    // ANSJ for Chinese word segmentation (Jieba-like algorithms)
+    implementation 'org.ansj:ansj_seg:5.1.6'
+    
+    // PDFBox for PDF generation (flashcards)
+    implementation 'org.apache.pdfbox:pdfbox:3.0.1'
+    
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
 }
 

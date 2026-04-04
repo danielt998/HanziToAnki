@@ -1,5 +1,6 @@
 package server.controller;
 
+import hanziToAnki.CardStyle;
 import hanziToAnki.DeckProducer;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.ExportOptions;
@@ -10,6 +11,7 @@ import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.List;
 
 import hanziToAnki.chinese.ChineseWordFinder;
 import org.springframework.http.HttpHeaders;
@@ -30,10 +32,12 @@ public class DeckGeneratorController {
     public ResponseEntity<byte[]> generate(
             @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile,
             @RequestParam(value = "textInput", required = false) String textInput,
-            @RequestParam(value = "strategy", defaultValue = "0") int strategyIndex,
+            @RequestParam(value = "strategy", defaultValue = "6") int strategyIndex,
             @RequestParam(value = "hskLevel", defaultValue = "0") int hskLevel,
             @RequestParam(value = "hanziType", defaultValue = "SIMP") String hanziTypeStr,
-            @RequestParam(value = "format", defaultValue = "ANKI") String formatStr
+            @RequestParam(value = "format", defaultValue = "ANKI") String formatStr,
+            @RequestParam(value = "cardStyle", defaultValue = "INDEX_CARD_3x5") String cardStyleStr,
+            @RequestParam(value = "toneColors", defaultValue = "true") boolean toneColors
     ) throws IOException, URISyntaxException {
 
         // Validate that either file or text is provided
@@ -49,7 +53,8 @@ public class DeckGeneratorController {
             case 3 -> ChineseWordFinder.STRATEGY.BIGRAM_AND_MONOGRAM_ONLY_OVERLAP;
             case 4 -> ChineseWordFinder.STRATEGY.SINGLE_CHAR_ONLY;
             case 5 -> ChineseWordFinder.STRATEGY.ALL_COMBINATIONS;
-            default -> ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
+            case 6 -> ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
+            default -> ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
         };
 
         OutputFormat outputFormat = OutputFormat.valueOf(formatStr);
@@ -70,19 +75,41 @@ public class DeckGeneratorController {
                     : tempDirectory.getFileFromText(textInput);
             var flashcardFile = tempDirectory.getFile();
 
-            var outputLines = deckProducer.produceDeck(
-                    inputFile.getAbsolutePath(),
-                    options
-            );
-            FileUtils.writeToFile(outputLines, flashcardFile.getAbsolutePath());
+            // Parse card style
+            CardStyle cardStyle;
+            try {
+                cardStyle = CardStyle.valueOf(cardStyleStr);
+            } catch (IllegalArgumentException e) {
+                cardStyle = CardStyle.INDEX_CARD_3x5;
+            }
 
-            // Read file content before the try-with-resources closes the temporary directory
-            byte[] fileContent = Files.readAllBytes(flashcardFile.toPath());
+            // Handle different output formats
+            byte[] fileContent;
+            String fileExtension;
+            String contentType;
+            
+            if (outputFormat == OutputFormat.PDF_FLASHCARDS) {
+                // Generate PDF flashcards
+                List<String> inputLines = FileUtils.fileToStringArray(inputFile.getAbsolutePath());
+                fileContent = deckProducer.producePdfFlashcards(inputLines, options, cardStyle, toneColors);
+                fileExtension = "pdf";
+                contentType = "application/pdf";
+            } else {
+                // Generate text-based formats (ANKI, PLECO, MEMRISE)
+                var outputLines = deckProducer.produceDeck(
+                        inputFile.getAbsolutePath(),
+                        options
+                );
+                FileUtils.writeToFile(outputLines, flashcardFile.getAbsolutePath());
+                fileContent = Files.readAllBytes(flashcardFile.toPath());
+                fileExtension = "tsv";
+                contentType = "text/plain";
+            }
 
             HttpHeaders header = new HttpHeaders();
-            header.setContentType(MediaType.TEXT_PLAIN);
+            header.setContentType(MediaType.parseMediaType(contentType));
             header.set(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=" + "flashcards.tsv");
+                    "attachment; filename=" + "flashcards." + fileExtension);
             header.setContentLength(fileContent.length);
 
             return new ResponseEntity<>(fileContent, header, HttpStatus.OK);

@@ -40,7 +40,14 @@ java -jar build/libs/HanziToAnki-1.0.0.jar input.txt -f ANKI -o output.anki
 * `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
 * `-s --single-characters` Extract only single characters from the file 
 * `-hsk <hsk level>` Remove any words in any HSK levels up to and including the given one
-* `-t --strategy <strategy>` Specify the word finding strategy. See ChineseWordFinder.Strategy enum for details
+* `-t --strategy <strategy>` Specify the word finding strategy. Options:
+  - `6` - ANSJ_SEGMENTATION (default): Intelligent word segmentation using ANSJ (Jieba-like)
+  - `0` - TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP: 3-char, 2-char, 1-char combinations
+  - `1` - TRI_BI_MONOGRAMS_USE_ALL_CHARS: Only 3-char combinations
+  - `2` - BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP: 2-char and 1-char, no overlap
+  - `3` - BIGRAM_AND_MONOGRAM_ONLY_OVERLAP: 2-char and 1-char with overlap
+  - `4` - SINGLE_CHAR_ONLY: Single characters only
+  - `5` - ALL_COMBINATIONS: All possible n-gram combinations
 * `-o <output filename>` Override the default output file name
 * `-f --format <output format>` Override the default output file name (ANKI, PLECO, MEMRISE)
 * `-c --char-type <char type>` Specify the type of character (TRAD, SIMP or SIMP_AND_TRAD)
@@ -93,7 +100,7 @@ Run all tests:
 The project includes:
 - 40+ unit tests for core functionality
 - 15+ integration tests for output validation with modern Chinese fixtures
-- Tests for all 4 word segmentation strategies
+- Tests for all 7 word segmentation strategies
 
 You can also run tests with IntelliJ or other IDEs.
 

@@ -5,6 +5,8 @@ import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 
 import java.util.*;
+import org.ansj.splitWord.analysis.ToAnalysis;
+import org.ansj.domain.Term;
 
 public class ChineseWordFinder {
 
@@ -15,7 +17,8 @@ public class ChineseWordFinder {
         BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP(2), // AB, BC
         BIGRAM_AND_MONOGRAM_ONLY_OVERLAP(3), // AB, BC, A, B, C
         SINGLE_CHAR_ONLY(4), // A, B, C
-        ALL_COMBINATIONS(5); // ABC, AB, BC, A, B, C
+        ALL_COMBINATIONS(5), // ABC, AB, BC, A, B, C
+        ANSJ_SEGMENTATION(6); // Use ANSJ library for word segmentation
         // TODO: consider some strategies that look at the frequency order
 
         private final int strategyIndex;
@@ -50,8 +53,37 @@ public class ChineseWordFinder {
             case ALL_COMBINATIONS -> findTriBiMonograms(charArray, true, true, true, true);
             case BIGRAM_AND_MONOGRAM_ONLY_OVERLAP -> findTriBiMonograms(charArray, false, true, true, false);
             case BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP -> findTriBiMonograms(charArray, false, false, true, false);
+            case ANSJ_SEGMENTATION -> findWordsUsingAnsj(lines);
             default -> throw new RuntimeException("fail");
         };
+    }
+
+    private Set<Word> findWordsUsingAnsj(List<String> lines) {
+        Set<Word> words = new LinkedHashSet<>();
+        String fullText = String.join("", lines);
+        
+        try {
+            List<Term> terms = ToAnalysis.parse(fullText).getTerms();
+            for (Term term : terms) {
+                String wordStr = term.getName();
+                if (isChineseOnly(wordStr)) {
+                    extractor.getWord(wordStr).ifPresent(words::add);
+                }
+            }
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new RuntimeException("ANSJ segmentation failed", e);
+        }
+        
+        return words;
+    }
+
+    private boolean isChineseOnly(String word) {
+        for (char c : word.toCharArray()) {
+            if (Character.UnicodeScript.of(c) != Character.UnicodeScript.HAN) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Set<Word> findMonograms(List<String> lines) {
