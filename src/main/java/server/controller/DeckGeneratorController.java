@@ -1,5 +1,6 @@
 package server.controller;
 
+import hanziToAnki.CardStyle;
 import hanziToAnki.DeckProducer;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.ExportOptions;
@@ -34,7 +35,8 @@ public class DeckGeneratorController {
             @RequestParam(value = "strategy", defaultValue = "6") int strategyIndex,
             @RequestParam(value = "hskLevel", defaultValue = "0") int hskLevel,
             @RequestParam(value = "hanziType", defaultValue = "SIMP") String hanziTypeStr,
-            @RequestParam(value = "format", defaultValue = "ANKI") String formatStr
+            @RequestParam(value = "format", defaultValue = "ANKI") String formatStr,
+            @RequestParam(value = "cardStyle", defaultValue = "INDEX_CARD_3x5") String cardStyleStr
     ) throws IOException, URISyntaxException {
 
         // Validate that either file or text is provided
@@ -72,6 +74,14 @@ public class DeckGeneratorController {
                     : tempDirectory.getFileFromText(textInput);
             var flashcardFile = tempDirectory.getFile();
 
+            // Parse card style
+            CardStyle cardStyle;
+            try {
+                cardStyle = CardStyle.valueOf(cardStyleStr);
+            } catch (IllegalArgumentException e) {
+                cardStyle = CardStyle.INDEX_CARD_3x5;
+            }
+
             // Handle different output formats
             byte[] fileContent;
             String fileExtension;
@@ -80,7 +90,7 @@ public class DeckGeneratorController {
             if (outputFormat == OutputFormat.PDF_FLASHCARDS) {
                 // Generate PDF flashcards
                 List<String> inputLines = FileUtils.fileToStringArray(inputFile.getAbsolutePath());
-                fileContent = deckProducer.producePdfFlashcards(inputLines, options);
+                fileContent = deckProducer.producePdfFlashcards(inputLines, options, cardStyle);
                 fileExtension = "pdf";
                 contentType = "application/pdf";
             } else {

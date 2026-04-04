@@ -32,21 +32,43 @@ public class PdfFlashcardGenerator {
     private static final int PAGE_WIDTH = 612 * SCALE;
     private static final int PAGE_HEIGHT = 792 * SCALE;
     
-    // Index card dimensions: 3" x 5" in points (1 inch = 72 points)
-    private static final int CARD_WIDTH = 216 * SCALE;  // 3 * 72
-    private static final int CARD_HEIGHT = 360 * SCALE; // 5 * 72
     private static final int MARGIN = 12 * SCALE;
     private static final int PADDING = 8 * SCALE;
     
-    // Layout: 2 columns x 2 rows per page
-    private static final int CARDS_PER_ROW = 2;
-    private static final int ROWS_PER_PAGE = 2;
-    private static final int CARDS_PER_PAGE = CARDS_PER_ROW * ROWS_PER_PAGE;
+    // Font size multipliers (relative to card style)
+    private static final float PINYIN_SIZE_RATIO = 0.22f;      // 22% of Chinese font size
+    private static final float DEFINITION_SIZE_RATIO = 0.15f;  // 15% of Chinese font size
     
-    // Fonts (scaled)
-    private static final Font FONT_CHINESE = new Font("SimSun", Font.PLAIN, 72 * SCALE);
-    private static final Font FONT_PINYIN = new Font("Arial", Font.PLAIN, 16 * SCALE);
-    private static final Font FONT_DEFINITION = new Font("Arial", Font.PLAIN, 11 * SCALE);
+    private final CardStyle cardStyle;
+    private final int cardWidth;
+    private final int cardHeight;
+    private final int cardsPerRow;
+    private final int cardsPerCol;
+    private final Font fontChinese;
+    private final Font fontPinyin;
+    private final Font fontDefinition;
+    
+    public PdfFlashcardGenerator() {
+        this(CardStyle.INDEX_CARD_3x5);
+    }
+    
+    public PdfFlashcardGenerator(CardStyle cardStyle) {
+        this.cardStyle = cardStyle;
+        this.cardWidth = cardStyle.widthPoints() * SCALE;
+        this.cardHeight = cardStyle.heightPoints() * SCALE;
+        
+        int[] cardsPerPage = cardStyle.getCardsPerPage();
+        this.cardsPerRow = cardsPerPage[0];
+        this.cardsPerCol = cardsPerPage[1];
+        
+        int chineseFontSize = cardStyle.chineseFontSize() * SCALE;
+        int pinyinFontSize = Math.max(8 * SCALE, (int)(chineseFontSize * PINYIN_SIZE_RATIO));
+        int definitionFontSize = Math.max(6 * SCALE, (int)(chineseFontSize * DEFINITION_SIZE_RATIO));
+        
+        this.fontChinese = new Font("SimSun", Font.PLAIN, chineseFontSize);
+        this.fontPinyin = new Font("Arial", Font.PLAIN, pinyinFontSize);
+        this.fontDefinition = new Font("Arial", Font.PLAIN, definitionFontSize);
+    }
     
     public byte[] generateFlashcardPdf(List<Word> words) throws IOException {
         // Generate images for each page
@@ -60,7 +82,8 @@ public class PdfFlashcardGenerator {
         List<BufferedImage> pages = new ArrayList<>();
         
         int totalCards = words.size();
-        int totalPages = (totalCards + CARDS_PER_PAGE - 1) / CARDS_PER_PAGE;
+        int cardsPerPageCount = cardsPerRow * cardsPerCol;
+        int totalPages = (totalCards + cardsPerPageCount - 1) / cardsPerPageCount;
         
         for (int pageNum = 0; pageNum < totalPages; pageNum++) {
             BufferedImage pageImage = new BufferedImage(PAGE_WIDTH, PAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -74,10 +97,10 @@ public class PdfFlashcardGenerator {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             
-            int cardIndex = pageNum * CARDS_PER_PAGE;
+            int cardIndex = pageNum * cardsPerPageCount;
             
-            for (int row = 0; row < ROWS_PER_PAGE; row++) {
-                for (int col = 0; col < CARDS_PER_ROW; col++) {
+            for (int row = 0; row < cardsPerCol; row++) {
+                for (int col = 0; col < cardsPerRow; col++) {
                     if (cardIndex < totalCards) {
                         Word word = words.get(cardIndex);
                         drawCard(g2d, word, col, row);
@@ -90,7 +113,7 @@ public class PdfFlashcardGenerator {
             pages.add(pageImage);
         }
         
-        logger.info("Generated {} page images for {} flashcards", pages.size(), totalCards);
+        logger.info("Generated {} page images for {} flashcards using {}", pages.size(), totalCards, cardStyle.displayName());
         return pages;
     }
     
@@ -98,40 +121,40 @@ public class PdfFlashcardGenerator {
         ChineseWord chineseWord = (ChineseWord) word;
         
         // Calculate card position
-        int x = col * CARD_WIDTH + MARGIN;
-        int y = row * CARD_HEIGHT + MARGIN;
+        int x = col * cardWidth + MARGIN;
+        int y = row * cardHeight + MARGIN;
         
         // Draw card border
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(1.5f));
-        g2d.drawRect(x, y, CARD_WIDTH - MARGIN, CARD_HEIGHT - MARGIN);
+        g2d.drawRect(x, y, cardWidth - MARGIN, cardHeight - MARGIN);
         
         // Draw dividing line (horizontal)
-        int midY = y + (CARD_HEIGHT - MARGIN) / 2;
-        g2d.drawLine(x, midY, x + CARD_WIDTH - MARGIN, midY);
+        int midY = y + (cardHeight - MARGIN) / 2;
+        g2d.drawLine(x, midY, x + cardWidth - MARGIN, midY);
         
         // === FRONT SIDE (Top): Hanzi ===
         int frontY = y + PADDING;
-        int frontHeight = (CARD_HEIGHT - MARGIN) / 2;
+        int frontHeight = (cardHeight - MARGIN) / 2;
         
-        g2d.setFont(FONT_CHINESE);
+        g2d.setFont(fontChinese);
         g2d.setColor(Color.BLACK);
         
         String hanzi = chineseWord.simplified();
         FontMetrics fm = g2d.getFontMetrics();
         int hanziWidth = fm.stringWidth(hanzi);
-        int hanziX = x + (CARD_WIDTH - MARGIN - hanziWidth) / 2;
+        int hanziX = x + (cardWidth - MARGIN - hanziWidth) / 2;
         int hanziY = frontY + (frontHeight - fm.getHeight()) / 2 + fm.getAscent();
         
         g2d.drawString(hanzi, hanziX, hanziY);
         
         // === BACK SIDE (Bottom): Pinyin + Definition ===
         int backY = midY + PADDING;
-        int backHeight = (CARD_HEIGHT - MARGIN) / 2;
-        int backBottom = y + CARD_HEIGHT - MARGIN; // Bottom boundary of card
+        int backHeight = (cardHeight - MARGIN) / 2;
+        int backBottom = y + cardHeight - MARGIN; // Bottom boundary of card
         
         // Draw pinyin with tone marks
-        g2d.setFont(FONT_PINYIN);
+        g2d.setFont(fontPinyin);
         g2d.setColor(new Color(64, 64, 64)); // Dark gray
         
         String pinyinWithNumbers = chineseWord.pinyinTones() != null ? chineseWord.pinyinTones() : "";
@@ -142,15 +165,15 @@ public class PdfFlashcardGenerator {
         g2d.drawString(pinyinWithMarks, pinyinX, pinyinY);
         
         // Draw definition with text wrapping - add more space between pinyin and definition
-        g2d.setFont(FONT_DEFINITION);
+        g2d.setFont(fontDefinition);
         g2d.setColor(Color.BLACK);
         
         String definition = chineseWord.definition() != null ? chineseWord.definition() : "";
         int defX = x + PADDING;
         int defY = pinyinY + 24;  // Increased from 12 to 24 for better spacing
-        int maxWidth = CARD_WIDTH - MARGIN - 2 * PADDING;
+        int maxWidth = cardWidth - MARGIN - 2 * PADDING;
         
-        drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, FONT_DEFINITION);
+        drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, fontDefinition);
     }
     
     private String convertPinyinToToneMarks(String pinyinWithNumbers) {

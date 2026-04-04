@@ -44,6 +44,7 @@ public class ArgParser {
         boolean allWords = true;
         int hskLevelToExclude = 0;
         ChineseWordFinder.STRATEGY strategy = ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
+        CardStyle cardStyle = CardStyle.INDEX_CARD_3x5;
 
         for (int argNo = 0; argNo < args.length - 1; argNo++) {
             switch (args[argNo]) {
@@ -108,14 +109,27 @@ public class ArgParser {
                         System.out.println("Error: -c/--char-type requires a type argument");
                     }
                 }
+                case "--card-style" -> {
+                    try {
+                        String style = args[++argNo].toLowerCase();
+                        cardStyle = switch (style) {
+                            case "business_card", "business-card", "business" -> CardStyle.BUSINESS_CARD;
+                            case "postcard", "post-card" -> CardStyle.POSTCARD;
+                            case "index_card", "index-card", "3x5", "index" -> CardStyle.INDEX_CARD_3x5;
+                            default -> CardStyle.INDEX_CARD_3x5;
+                        };
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Error: --card-style requires a style argument");
+                    }
+                }
                 default -> fileNames.add(args[argNo]);
             }
         }
 
         var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat, charType);
-        return new ParsedArgs(options, fileNames, outputFileName);
+        return new ParsedArgs(options, fileNames, outputFileName, cardStyle);
     }
 
-    public record ParsedArgs(ExportOptions options, List<String> fileNames, String outputFileName) {
+    public record ParsedArgs(ExportOptions options, List<String> fileNames, String outputFileName, CardStyle cardStyle) {
     }
 }
