@@ -79,14 +79,22 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
     private Word getWordFromLine(String line) {
         String[] str = line.split(" /");
+        if (str.length < 2) {
+            return null;
+        }
         String definition = str[1];
 
         String[] rem = str[0].split("\\[");
+        if (rem.length < 2) {
+            return null;
+        }
         String pinyinNoTones = rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
         String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
 
-
         String[] remRem = rem[0].split(" ");
+        if (remRem.length < 2) {
+            return null;
+        }
         String trad = remRem[0];
         String simp = remRem[1];
 
