@@ -96,7 +96,7 @@ class ArgParserTest {
         ParsedArgs result = ArgParser.parseArgs(args);
 
         Assertions.assertEquals(
-            ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP,
+            ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION,
             result.options().strategy()
         );
     }
