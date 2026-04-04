@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chinese.DictionaryExtractorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:03:35" hostname="fedora" time="0.416">
+<testsuite name="chinese.DictionaryExtractorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:10:21" hostname="fedora" time="0.403">
   <properties/>
-  <testcase name="canExtractSomeWord()" classname="chinese.DictionaryExtractorTest" time="0.196"/>
-  <testcase name="canExtractErHuaTest()" classname="chinese.DictionaryExtractorTest" time="0.219"/>
-  <system-out><![CDATA[17:03:35.899 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
-17:03:36.119 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
+  <testcase name="canExtractSomeWord()" classname="chinese.DictionaryExtractorTest" time="0.194"/>
+  <testcase name="canExtractErHuaTest()" classname="chinese.DictionaryExtractorTest" time="0.209"/>
+  <system-out><![CDATA[17:10:21.679 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
+17:10:21.888 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -5,6 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HanziToAnki - Flashcard Generator</title>
     <style>
+        :root {
+            /* Light theme (default) */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --primary-dark: #764ba2;
+            --secondary-color: #667eea;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-tertiary: #999;
+            --bg-primary: white;
+            --bg-secondary: #f5f5f5;
+            --bg-tertiary: #fafafa;
+            --border-color: #ddd;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body[data-theme="dark"] {
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --primary-color: #64b5f6;
+            --primary-dark: #2196f3;
+            --secondary-color: #64b5f6;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --border-color: #404040;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        body[data-theme="sunset"] {
+            --primary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --primary-color: #f5576c;
+            --primary-dark: #f093fb;
+            --secondary-color: #f5576c;
+            --text-primary: #2c3e50;
+            --text-secondary: #34495e;
+            --text-tertiary: #7f8c8d;
+            --bg-primary: #fff8f5;
+            --bg-secondary: #ffe8e0;
+            --bg-tertiary: #fff0eb;
+            --border-color: #f0d4c8;
+            --shadow: 0 20px 60px rgba(245, 87, 108, 0.2);
+        }
+
+        body[data-theme="ocean"] {
+            --primary-gradient: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+            --primary-color: #0093E9;
+            --primary-dark: #80D0C7;
+            --secondary-color: #0093E9;
+            --text-primary: #0d1f2d;
+            --text-secondary: #1a3a45;
+            --text-tertiary: #4a6a75;
+            --bg-primary: #f0f8fb;
+            --bg-secondary: #e0f2f7;
+            --bg-tertiary: #f5fafb;
+            --border-color: #c0e0eb;
+            --shadow: 0 20px 60px rgba(0, 147, 233, 0.2);
+        }
+
+        body[data-theme="forest"] {
+            --primary-gradient: linear-gradient(135deg, #134e5e 0%, #16a085 100%);
+            --primary-color: #16a085;
+            --primary-dark: #134e5e;
+            --secondary-color: #16a085;
+            --text-primary: #1a3a35;
+            --text-secondary: #2d5a52;
+            --text-tertiary: #5a8a80;
+            --bg-primary: #f0faf8;
+            --bg-secondary: #e0f5f0;
+            --bg-tertiary: #f5faf9;
+            --border-color: #c0e5dd;
+            --shadow: 0 20px 60px rgba(22, 160, 133, 0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,21 +89,57 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            color: var(--text-primary);
+            transition: background 0.3s ease;
+        }
+
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-btn.active {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         .container {
-            background: white;
+            background: var(--bg-primary);
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
             padding: 40px;
             max-width: 600px;
             width: 100%;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
 
         .header {
@@ -36,13 +148,13 @@
         }
 
         .header h1 {
-            color: #333;
+            color: var(--text-primary);
             font-size: 28px;
             margin-bottom: 10px;
         }
 
         .header p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 16px;
         }
 
@@ -53,7 +165,7 @@
         .form-section label {
             display: block;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 8px;
             font-size: 14px;
         }
@@ -62,21 +174,23 @@
         .form-section select {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 14px;
             transition: border-color 0.3s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         .form-section input[type="file"]:hover,
         .form-section select:hover {
-            border-color: #667eea;
+            border-color: var(--primary-color);
         }
 
         .form-section input[type="file"]:focus,
         .form-section select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
@@ -95,19 +209,19 @@
         .file-input-label {
             display: block;
             padding: 12px;
-            background: #f5f5f5;
-            border: 2px dashed #ddd;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
             border-radius: 6px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            color: #666;
+            color: var(--text-secondary);
         }
 
         .file-input-label:hover {
-            border-color: #667eea;
-            background: #fafafa;
-            color: #667eea;
+            border-color: var(--primary-color);
+            background: var(--bg-tertiary);
+            color: var(--primary-color);
         }
 
         .options-grid {
@@ -153,7 +267,7 @@
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
         }
 
@@ -167,30 +281,30 @@
         }
 
         .btn-reset {
-            background: #f0f0f0;
-            color: #333;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         .btn-reset:hover {
-            background: #e0e0e0;
+            background: var(--border-color);
         }
 
         .info-text {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 12px;
             margin-top: 6px;
         }
 
         .description {
-            color: #999;
+            color: var(--text-tertiary);
             font-size: 12px;
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
         }
 
         .file-name {
-            color: #667eea;
+            color: var(--primary-color);
             font-size: 13px;
             margin-top: 5px;
             font-weight: 500;
@@ -200,7 +314,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
         }
 
@@ -208,7 +322,7 @@
             padding: 8px 16px;
             background: none;
             border: none;
-            color: #999;
+            color: var(--text-tertiary);
             font-weight: 600;
             cursor: pointer;
             border-bottom: 3px solid transparent;
@@ -218,12 +332,12 @@
         }
 
         .toggle-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
         }
 
         .toggle-btn:hover:not(.active) {
-            color: #666;
+            color: var(--text-secondary);
         }
 
         .input-section {
@@ -237,27 +351,38 @@
         .form-section textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 14px;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             resize: vertical;
             min-height: 150px;
             transition: border-color 0.3s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         .form-section textarea:hover {
-            border-color: #667eea;
+            border-color: var(--primary-color);
         }
 
         .form-section textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
     </style>
 </head>
 <body>
+    <div class="theme-switcher">
+        <span style="color: white; font-weight: 600; align-self: center; margin-right: 10px;">Theme:</span>
+        <button type="button" class="theme-btn active" data-theme="light" title="Light Theme">☀️</button>
+        <button type="button" class="theme-btn" data-theme="dark" title="Dark Theme">🌙</button>
+        <button type="button" class="theme-btn" data-theme="sunset" title="Sunset Theme">🌅</button>
+        <button type="button" class="theme-btn" data-theme="ocean" title="Ocean Theme">🌊</button>
+        <button type="button" class="theme-btn" data-theme="forest" title="Forest Theme">🌲</button>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>HanziToAnki</h1>
@@ -357,20 +482,47 @@
     </div>
 
     <script>
+        // Theme Switcher
+        const themeBtns = document.querySelectorAll('.theme-btn');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        
+        // Set active button
+        themeBtns.forEach(btn => {
+            if (btn.dataset.theme === savedTheme) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        themeBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const theme = this.dataset.theme;
+                document.body.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                
+                // Update active button
+                themeBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
         // Mode toggle
-        const toggleBtns = document.querySelectorAll('.toggle-btn');
+        const inputToggleBtns = document.querySelectorAll('.toggle-btn[data-mode]');
         const fileSection = document.getElementById('fileSection');
         const textSection = document.getElementById('textSection');
         const uploadFile = document.getElementById('uploadFile');
         const textInput = document.getElementById('textInput');
 
-        toggleBtns.forEach(btn => {
+        inputToggleBtns.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 const mode = this.dataset.mode;
                 
                 // Update toggle buttons
-                toggleBtns.forEach(b => b.classList.remove('active'));
+                inputToggleBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
                 // Update sections

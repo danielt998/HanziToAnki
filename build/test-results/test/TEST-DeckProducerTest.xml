@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="DeckProducerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:03:34" hostname="fedora" time="0.916">
+<testsuite name="DeckProducerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:10:20" hostname="fedora" time="0.804">
   <properties/>
-  <testcase name="produceDeckReturnsEmptyListForUnsupportedFormat()" classname="DeckProducerTest" time="0.493"/>
-  <testcase name="produceDeckWithEmptyInput()" classname="DeckProducerTest" time="0.21"/>
-  <testcase name="produceDeckWithValidInput()" classname="DeckProducerTest" time="0.213"/>
-  <system-out><![CDATA[17:03:34.847 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
-17:03:34.858 [Test worker] WARN hanziToAnki.DeckProducer -- Unrecognised output format: MEMRISE
-17:03:35.067 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
-17:03:35.277 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
+  <testcase name="produceDeckReturnsEmptyListForUnsupportedFormat()" classname="DeckProducerTest" time="0.359"/>
+  <testcase name="produceDeckWithEmptyInput()" classname="DeckProducerTest" time="0.23"/>
+  <testcase name="produceDeckWithValidInput()" classname="DeckProducerTest" time="0.215"/>
+  <system-out><![CDATA[17:10:20.689 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
+17:10:20.699 [Test worker] WARN hanziToAnki.DeckProducer -- Unrecognised output format: MEMRISE
+17:10:20.928 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
+17:10:21.141 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

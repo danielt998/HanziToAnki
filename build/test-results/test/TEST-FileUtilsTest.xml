@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="FileUtilsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:03:35" hostname="fedora" time="0.136">
+<testsuite name="FileUtilsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:10:21" hostname="fedora" time="0.078">
   <properties/>
-  <testcase name="Reading from FileUtils_helloWorld.txt" classname="FileUtilsTest" time="0.122"/>
-  <testcase name="Reading from FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.zip" classname="FileUtilsTest" time="0.008"/>
-  <testcase name="Reading from FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.txt.gz" classname="FileUtilsTest" time="0.004"/>
+  <testcase name="Reading from FileUtils_helloWorld.txt" classname="FileUtilsTest" time="0.063"/>
+  <testcase name="Reading from FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.zip" classname="FileUtilsTest" time="0.006"/>
+  <testcase name="Reading from FileUtils_mini_cedict_1_0_ts_utf-8_mdbg.txt.gz" classname="FileUtilsTest" time="0.007"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
