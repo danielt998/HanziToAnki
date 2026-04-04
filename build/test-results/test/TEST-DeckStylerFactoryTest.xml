@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="DeckStylerFactoryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-04T13:06:15" hostname="fedora" time="0.006">
+  <properties/>
+  <testcase name="[1] hanziType=SIMP" classname="DeckStylerFactoryTest" time="0.003"/>
+  <testcase name="[2] hanziType=TRAD" classname="DeckStylerFactoryTest" time="0.001"/>
+  <testcase name="[3] hanziType=SIMP_AND_TRAD" classname="DeckStylerFactoryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

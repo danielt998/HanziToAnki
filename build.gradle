@@ -2,12 +2,20 @@ plugins {
     id 'java'
     id 'application'
     id 'idea'
+    id 'org.springframework.boot' version '3.1.0'
 }
 
 group 'org.example'
 version '1.0.0'
 
 sourceCompatibility = 21
+targetCompatibility = 21
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -16,21 +24,24 @@ repositories {
 dependencies {
     implementation 'org.apache.tika:tika-core:2.9.2'
     implementation 'org.jetbrains:annotations:24.1.0'
+    
+    // Spring Boot 3.1+ (officially supports Java 21)
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.1.0'
+    
+    // SLF4J API for application code
     implementation 'org.slf4j:slf4j-api:2.0.11'
-    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
 }
 
 application {
-    mainClass = 'hanziToAnki.Main'
+    mainClass = 'Launcher'
 }
 
 sourceSets {
     main {
         java {
             exclude 'GUIs/**'
-            exclude 'server/**'
-            exclude 'utils/**'
         }
     }
     test {
@@ -57,9 +68,62 @@ test {
     }
 }
 
-jar {
-    manifest {
-        attributes('Main-Class': 'hanziToAnki.Main')
+
+task printClasspath {
+    doLast {
+        println configurations.runtimeClasspath.asPath
     }
-    archiveFileName = "HanziToAnki.jar"
+}
+
+task runApi {
+    description = "Run the Spring Boot API server"
+    dependsOn 'classes'
+    doLast {
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'server.Application'
+        }
+    }
+}
+
+task runCli {
+    description = "Run the CLI tool (usage: ./gradlew runCli -Pargs='input.txt')"
+    dependsOn 'classes'
+    doLast {
+        def cliArgs = project.hasProperty('args') ? project.args.toString().split('\\s+') as List : []
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'hanziToAnki.Main'
+            args = cliArgs
+        }
+    }
+}
+
+jar {
+    // Spring Boot will handle the manifest
+    duplicatesStrategy = 'exclude'
+}
+
+// Optional: Create separate lightweight JARs for CLI and API
+task cliJar(type: Jar) {
+    description = "Create a standalone CLI JAR (without Spring Boot)"
+    archiveBaseName = "HanziToAnki-cli"
+    from sourceSets.main.output
+    exclude 'server/**'
+    exclude 'public/**'
+    manifest {
+        attributes 'Main-Class': 'hanziToAnki.Main'
+    }
+    dependsOn classes
+}
+
+task apiJar(type: Jar) {
+    description = "Create a standalone API JAR (without CLI Main)"
+    archiveBaseName = "HanziToAnki-api"
+    from sourceSets.main.output
+    exclude 'hanziToAnki/Main.class'
+    manifest {
+        attributes 'Main-Class': 'server.Application'
+    }
+    dependsOn classes
 }

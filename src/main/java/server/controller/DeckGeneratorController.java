@@ -9,9 +9,9 @@ import hanziToAnki.chinese.ChineseDeckStyler;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 
 import hanziToAnki.chinese.ChineseWordFinder;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,19 +26,34 @@ import utils.TemporaryDirectory;
 @RestController
 public class DeckGeneratorController {
 
-    //https://github.com/IdiosApps/gradedReaderBuilderServer/blob/master/src/main/java/com/idiosApps/gradedReaderBuilderServer/BuildController.java
-    @PostMapping(value = "/generate", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<FileSystemResource> generate(@RequestParam("uploadFile") MultipartFile uploadFile
-//                         @RequestParam("outputType") String outputType,
+    @PostMapping(value = "/generate", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<byte[]> generate(
+            @RequestParam("uploadFile") MultipartFile uploadFile,
+            @RequestParam(value = "strategy", defaultValue = "0") int strategyIndex,
+            @RequestParam(value = "hskLevel", defaultValue = "0") int hskLevel,
+            @RequestParam(value = "hanziType", defaultValue = "SIMP") String hanziTypeStr,
+            @RequestParam(value = "format", defaultValue = "ANKI") String formatStr
     ) throws IOException, URISyntaxException {
 
-        // TODO get from UI
-        var options = new ExportOptions(true, true, 0,
-                ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP, OutputFormat.ANKI, ChineseDeckStyler.HanziType.SIMP);
+        // Map strategy index to enum
+        ChineseWordFinder.STRATEGY strategy = switch (strategyIndex) {
+            case 0 -> ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
+            case 1 -> ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS;
+            case 2 -> ChineseWordFinder.STRATEGY.BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP;
+            case 3 -> ChineseWordFinder.STRATEGY.BIGRAM_AND_MONOGRAM_ONLY_OVERLAP;
+            case 4 -> ChineseWordFinder.STRATEGY.SINGLE_CHAR_ONLY;
+            case 5 -> ChineseWordFinder.STRATEGY.ALL_COMBINATIONS;
+            default -> ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
+        };
+
+        OutputFormat outputFormat = OutputFormat.valueOf(formatStr);
+        ChineseDeckStyler.HanziType hanziType = ChineseDeckStyler.HanziType.valueOf(hanziTypeStr);
+
+        // useWordList=false to extract words from text (not treat lines as whole words)
+        var options = new ExportOptions(false, true, hskLevel, strategy, outputFormat, hanziType);
 
         try (TemporaryDirectory tempDirectory = new TemporaryDirectory()) {
 
-            // TODO use language radio button / detect language, to choose relevant dictionary
             DictionaryExtractor extractor = new ChineseDictionaryExtractor();
             extractor.readInDictionary();
 
@@ -53,13 +68,16 @@ public class DeckGeneratorController {
             );
             FileUtils.writeToFile(outputLines, flashcardFile.getAbsolutePath());
 
+            // Read file content before the try-with-resources closes the temporary directory
+            byte[] fileContent = Files.readAllBytes(flashcardFile.toPath());
+
             HttpHeaders header = new HttpHeaders();
             header.setContentType(MediaType.TEXT_PLAIN);
             header.set(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=" + "flashcards.anki");
-            header.setContentLength(flashcardFile.length());
+                    "attachment; filename=" + "flashcards.tsv");
+            header.setContentLength(fileContent.length);
 
-            return new ResponseEntity(new FileSystemResource(flashcardFile), header, HttpStatus.OK);
+            return new ResponseEntity<>(fileContent, header, HttpStatus.OK);
         }
     }
 }
