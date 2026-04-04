@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chinese.ToneHelperTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:12:11" hostname="fedora" time="0.004">
+<testsuite name="chinese.ToneHelperTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:14:26" hostname="fedora" time="0.003">
   <properties/>
   <testcase name="[1] inputSyllable=kan1, expectedOutput=kān" classname="chinese.ToneHelperTest" time="0.001"/>
   <testcase name="[2] inputSyllable=He2, expectedOutput=Hé" classname="chinese.ToneHelperTest" time="0.0"/>
   <testcase name="[3] inputSyllable=pin3, expectedOutput=pǐn" classname="chinese.ToneHelperTest" time="0.0"/>
   <testcase name="[4] inputSyllable=po4, expectedOutput=pò" classname="chinese.ToneHelperTest" time="0.0"/>
-  <testcase name="[5] inputSyllable=Wu5, expectedOutput=Wu" classname="chinese.ToneHelperTest" time="0.001"/>
+  <testcase name="[5] inputSyllable=Wu5, expectedOutput=Wu" classname="chinese.ToneHelperTest" time="0.0"/>
   <testcase name="[6] inputSyllable=lü1, expectedOutput=lǖ" classname="chinese.ToneHelperTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
