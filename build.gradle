@@ -1,40 +1,54 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'idea'
-    id 'org.springframework.boot' version '2.7.5'
-    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group 'org.example'
 version '1.0.0'
 
-sourceCompatibility = 17
+sourceCompatibility = 21
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
     implementation 'org.apache.tika:tika-core:2.9.2'
     implementation 'org.jetbrains:annotations:24.1.0'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.11.0'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.slf4j:slf4j-api:2.0.11'
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
 }
 
-javafx {
-    version = "17"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+application {
+    mainClass = 'hanziToAnki.Main'
 }
 
-mainClassName = 'hanziToAnki.Main' //'server.Application' or 'GUIStarter' are also available
+sourceSets {
+    main {
+        java {
+            exclude 'GUIs/**'
+            exclude 'server/**'
+            exclude 'utils/**'
+        }
+    }
+    test {
+        java {
+            exclude '**/GeneratorControllerTest.java'
+        }
+    }
+}
 
-compileJava {options.encoding = "UTF-8"} // overcome ü cp-1252 issues
-compileTestJava {options.encoding = "UTF-8"}
+compileJava {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
 
 test {
     useJUnitPlatform()
@@ -43,36 +57,9 @@ test {
     }
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs += "--enable-preview"
-}
-
-tasks.withType(Test) {
-    jvmArgs += "--enable-preview"
-}
-
-tasks.withType(JavaExec) {
-    jvmArgs += '--enable-preview'
-}
-
-task stage {
-    dependsOn build
-}
-
 jar {
     manifest {
-        attributes(
-                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' '),
-                'Main-Class': 'server.Application'
-        )
+        attributes('Main-Class': 'hanziToAnki.Main')
     }
-    archiveFileName = "heroku-gradle-spring-boot.jar"
-    baseName = 'heroku-gradle-spring-boot'
+    archiveFileName = "HanziToAnki.jar"
 }
-
-task copyToLib(type: Copy) {
-    into "$buildDir/libs"
-    from(configurations.runtimeClasspath)
-}
-
-stage.dependsOn(copyToLib)
