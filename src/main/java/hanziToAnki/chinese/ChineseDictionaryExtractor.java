@@ -1,43 +1,24 @@
 package hanziToAnki.chinese;
 
-
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*Notes:
-  This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
-  Also, it has some useful methods that are of no use for this particular project, so it might be nice
-  to create a separate linked GitHub project or something for it later
-  Another note:for now, it will only handle unique characters, not words composed of chars, making it
-  somewhat less useful than it could be
-*/
-/*TODO:
-  tidy up formatting (e.g. trailing \)
-  ensure that split(" /") does not miss anything
-  give some thought to how we can implement search for characters/English too...
-     maybe create some sort of hashmap
-  search should not require exact matches, if whole provided string is a substring of pinyin
-  should be something like:
-    if it's a (partial) match:
-      traverse the list both backwards and forwards as far as possible and add all the matches
-  (starting at same place), this should be a match too.
-  also,** multiple words have same pinyin** - for the moment, this will return only the first result
-  Capitals are causing issues too...
-*/
+/**
+ * Extracts Chinese word definitions from CC-CEDICT dictionary format.
+ * Supports both simplified and traditional Chinese characters, and handles
+ * erhua (儿化) pronunciation variations.
+ */
 public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private static final Logger logger = LoggerFactory.getLogger(ChineseDictionaryExtractor.class);
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
@@ -47,8 +28,8 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private final Map<String, Word> traditionalMapping = new HashMap<>();
 
     @Override
-    public void readInDictionary() throws URISyntaxException {
-        InputStream dictionaryStream = this.getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME);
+    public void readInDictionary() {
+        InputStream dictionaryStream = getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME);
         if (dictionaryStream == null) {
             logger.error("Dictionary file not found: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME);
             return;
@@ -71,65 +52,67 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     }
 
     @Override
-    public java.util.Optional<Word> getWord(char c) {
+    public Optional<Word> getWord(char c) {
         return getWord(String.valueOf(c));
     }
 
     @Override
-    public java.util.Optional<Word> getWord(String s) {
-        var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
-        if (Objects.nonNull(word)) {
-            return java.util.Optional.of(word);
+    public Optional<Word> getWord(String s) {
+        Word word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
+        if (word != null) {
+            return Optional.of(word);
         }
 
         if (mightBeErhua(s)) {
-            var stripped = sanitiseErhua(s);
+            String stripped = sanitiseErhua(s);
             word = simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
-            if (Objects.nonNull(word)) {
-                return java.util.Optional.of(word);
+            if (word != null) {
+                return Optional.of(word);
             }
         }
 
-        return java.util.Optional.empty();
+        return Optional.empty();
     }
 
+    /**
+     * Parses a CC-CEDICT format line: "Traditional Simplified [pinyin] /definition/"
+     */
     private Word getWordFromLine(String line) {
-        String[] str = line.split(" /");
-        if (str.length < 2) {
+        String[] definitionParts = line.split(" /");
+        if (definitionParts.length < 2) {
             return null;
         }
-        String definition = str[1];
+        String definition = definitionParts[1];
 
-        String[] rem = str[0].split("\\[");
-        if (rem.length < 2) {
+        String[] pinyinParts = definitionParts[0].split("\\[");
+        if (pinyinParts.length < 2) {
             return null;
         }
-        String pinyinNoTones = rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
-        String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
+        String pinyinNoTones = pinyinParts[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
+        String pinyinWithTones = pinyinParts[1].replaceAll("[\\[\\]]", "").toLowerCase();
 
-        String[] remRem = rem[0].split(" ");
-        if (remRem.length < 2) {
+        String[] characterParts = pinyinParts[0].split(" ");
+        if (characterParts.length < 2) {
             return null;
         }
-        String trad = remRem[0];
-        String simp = remRem[1];
+        String traditional = characterParts[0];
+        String simplified = characterParts[1];
 
-        return new ChineseWord(trad, simp, pinyinNoTones, pinyinWithTones, definition);
+        return new ChineseWord(traditional, simplified, pinyinNoTones, pinyinWithTones, definition);
     }
 
-    private void putWordToMaps(Word word) { // helper function for tidy stream
+    private void putWordToMaps(Word word) {
         if (word instanceof ChineseWord w) {
             simplifiedMapping.put(w.simplified(), word);
             traditionalMapping.put(w.traditional(), word);
         }
     }
 
-
     private boolean mightBeErhua(String word) {
-        return word.lastIndexOf("儿") == word.length() - 1;
+        return word.endsWith("儿");
     }
 
     private String sanitiseErhua(String word) {
-        return word.substring(0, word.lastIndexOf("儿"));
+        return word.substring(0, word.length() - 1);
     }
 }
