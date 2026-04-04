@@ -28,12 +28,18 @@ public class DeckGeneratorController {
 
     @PostMapping(value = "/generate", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<byte[]> generate(
-            @RequestParam("uploadFile") MultipartFile uploadFile,
+            @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile,
+            @RequestParam(value = "textInput", required = false) String textInput,
             @RequestParam(value = "strategy", defaultValue = "0") int strategyIndex,
             @RequestParam(value = "hskLevel", defaultValue = "0") int hskLevel,
             @RequestParam(value = "hanziType", defaultValue = "SIMP") String hanziTypeStr,
             @RequestParam(value = "format", defaultValue = "ANKI") String formatStr
     ) throws IOException, URISyntaxException {
+
+        // Validate that either file or text is provided
+        if ((uploadFile == null || uploadFile.isEmpty()) && (textInput == null || textInput.trim().isEmpty())) {
+            return ResponseEntity.badRequest().build();
+        }
 
         // Map strategy index to enum
         ChineseWordFinder.STRATEGY strategy = switch (strategyIndex) {
@@ -59,11 +65,13 @@ public class DeckGeneratorController {
 
             DeckProducer deckProducer = new DeckProducer(extractor);
 
-            var localFile = tempDirectory.getFileFromMultipart(uploadFile);
+            var inputFile = (uploadFile != null && !uploadFile.isEmpty()) 
+                    ? tempDirectory.getFileFromMultipart(uploadFile)
+                    : tempDirectory.getFileFromText(textInput);
             var flashcardFile = tempDirectory.getFile();
 
             var outputLines = deckProducer.produceDeck(
-                    localFile.getAbsolutePath(),
+                    inputFile.getAbsolutePath(),
                     options
             );
             FileUtils.writeToFile(outputLines, flashcardFile.getAbsolutePath());

@@ -195,6 +195,66 @@
             margin-top: 5px;
             font-weight: 500;
         }
+
+        .input-mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            color: #999;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .toggle-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            color: #666;
+        }
+
+        .input-section {
+            display: none;
+        }
+
+        .input-section.active {
+            display: block;
+        }
+
+        .form-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s;
+        }
+
+        .form-section textarea:hover {
+            border-color: #667eea;
+        }
+
+        .form-section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -205,17 +265,33 @@
         </div>
 
         <form method="POST" action="/generate" enctype="multipart/form-data" id="generateForm">
-            <!-- File Upload -->
-            <div class="form-section">
-                <label for="uploadFile">Upload Chinese Text</label>
-                <div class="file-input-wrapper">
-                    <input type="file" id="uploadFile" name="uploadFile" accept=".txt" required>
-                    <label for="uploadFile" class="file-input-label">
-                        Click to select a .txt file<br>
-                        <span class="info-text">or drag and drop</span>
-                    </label>
+            <!-- Input Mode Toggle -->
+            <div class="input-mode-toggle">
+                <button type="button" class="toggle-btn active" data-mode="file">📁 Upload File</button>
+                <button type="button" class="toggle-btn" data-mode="text">📝 Paste Text</button>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="input-section active" id="fileSection">
+                <div class="form-section">
+                    <label for="uploadFile">Upload Chinese Text</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="uploadFile" name="uploadFile" accept=".txt">
+                        <label for="uploadFile" class="file-input-label">
+                            Click to select a .txt file<br>
+                            <span class="info-text">or drag and drop</span>
+                        </label>
+                    </div>
+                    <div class="file-name" id="fileName"></div>
                 </div>
-                <div class="file-name" id="fileName"></div>
+            </div>
+
+            <!-- Text Input Section -->
+            <div class="input-section" id="textSection">
+                <div class="form-section">
+                    <label for="textInput">Paste Chinese Text</label>
+                    <textarea id="textInput" name="textInput" placeholder="Paste your Chinese text here..."></textarea>
+                </div>
             </div>
 
             <!-- Options Grid -->
@@ -281,6 +357,47 @@
     </div>
 
     <script>
+        // Mode toggle
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+        const fileSection = document.getElementById('fileSection');
+        const textSection = document.getElementById('textSection');
+        const uploadFile = document.getElementById('uploadFile');
+        const textInput = document.getElementById('textInput');
+
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const mode = this.dataset.mode;
+                
+                // Update toggle buttons
+                toggleBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update sections
+                if (mode === 'file') {
+                    fileSection.classList.add('active');
+                    textSection.classList.remove('active');
+                    uploadFile.focus();
+                } else {
+                    fileSection.classList.remove('active');
+                    textSection.classList.add('active');
+                    textInput.focus();
+                }
+            });
+        });
+
+        // Form validation
+        document.getElementById('generateForm').addEventListener('submit', function(e) {
+            const hasFile = uploadFile.files.length > 0;
+            const hasText = textInput.value.trim().length > 0;
+
+            if (!hasFile && !hasText) {
+                e.preventDefault();
+                alert('Please either upload a file or paste text');
+                return false;
+            }
+        });
+
         // File input display
         document.getElementById('uploadFile').addEventListener('change', function() {
             const fileName = this.files[0]?.name || '';

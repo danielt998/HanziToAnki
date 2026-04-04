@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ArgParserTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-04-04T13:06:14" hostname="fedora" time="0.019">
+<testsuite name="ArgParserTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:03:34" hostname="fedora" time="0.022">
   <properties/>
-  <testcase name="parseArgsDefaultStrategy()" classname="ArgParserTest" time="0.009"/>
+  <testcase name="parseArgsDefaultStrategy()" classname="ArgParserTest" time="0.01"/>
   <testcase name="parseArgsWithWordList()" classname="ArgParserTest" time="0.001"/>
-  <testcase name="parseArgsWithValidHskLevel()" classname="ArgParserTest" time="0.0"/>
-  <testcase name="parseArgsWithOutputFilename()" classname="ArgParserTest" time="0.001"/>
+  <testcase name="parseArgsWithValidHskLevel()" classname="ArgParserTest" time="0.001"/>
+  <testcase name="parseArgsWithOutputFilename()" classname="ArgParserTest" time="0.0"/>
   <testcase name="parseArgsWithOutputFormat()" classname="ArgParserTest" time="0.0"/>
   <testcase name="parseArgsWithMultipleOptions()" classname="ArgParserTest" time="0.001"/>
   <testcase name="parseArgsWithCharType()" classname="ArgParserTest" time="0.0"/>
-  <testcase name="parseArgsWithSingleCharacters()" classname="ArgParserTest" time="0.0"/>
+  <testcase name="parseArgsWithSingleCharacters()" classname="ArgParserTest" time="0.001"/>
   <testcase name="parseArgsWithFilenameOnly()" classname="ArgParserTest" time="0.0"/>
-  <testcase name="parseArgsWithInvalidHskLevel()" classname="ArgParserTest" time="0.004"/>
+  <testcase name="parseArgsWithInvalidHskLevel()" classname="ArgParserTest" time="0.005"/>
   <system-out><![CDATA[Invalid HSK level: 10. Must be 0-6.
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
