@@ -106,11 +106,6 @@ You can also run tests with IntelliJ or other IDEs.
 
 ## Code Quality
 
-Before raising a PR, please:
-- Run tests: `./gradlew test`
-- Format code using your IDE with the included `google_checks.xml` CheckStyle configuration
-
-
 ## License 
 This project uses a modified version of the CEDICT Chinese dictionary, which can be found here:
 https://cc-cedict.org/wiki/
