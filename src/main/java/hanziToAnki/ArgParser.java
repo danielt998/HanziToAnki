@@ -55,27 +55,55 @@ public class ArgParser {
                     allWords = false;
                     useWordList = false;
                 }
-                case "-hsk" -> hskLevelToExclude = Integer.parseInt(args[++argNo]);
+                case "-hsk" -> {
+                    try {
+                        hskLevelToExclude = Integer.parseInt(args[++argNo]);
+                        if (hskLevelToExclude < 0 || hskLevelToExclude > 6) {
+                            System.out.println("Invalid HSK level: " + hskLevelToExclude + ". Must be 0-6.");
+                            hskLevelToExclude = 0;
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Error: -hsk requires a level argument");
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: HSK level must be a number");
+                    }
+                }
                 case "-o" -> outputFileName = args[++argNo];
-                case "-t", "--strategy" -> strategy = ChineseWordFinder.STRATEGY.getStrategy(Integer.parseInt(args[++argNo]));
+                case "-t", "--strategy" -> {
+                    try {
+                        strategy = ChineseWordFinder.STRATEGY.getStrategy(Integer.parseInt(args[++argNo]));
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Error: -t/--strategy requires a strategy number argument");
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Strategy must be a number");
+                    }
+                }
                 case "-f", "--format" -> {
-                    String format = args[++argNo].toLowerCase();
-                    outputFormat = switch (format) {
-                        case "pleco" -> OutputFormat.PLECO;
-                        case "memrise" -> OutputFormat.MEMRISE;
-                        default -> OutputFormat.ANKI;
-                    };
+                    try {
+                        String format = args[++argNo].toLowerCase();
+                        outputFormat = switch (format) {
+                            case "pleco" -> OutputFormat.PLECO;
+                            case "memrise" -> OutputFormat.MEMRISE;
+                            default -> OutputFormat.ANKI;
+                        };
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Error: -f/--format requires a format argument");
+                    }
                 }
                 case "-c", "--char-type" -> {
-                    String type = args[++argNo].toLowerCase();
-                    charType = switch (type) {
-                        case "simp", "simplified" -> ChineseDeckStyler.HanziType.SIMP;
-                        case "trad", "traditional" -> ChineseDeckStyler.HanziType.TRAD;
-                        case "both" -> ChineseDeckStyler.HanziType.SIMP_AND_TRAD;
-                        default -> ChineseDeckStyler.HanziType.SIMP;
-                    };
+                    try {
+                        String type = args[++argNo].toLowerCase();
+                        charType = switch (type) {
+                            case "simp", "simplified" -> ChineseDeckStyler.HanziType.SIMP;
+                            case "trad", "traditional" -> ChineseDeckStyler.HanziType.TRAD;
+                            case "both" -> ChineseDeckStyler.HanziType.SIMP_AND_TRAD;
+                            default -> ChineseDeckStyler.HanziType.SIMP;
+                        };
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Error: -c/--char-type requires a type argument");
+                    }
                 }
-                default -> fileNames.add(args[argNo]); // no flag specified - so this is the output file
+                default -> fileNames.add(args[argNo]);
             }
         }
 
