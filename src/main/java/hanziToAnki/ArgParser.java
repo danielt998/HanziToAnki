@@ -43,7 +43,7 @@ public class ArgParser {
         boolean useWordList = false;
         boolean allWords = true;
         int hskLevelToExclude = 0;
-        ChineseWordFinder.STRATEGY strategy = ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
+        ChineseWordFinder.STRATEGY strategy = ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
 
         for (int argNo = 0; argNo < args.length - 1; argNo++) {
             switch (args[argNo]) {

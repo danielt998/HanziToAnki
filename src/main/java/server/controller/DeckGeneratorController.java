@@ -30,7 +30,7 @@ public class DeckGeneratorController {
     public ResponseEntity<byte[]> generate(
             @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile,
             @RequestParam(value = "textInput", required = false) String textInput,
-            @RequestParam(value = "strategy", defaultValue = "0") int strategyIndex,
+            @RequestParam(value = "strategy", defaultValue = "6") int strategyIndex,
             @RequestParam(value = "hskLevel", defaultValue = "0") int hskLevel,
             @RequestParam(value = "hanziType", defaultValue = "SIMP") String hanziTypeStr,
             @RequestParam(value = "format", defaultValue = "ANKI") String formatStr
@@ -49,7 +49,8 @@ public class DeckGeneratorController {
             case 3 -> ChineseWordFinder.STRATEGY.BIGRAM_AND_MONOGRAM_ONLY_OVERLAP;
             case 4 -> ChineseWordFinder.STRATEGY.SINGLE_CHAR_ONLY;
             case 5 -> ChineseWordFinder.STRATEGY.ALL_COMBINATIONS;
-            default -> ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS_BIGRAM_OVERLAP;
+            case 6 -> ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
+            default -> ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
         };
 
         OutputFormat outputFormat = OutputFormat.valueOf(formatStr);
