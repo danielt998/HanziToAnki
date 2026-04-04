@@ -67,7 +67,7 @@ public class ChineseDeckStyler implements DeckStyler {
     }
 
     private String getWordAsDeckLine(Word word) {
-        var w = (ChineseWord) word;
+        ChineseWord w = (ChineseWord) word;
         return switch (hanziType) {
             case SIMP -> String.join(DELIMITER,
                     w.simplified(),

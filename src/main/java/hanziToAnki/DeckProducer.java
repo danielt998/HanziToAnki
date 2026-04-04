@@ -27,7 +27,7 @@ public class DeckProducer {
     }
 
     public List<String> produceDeck(List<String> lines, ExportOptions exportOptions) {
-        var words = generateWords(lines, exportOptions);
+        Set<Word> words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
             logger.warn("No words extracted. Please provide UTF-8 encoded files - "
@@ -36,11 +36,11 @@ public class DeckProducer {
         }
 
         Grader grader = new ChineseGrader(extractor);
-        var wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
+        Set<Word> wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
         words.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            var deckStyler = DeckStylerFactory.getDeckStyler(words, exportOptions.hanziType());
+            DeckStyler deckStyler = DeckStylerFactory.getDeckStyler(words, exportOptions.hanziType());
             return deckStyler.style(words);
         }
 
@@ -57,7 +57,7 @@ public class DeckProducer {
     }
 
     public byte[] producePdfFlashcards(List<String> lines, ExportOptions exportOptions, CardStyle cardStyle, boolean useToneColors) {
-        var words = generateWords(lines, exportOptions);
+        Set<Word> words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
             logger.warn("No words extracted. Please provide UTF-8 encoded files");
@@ -65,7 +65,7 @@ public class DeckProducer {
         }
 
         Grader grader = new ChineseGrader(extractor);
-        var wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
+        Set<Word> wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
         words.removeAll(wordsToExclude);
 
         List<Word> wordList = new ArrayList<>(words);
