@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chinese.GraderTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:14:26" hostname="fedora" time="0.012">
-  <properties/>
-  <testcase name="getAccumulativeHskVocabularyTest()" classname="chinese.GraderTest" time="0.012"/>
-  <system-out><![CDATA[17:14:26.314 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
-]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
