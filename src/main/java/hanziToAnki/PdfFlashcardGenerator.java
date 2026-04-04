@@ -129,23 +129,23 @@ public class PdfFlashcardGenerator {
         int backHeight = (CARD_HEIGHT - MARGIN) / 2;
         int backBottom = y + CARD_HEIGHT - MARGIN; // Bottom boundary of card
         
-        // Draw pinyin
+        // Draw pinyin with tone marks
         g2d.setFont(FONT_PINYIN);
         g2d.setColor(new Color(64, 64, 64)); // Dark gray
         
-        String pinyin = chineseWord.pinyin() != null ? chineseWord.pinyin() : "";
+        String pinyin = chineseWord.pinyinTones() != null ? chineseWord.pinyinTones() : "";
         int pinyinX = x + PADDING;
         int pinyinY = backY + 14;
         
         g2d.drawString(pinyin, pinyinX, pinyinY);
         
-        // Draw definition with text wrapping
+        // Draw definition with text wrapping - add more space between pinyin and definition
         g2d.setFont(FONT_DEFINITION);
         g2d.setColor(Color.BLACK);
         
         String definition = chineseWord.definition() != null ? chineseWord.definition() : "";
         int defX = x + PADDING;
-        int defY = pinyinY + 12;
+        int defY = pinyinY + 24;  // Increased from 12 to 24 for better spacing
         int maxWidth = CARD_WIDTH - MARGIN - 2 * PADDING;
         
         drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, FONT_DEFINITION);
