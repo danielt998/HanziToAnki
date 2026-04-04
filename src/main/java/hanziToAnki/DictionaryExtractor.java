@@ -1,11 +1,10 @@
 package hanziToAnki;
 
-import java.net.URISyntaxException;
 import java.util.Optional;
 
 public interface DictionaryExtractor {
 
-    void readInDictionary() throws URISyntaxException;
+    void readInDictionary();
 
     Optional<Word> getWord(String s);
 
