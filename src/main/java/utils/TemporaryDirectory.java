@@ -40,4 +40,14 @@ public class TemporaryDirectory implements Closeable {
         multipartFile.transferTo(temporaryFile);
         return temporaryFile;
     }
+
+    public TemporaryFile getFileFromText(String text) throws IOException {
+        TemporaryFile temporaryFile = new TemporaryFile(
+                (Files.createTempFile(directory, UUID.randomUUID().toString(), TMP_EXT)));
+
+        if (text != null && !text.trim().isEmpty()) {
+            Files.writeString(temporaryFile.toPath(), text);
+        }
+        return temporaryFile;
+    }
 }

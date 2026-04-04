@@ -3,7 +3,10 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -45,13 +48,17 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
     @Override
     public void readInDictionary() throws URISyntaxException {
-        URI defaultDictionaryPath = this.getClass().getResource("/dictionary/" + DEFAULT_DICTIONARY_FILENAME).toURI();
-        readInDictionary(Path.of(defaultDictionaryPath));
+        InputStream dictionaryStream = this.getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME);
+        if (dictionaryStream == null) {
+            logger.error("Dictionary file not found: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME);
+            return;
+        }
+        readInDictionary(dictionaryStream);
     }
 
-    private void readInDictionary(Path path) {
-        try {
-            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
+    private void readInDictionary(InputStream stream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            reader.lines()
                     .filter(line -> !line.isEmpty() && line.charAt(0) != COMMENT_CHARACTER)
                     .map(this::getWordFromLine)
                     .filter(Objects::nonNull)
@@ -59,7 +66,7 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
             logger.info("Successfully loaded dictionary with {} simplified and {} traditional words",
                     simplifiedMapping.size(), traditionalMapping.size());
         } catch (IOException e) {
-            logger.error("Could not load dictionary file at {}", path, e);
+            logger.error("Could not load dictionary file", e);
         }
     }
 
