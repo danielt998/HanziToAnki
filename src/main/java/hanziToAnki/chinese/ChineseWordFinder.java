@@ -70,7 +70,7 @@ public class ChineseWordFinder {
                     extractor.getWord(wordStr).ifPresent(words::add);
                 }
             }
-        } catch (Exception e) {
+        } catch (NullPointerException | IllegalArgumentException e) {
             throw new RuntimeException("ANSJ segmentation failed", e);
         }
         
