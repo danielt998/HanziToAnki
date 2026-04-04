@@ -36,8 +36,7 @@ public class ArgParser {
 
     public static ParsedArgs parseArgs(String[] args) {
         List<String> fileNames = new ArrayList<>();
-        fileNames.add(args[args.length - 1]);
-        String outputFileName = FilenameUtils.removeExtension(fileNames.get(0)) + ".tsv";
+        String outputFileName = null;
         OutputFormat outputFormat = OutputFormat.ANKI;
         ChineseDeckStyler.HanziType charType = ChineseDeckStyler.HanziType.SIMP;
         boolean useWordList = false;
@@ -47,7 +46,7 @@ public class ArgParser {
         CardStyle cardStyle = CardStyle.INDEX_CARD_3x5;
         boolean useToneColors = true;
 
-        for (int argNo = 0; argNo < args.length - 1; argNo++) {
+        for (int argNo = 0; argNo < args.length; argNo++) {
             switch (args[argNo]) {
                 case "-w", "--word-list" -> {
                     useWordList = true;
@@ -89,10 +88,6 @@ public class ArgParser {
                             case "pdf_flashcards", "pdf-flashcards", "pdf" -> OutputFormat.PDF_FLASHCARDS;
                             default -> OutputFormat.ANKI;
                         };
-                        // Update output filename extension for PDF
-                        if (outputFormat == OutputFormat.PDF_FLASHCARDS) {
-                            outputFileName = outputFileName.replace(".tsv", ".pdf");
-                        }
                     } catch (IndexOutOfBoundsException e) {
                         System.out.println("Error: -f/--format requires a format argument");
                     }
@@ -126,6 +121,19 @@ public class ArgParser {
                 case "--no-tone-colors" -> useToneColors = false;
                 default -> fileNames.add(args[argNo]);
             }
+        }
+
+        if (fileNames.isEmpty()) {
+            throw new IllegalArgumentException("No input file specified");
+        }
+        
+        if (outputFileName == null) {
+            outputFileName = FilenameUtils.removeExtension(fileNames.get(0)) + ".tsv";
+        }
+        
+        // Update output filename extension for PDF if format is PDF_FLASHCARDS
+        if (outputFormat == OutputFormat.PDF_FLASHCARDS && outputFileName.endsWith(".tsv")) {
+            outputFileName = outputFileName.replace(".tsv", ".pdf");
         }
 
         var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat, charType);
