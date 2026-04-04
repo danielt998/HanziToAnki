@@ -49,7 +49,7 @@ public class FileUtils {
             }
         } catch (IOException exception) {
             logger.error("Could not read lines from file at {}", file.getPath(), exception);
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
     }
 

@@ -7,6 +7,7 @@ import hanziToAnki.chinese.ChineseGrader;
 import hanziToAnki.chinese.ChineseWordFinder;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ public class DeckProducer {
         if (words.isEmpty() && !lines.isEmpty()) {
             logger.warn("No words extracted. Please provide UTF-8 encoded files - "
                     + "other encodings (e.g. GBK, Big5) are not currently supported");
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         Grader grader = new ChineseGrader(extractor);
@@ -45,7 +46,7 @@ public class DeckProducer {
         }
 
         logger.warn("Unrecognised output format: {}", exportOptions.outputFormat());
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public byte[] producePdfFlashcards(List<String> lines, ExportOptions exportOptions) {

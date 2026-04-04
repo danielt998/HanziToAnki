@@ -9,11 +9,13 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChineseGrader implements Grader {
+    private static final Logger logger = LoggerFactory.getLogger(ChineseGrader.class);
     private static final String VOCAB_DIRECTORY = "vocab_lists/HSK";
 
     private final DictionaryExtractor extractor;
@@ -44,7 +46,7 @@ public class ChineseGrader implements Grader {
                     .flatMap(java.util.Optional::stream)
                     .collect(Collectors.toSet());
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace(); // We should throw these up and display in GUI
+            logger.error("Failed to load vocabulary from file: {}", filename, e);
             return Set.of();
         }
     }
