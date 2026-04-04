@@ -100,34 +100,35 @@ public class ChineseWordFinder {
     }
 
     private List<List<Word>> getWordList(char[] charArray) {
-        List<List<Word>> wordsForChars = new ArrayList<List<Word>>(charArray.length);
+        List<List<Word>> wordsForChars = new ArrayList<>(charArray.length);
         for (int i = 0; i < charArray.length; i++) {
             wordsForChars.add(new ArrayList<>());
         }
-        for (int i = 0; i < charArray.length; i++) {
+        
+        java.util.stream.IntStream.range(0, charArray.length).forEach(i -> {
             //TODO:genericise
             //trigrams
             if (i + 2 < charArray.length) {
-                Word wordThreeChars = (Word) extractor.getWord("" + charArray[i] + charArray[i + 1] + charArray[i + 2]);
-                if (wordThreeChars != null) {
-                    wordsForChars.get(i).add(wordThreeChars);
-                    wordsForChars.get(i + 1).add(wordThreeChars);
-                    wordsForChars.get(i + 2).add(wordThreeChars);
-                }
+                extractor.getWord("" + charArray[i] + charArray[i + 1] + charArray[i + 2])
+                        .ifPresent(wordThreeChars -> {
+                            wordsForChars.get(i).add(wordThreeChars);
+                            wordsForChars.get(i + 1).add(wordThreeChars);
+                            wordsForChars.get(i + 2).add(wordThreeChars);
+                        });
             }
 
             //bigrams
             if (i + 1 < charArray.length) {
-                Word word = extractor.getWord("" + charArray[i] + charArray[i + 1]);
-                if (word != null) {
-                    wordsForChars.get(i).add(word);
-                    wordsForChars.get(i+1).add(word);
-                }
+                extractor.getWord("" + charArray[i] + charArray[i + 1])
+                        .ifPresent(word -> {
+                            wordsForChars.get(i).add(word);
+                            wordsForChars.get(i+1).add(word);
+                        });
             }
 
             //monogram
-            wordsForChars.get(i).add(extractor.getWord(charArray[i]));
-        }
+            extractor.getWord(charArray[i]).ifPresent(word -> wordsForChars.get(i).add(word));
+        });
         return wordsForChars;
     }
 

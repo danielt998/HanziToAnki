@@ -48,13 +48,12 @@ public class DeckProducer {
     }
 
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {
-        if (options.useWordList()) { // todo think of more meaningful, easy-to-understand options for our users
+        if (options.useWordList()) {
             return lines.stream()
                     .map(s -> extractor.getWord(s))
-                    .filter(Objects::nonNull)
+                    .flatMap(java.util.Optional::stream)
                     .collect(Collectors.toSet());
         }
-        // TODO use our other options for grade-filtering (HSK level for Chinese)
 
         ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
         if (options.useAllWords()) {

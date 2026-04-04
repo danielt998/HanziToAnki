@@ -64,23 +64,26 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     }
 
     @Override
-    public Word getWord(char c) {
+    public java.util.Optional<Word> getWord(char c) {
         return getWord(String.valueOf(c));
     }
 
     @Override
-    public Word getWord(String s) {
+    public java.util.Optional<Word> getWord(String s) {
         var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
         if (Objects.nonNull(word)) {
-            return word;
+            return java.util.Optional.of(word);
         }
 
         if (mightBeErhua(s)) {
             var stripped = sanitiseErhua(s);
-            return simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+            word = simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+            if (Objects.nonNull(word)) {
+                return java.util.Optional.of(word);
+            }
         }
 
-        return null;
+        return java.util.Optional.empty();
     }
 
     private Word getWordFromLine(String line) {
