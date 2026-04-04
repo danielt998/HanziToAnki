@@ -5,6 +5,8 @@ import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
 
 import java.util.*;
+import org.ansj.splitWord.analysis.ToAnalysis;
+import org.ansj.domain.Term;
 
 public class ChineseWordFinder {
 
@@ -15,7 +17,8 @@ public class ChineseWordFinder {
         BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP(2), // AB, BC
         BIGRAM_AND_MONOGRAM_ONLY_OVERLAP(3), // AB, BC, A, B, C
         SINGLE_CHAR_ONLY(4), // A, B, C
-        ALL_COMBINATIONS(5); // ABC, AB, BC, A, B, C
+        ALL_COMBINATIONS(5), // ABC, AB, BC, A, B, C
+        ANSJ_SEGMENTATION(6); // Use ANSJ library for word segmentation
         // TODO: consider some strategies that look at the frequency order
 
         private final int strategyIndex;
@@ -50,8 +53,37 @@ public class ChineseWordFinder {
             case ALL_COMBINATIONS -> findTriBiMonograms(charArray, true, true, true, true);
             case BIGRAM_AND_MONOGRAM_ONLY_OVERLAP -> findTriBiMonograms(charArray, false, true, true, false);
             case BIGRAM_AND_MONOGRAM_ONLY_NO_OVERLAP -> findTriBiMonograms(charArray, false, false, true, false);
+            case ANSJ_SEGMENTATION -> findWordsUsingAnsj(lines);
             default -> throw new RuntimeException("fail");
         };
+    }
+
+    private Set<Word> findWordsUsingAnsj(List<String> lines) {
+        Set<Word> words = new LinkedHashSet<>();
+        String fullText = String.join("", lines);
+        
+        try {
+            List<Term> terms = ToAnalysis.parse(fullText).getTerms();
+            for (Term term : terms) {
+                String wordStr = term.getName();
+                if (isChineseOnly(wordStr)) {
+                    extractor.getWord(wordStr).ifPresent(words::add);
+                }
+            }
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new RuntimeException("ANSJ segmentation failed", e);
+        }
+        
+        return words;
+    }
+
+    private boolean isChineseOnly(String word) {
+        for (char c : word.toCharArray()) {
+            if (Character.UnicodeScript.of(c) != Character.UnicodeScript.HAN) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Set<Word> findMonograms(List<String> lines) {
@@ -100,34 +132,35 @@ public class ChineseWordFinder {
     }
 
     private List<List<Word>> getWordList(char[] charArray) {
-        List<List<Word>> wordsForChars = new ArrayList<List<Word>>(charArray.length);
+        List<List<Word>> wordsForChars = new ArrayList<>(charArray.length);
         for (int i = 0; i < charArray.length; i++) {
             wordsForChars.add(new ArrayList<>());
         }
-        for (int i = 0; i < charArray.length; i++) {
+        
+        java.util.stream.IntStream.range(0, charArray.length).forEach(i -> {
             //TODO:genericise
             //trigrams
             if (i + 2 < charArray.length) {
-                Word wordThreeChars = (Word) extractor.getWord("" + charArray[i] + charArray[i + 1] + charArray[i + 2]);
-                if (wordThreeChars != null) {
-                    wordsForChars.get(i).add(wordThreeChars);
-                    wordsForChars.get(i + 1).add(wordThreeChars);
-                    wordsForChars.get(i + 2).add(wordThreeChars);
-                }
+                extractor.getWord("" + charArray[i] + charArray[i + 1] + charArray[i + 2])
+                        .ifPresent(wordThreeChars -> {
+                            wordsForChars.get(i).add(wordThreeChars);
+                            wordsForChars.get(i + 1).add(wordThreeChars);
+                            wordsForChars.get(i + 2).add(wordThreeChars);
+                        });
             }
 
             //bigrams
             if (i + 1 < charArray.length) {
-                Word word = extractor.getWord("" + charArray[i] + charArray[i + 1]);
-                if (word != null) {
-                    wordsForChars.get(i).add(word);
-                    wordsForChars.get(i+1).add(word);
-                }
+                extractor.getWord("" + charArray[i] + charArray[i + 1])
+                        .ifPresent(word -> {
+                            wordsForChars.get(i).add(word);
+                            wordsForChars.get(i+1).add(word);
+                        });
             }
 
             //monogram
-            wordsForChars.get(i).add(extractor.getWord(charArray[i]));
-        }
+            extractor.getWord(charArray[i]).ifPresent(word -> wordsForChars.get(i).add(word));
+        });
         return wordsForChars;
     }
 

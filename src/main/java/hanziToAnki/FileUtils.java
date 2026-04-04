@@ -17,8 +17,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileUtils {
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
     private static final String ZIP_COMPRESSED = "application/x-zip-compressed";
     private static final String ZIP = "application/zip";
     private static final String X_GZIP = "application/x-gzip";
@@ -40,13 +43,12 @@ public class FileUtils {
                     return getGzipLines(file);
                 }
                 default -> {
-                    System.out.println("Mediatype detected: " + contentType + ", attempting to read lines");
+                    logger.debug("Mediatype detected: {}, attempting to read lines", contentType);
                     return Files.readAllLines(file.toPath());
                 }
             }
         } catch (IOException exception) {
-            System.out.println("Could not read lines from file at " + file.getPath());
-            exception.printStackTrace();
+            logger.error("Could not read lines from file at {}", file.getPath(), exception);
             return new ArrayList<>();
         }
     }
@@ -62,19 +64,17 @@ public class FileUtils {
                 allLines.addAll(lines);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error reading zip file: {}", file.getPath(), e);
         }
         return allLines;
     }
 
-    // Probably single file with .gz compression
     private static List<String> getGzipLines(File file) {
         try {
             GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(file));
             return readLinesFromStream(gzipInputStream);
         } catch (IOException e) {
-            System.out.println("Unable to read Gzip file");
-            e.printStackTrace();
+            logger.error("Unable to read Gzip file: {}", file.getPath(), e);
             return Collections.emptyList();
         }
     }
@@ -83,7 +83,7 @@ public class FileUtils {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
             return reader.lines().collect(Collectors.toList());
         } catch (IOException e) {
-            System.out.println("Unable to read stream from zipped file");
+            logger.error("Unable to read stream from zipped file", e);
             return Collections.emptyList();
         }
     }
@@ -91,8 +91,9 @@ public class FileUtils {
     public static void writeToFile(List<String> lines, String outputFilename) {
         try {
             Files.write(Paths.get(outputFilename), lines);
-        } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("Successfully wrote {} lines to {}", lines.size(), outputFilename);
+        } catch (IOException e) {
+            logger.error("Error writing to file: {}", outputFilename, e);
         }
     }
 }

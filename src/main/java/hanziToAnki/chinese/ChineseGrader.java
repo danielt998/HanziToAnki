@@ -41,7 +41,7 @@ public class ChineseGrader implements Grader {
             Path path = Path.of(uri);
             return Files.readAllLines(path).stream()
                     .map(extractor::getWord)
-                    .filter(Objects::nonNull)
+                    .flatMap(java.util.Optional::stream)
                     .collect(Collectors.toSet());
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace(); // We should throw these up and display in GUI

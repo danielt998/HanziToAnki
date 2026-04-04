@@ -1,40 +1,71 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'idea'
-    id 'org.springframework.boot' version '2.7.5'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version '3.1.0'
 }
 
 group 'org.example'
 version '1.0.0'
 
-sourceCompatibility = 17
+sourceCompatibility = 21
+targetCompatibility = 21
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
     implementation 'org.apache.tika:tika-core:2.9.2'
     implementation 'org.jetbrains:annotations:24.1.0'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.11.0'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    
+    // Spring Boot 3.1+ (officially supports Java 21)
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.1.0'
+    
+    // SLF4J API for application code
+    implementation 'org.slf4j:slf4j-api:2.0.11'
+    
+    // ANSJ for Chinese word segmentation (Jieba-like algorithms)
+    implementation 'org.ansj:ansj_seg:5.1.6'
+    
+    // PDFBox for PDF generation (flashcards)
+    implementation 'org.apache.pdfbox:pdfbox:3.0.1'
+    
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
 }
 
-javafx {
-    version = "17"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+application {
+    mainClass = 'Launcher'
 }
 
-mainClassName = 'hanziToAnki.Main' //'server.Application' or 'GUIStarter' are also available
+sourceSets {
+    main {
+        java {
+            exclude 'GUIs/**'
+        }
+    }
+    test {
+        java {
+            exclude '**/GeneratorControllerTest.java'
+        }
+    }
+}
 
-compileJava {options.encoding = "UTF-8"} // overcome ü cp-1252 issues
-compileTestJava {options.encoding = "UTF-8"}
+compileJava {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
+    options.release = 21
+}
 
 test {
     useJUnitPlatform()
@@ -43,36 +74,62 @@ test {
     }
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs += "--enable-preview"
+
+task printClasspath {
+    doLast {
+        println configurations.runtimeClasspath.asPath
+    }
 }
 
-tasks.withType(Test) {
-    jvmArgs += "--enable-preview"
+task runApi {
+    description = "Run the Spring Boot API server"
+    dependsOn 'classes'
+    doLast {
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'server.Application'
+        }
+    }
 }
 
-tasks.withType(JavaExec) {
-    jvmArgs += '--enable-preview'
-}
-
-task stage {
-    dependsOn build
+task runCli {
+    description = "Run the CLI tool (usage: ./gradlew runCli -Pargs='input.txt')"
+    dependsOn 'classes'
+    doLast {
+        def cliArgs = project.hasProperty('args') ? project.args.toString().split('\\s+') as List : []
+        javaexec {
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'hanziToAnki.Main'
+            args = cliArgs
+        }
+    }
 }
 
 jar {
+    // Spring Boot will handle the manifest
+    duplicatesStrategy = 'exclude'
+}
+
+// Optional: Create separate lightweight JARs for CLI and API
+task cliJar(type: Jar) {
+    description = "Create a standalone CLI JAR (without Spring Boot)"
+    archiveBaseName = "HanziToAnki-cli"
+    from sourceSets.main.output
+    exclude 'server/**'
+    exclude 'public/**'
     manifest {
-        attributes(
-                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' '),
-                'Main-Class': 'server.Application'
-        )
+        attributes 'Main-Class': 'hanziToAnki.Main'
     }
-    archiveFileName = "heroku-gradle-spring-boot.jar"
-    baseName = 'heroku-gradle-spring-boot'
+    dependsOn classes
 }
 
-task copyToLib(type: Copy) {
-    into "$buildDir/libs"
-    from(configurations.runtimeClasspath)
+task apiJar(type: Jar) {
+    description = "Create a standalone API JAR (without CLI Main)"
+    archiveBaseName = "HanziToAnki-api"
+    from sourceSets.main.output
+    exclude 'hanziToAnki/Main.class'
+    manifest {
+        attributes 'Main-Class': 'server.Application'
+    }
+    dependsOn classes
 }
-
-stage.dependsOn(copyToLib)

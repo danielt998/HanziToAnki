@@ -1,3 +1,7 @@
 .idea
 .gradle
 build
+gradle.properties
+*.tsv
+META-INF/
+*.txt

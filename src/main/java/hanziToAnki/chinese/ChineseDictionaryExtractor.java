@@ -3,7 +3,10 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Word;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +15,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
@@ -34,6 +39,7 @@ import java.util.Objects;
   Capitals are causing issues too...
 */
 public class ChineseDictionaryExtractor implements DictionaryExtractor {
+    private static final Logger logger = LoggerFactory.getLogger(ChineseDictionaryExtractor.class);
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
 
@@ -42,51 +48,69 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
     @Override
     public void readInDictionary() throws URISyntaxException {
-        URI defaultDictionaryPath = this.getClass().getResource("/dictionary/" + DEFAULT_DICTIONARY_FILENAME).toURI();
-        readInDictionary(Path.of(defaultDictionaryPath));
+        InputStream dictionaryStream = this.getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME);
+        if (dictionaryStream == null) {
+            logger.error("Dictionary file not found: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME);
+            return;
+        }
+        readInDictionary(dictionaryStream);
     }
 
-    private void readInDictionary(Path path) {
-        try {
-            Files.readAllLines(path, StandardCharsets.UTF_8).stream()
-                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
+    private void readInDictionary(InputStream stream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            reader.lines()
+                    .filter(line -> !line.isEmpty() && line.charAt(0) != COMMENT_CHARACTER)
                     .map(this::getWordFromLine)
+                    .filter(Objects::nonNull)
                     .forEach(this::putWordToMaps);
+            logger.info("Successfully loaded dictionary with {} simplified and {} traditional words",
+                    simplifiedMapping.size(), traditionalMapping.size());
         } catch (IOException e) {
-            System.out.println("Could not load dictionary file at " + path);
+            logger.error("Could not load dictionary file", e);
         }
     }
 
     @Override
-    public Word getWord(char c) {
+    public java.util.Optional<Word> getWord(char c) {
         return getWord(String.valueOf(c));
     }
 
     @Override
-    public Word getWord(String s) {
+    public java.util.Optional<Word> getWord(String s) {
         var word = simplifiedMapping.getOrDefault(s, traditionalMapping.get(s));
         if (Objects.nonNull(word)) {
-            return word;
+            return java.util.Optional.of(word);
         }
 
         if (mightBeErhua(s)) {
             var stripped = sanitiseErhua(s);
-            return simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+            word = simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
+            if (Objects.nonNull(word)) {
+                return java.util.Optional.of(word);
+            }
         }
 
-        return null;
+        return java.util.Optional.empty();
     }
 
     private Word getWordFromLine(String line) {
         String[] str = line.split(" /");
+        if (str.length < 2) {
+            return null;
+        }
         String definition = str[1];
 
         String[] rem = str[0].split("\\[");
+        if (rem.length < 2) {
+            return null;
+        }
         String pinyinNoTones = rem[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
         String pinyinWithTones = rem[1].replaceAll("[\\[\\]]", "").toLowerCase();
 
-
         String[] remRem = rem[0].split(" ");
+        if (remRem.length < 2) {
+            return null;
+        }
         String trad = remRem[0];
         String simp = remRem[1];
 

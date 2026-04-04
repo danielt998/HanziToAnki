@@ -14,6 +14,32 @@ public class ChineseDeckStyler implements DeckStyler {
             "#notetype:Chinese"
     );
 
+    private final HanziType hanziType;
+
+    public enum HanziType {
+        SIMP(0),
+        TRAD(1),
+        SIMP_AND_TRAD(2);
+
+        private final int hanziTypeIndex;
+
+        HanziType(final int givenValue) {
+            hanziTypeIndex = givenValue;
+        }
+
+        public static HanziType getHanziType(int givenHanziType) {
+            for (HanziType hanziType: HanziType.values()) {
+                if (hanziType.hanziTypeIndex == givenHanziType){
+                    return hanziType;
+                }
+            }
+            throw new IllegalArgumentException("Hanzi type not found");
+        }
+    }
+
+    public ChineseDeckStyler(HanziType givenHanziType) {
+        this.hanziType = givenHanziType;
+    }
 
     private static String getPinyinWithHtml(ChineseWord word) {
         String pinyin = word.pinyinTones();
@@ -36,15 +62,29 @@ public class ChineseDeckStyler implements DeckStyler {
         List<String> wordList = words.stream()
                 .map(this::getWordAsDeckLine)
                 .toList();
+        //TODO: consider a different notetype if including both trad and simp
         return Stream.of(HEADERS, wordList).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     private String getWordAsDeckLine(Word word) {
         var w = (ChineseWord) word;
-        return String.join(DELIMITER,
-                w.simplified(),
-                w.definition(),
-                getPinyinWithHtml(w)
-        );
+        return switch (hanziType) {
+            case SIMP -> String.join(DELIMITER,
+                    w.simplified(),
+                    w.definition(),
+                    getPinyinWithHtml(w)
+            );
+            case TRAD -> String.join(DELIMITER,
+                    w.traditional(),
+                    w.definition(),
+                    getPinyinWithHtml(w)
+            );
+            case SIMP_AND_TRAD -> String.join(DELIMITER,
+                    w.simplified(),
+                    w.traditional(),
+                    w.definition(),
+                    getPinyinWithHtml(w)
+            );
+        };
     }
 }

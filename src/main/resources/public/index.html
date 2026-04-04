@@ -1,30 +1,627 @@
 <!DOCTYPE HTML>
-<html xmlns:form="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-    <title>Flashcard Generator</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HanziToAnki - Flashcard Generator</title>
+    <style>
+        :root {
+            /* Dark theme (default) - cool, professional */
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --primary-color: #64b5f6;
+            --primary-dark: #2196f3;
+            --secondary-color: #64b5f6;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --border-color: #404040;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        body[data-theme="dark"] {
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --primary-color: #64b5f6;
+            --primary-dark: #2196f3;
+            --secondary-color: #64b5f6;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --border-color: #404040;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        body[data-theme="sunset"] {
+            --primary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --primary-color: #f5576c;
+            --primary-dark: #f093fb;
+            --secondary-color: #f5576c;
+            --text-primary: #2c3e50;
+            --text-secondary: #34495e;
+            --text-tertiary: #7f8c8d;
+            --bg-primary: #fff8f5;
+            --bg-secondary: #ffe8e0;
+            --bg-tertiary: #fff0eb;
+            --border-color: #f0d4c8;
+            --shadow: 0 20px 60px rgba(245, 87, 108, 0.2);
+        }
+
+        body[data-theme="ocean"] {
+            --primary-gradient: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+            --primary-color: #0093E9;
+            --primary-dark: #80D0C7;
+            --secondary-color: #0093E9;
+            --text-primary: #0d1f2d;
+            --text-secondary: #1a3a45;
+            --text-tertiary: #4a6a75;
+            --bg-primary: #f0f8fb;
+            --bg-secondary: #e0f2f7;
+            --bg-tertiary: #f5fafb;
+            --border-color: #c0e0eb;
+            --shadow: 0 20px 60px rgba(0, 147, 233, 0.2);
+        }
+
+        body[data-theme="forest"] {
+            --primary-gradient: linear-gradient(135deg, #134e5e 0%, #16a085 100%);
+            --primary-color: #16a085;
+            --primary-dark: #134e5e;
+            --secondary-color: #16a085;
+            --text-primary: #1a3a35;
+            --text-secondary: #2d5a52;
+            --text-tertiary: #5a8a80;
+            --bg-primary: #f0faf8;
+            --bg-secondary: #e0f5f0;
+            --bg-tertiary: #f5faf9;
+            --border-color: #c0e5dd;
+            --shadow: 0 20px 60px rgba(22, 160, 133, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: stretch;
+            padding: 0;
+            color: var(--text-primary);
+            transition: background 0.3s ease;
+        }
+
+        .main-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--bg-primary);
+            padding: 40px;
+            flex: 1;
+            max-width: 50%;
+            overflow-y: auto;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: var(--bg-primary);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .optional-badge {
+            background: var(--border-color);
+            color: var(--text-primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-textarea {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            transition: border-color 0.3s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: none;
+        }
+
+        .sidebar-textarea:hover {
+            border-color: var(--primary-color);
+        }
+
+        .sidebar-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            .container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .sidebar {
+                max-width: 100%;
+                min-height: 300px;
+                border-radius: 0;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--text-primary);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-section input[type="file"],
+        .form-section select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .form-section input[type="file"]:hover,
+        .form-section select:hover {
+            border-color: var(--primary-color);
+        }
+
+        .form-section input[type="file"]:focus,
+        .form-section select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-tertiary);
+            color: var(--primary-color);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-column label {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .option-column select {
+            padding: 8px;
+            font-size: 13px;
+        }
+
+        .form-section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-reset {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-reset:hover {
+            background: var(--border-color);
+        }
+
+        .info-text {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .description {
+            color: var(--text-tertiary);
+            font-size: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .file-name {
+            color: var(--primary-color);
+            font-size: 13px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .input-mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .toggle-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .input-section {
+            display: none;
+        }
+
+        .input-section.active {
+            display: block;
+        }
+
+        .form-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .form-section textarea:hover {
+            border-color: var(--primary-color);
+        }
+
+        .form-section textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
 </head>
 <body>
-<span>Complete the settings and generate your flashcards!</span><br><br>
-<form method="POST" action="/generate" enctype="multipart/form-data">
-    <table>
-        <tr>
-            <td><form:label path="uploadFile">Upload a file to create flashcards from:</form:label></td>
-            <td><input type="file" name="uploadFile" /></td>
-        </tr>
-        <span>Language:</span><br>
-        <tr>
-            <input type="radio" id="zh-cn" name="outputType" value="zh-cn">
-            <label for="zh-cn">Chinese (zh-cn)</label><br>
-            <input type="radio" id="todo" name="outputType" value="todo">
-            <label for="todo">Help needed for more languages</label><br>
-        </tr>
-        <br>
-        <tr>
-            <td>Generate your flashcards!<input type="submit" value="Submit" /></td>
-        </tr>
-    </table>
-</form>
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>HanziToAnki</h1>
+                <p>Generate flashcards from Chinese text</p>
+            </div>
 
+            <form method="POST" action="/generate" enctype="multipart/form-data" id="generateForm">
+                <!-- File Upload Section -->
+                <div class="form-section">
+                    <label for="uploadFile">Upload Chinese Text</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="uploadFile" name="uploadFile" accept=".txt">
+                        <label for="uploadFile" class="file-input-label">
+                            Click to select a .txt file<br>
+                            <span class="info-text">or drag and drop</span>
+                        </label>
+                    </div>
+                    <div class="file-name" id="fileName"></div>
+                </div>
+
+                <!-- Options Grid -->
+                <div class="options-grid">
+                    <!-- Hanzi Type -->
+                    <div class="form-section">
+                        <label for="hanziType">Character Type</label>
+                        <select id="hanziType" name="hanziType" required>
+                            <option value="SIMP">Simplified (简体)</option>
+                            <option value="TRAD">Traditional (繁體)</option>
+                            <option value="SIMP_AND_TRAD">Both (混合)</option>
+                        </select>
+                    </div>
+
+                    <!-- Strategy -->
+                    <div class="form-section">
+                        <label for="strategy">Segmentation Strategy</label>
+                        <select id="strategy" name="strategy" required>
+                            <option value="6" selected>Smart Segmentation (Default - ANSJ)</option>
+                            <option value="0">Balanced (N-gram)</option>
+                            <option value="1">All Combinations</option>
+                            <option value="4">Single Characters Only</option>
+                            <option value="2">Bigram + Monogram (No Overlap)</option>
+                            <option value="3">Bigram + Monogram (Overlap)</option>
+                        </select>
+                    </div>
+
+                    <!-- HSK Level -->
+                    <div class="form-section">
+                        <label for="hskLevel">Minimum HSK Level</label>
+                        <select id="hskLevel" name="hskLevel" required>
+                            <option value="0">Include All (0)</option>
+                            <option value="1">Exclude HSK 1</option>
+                            <option value="2">Exclude HSK 1-2</option>
+                            <option value="3">Exclude HSK 1-3</option>
+                            <option value="4">Exclude HSK 1-4</option>
+                            <option value="5">Exclude HSK 1-5</option>
+                            <option value="6">Exclude HSK 1-6</option>
+                        </select>
+                    </div>
+
+                    <!-- Format -->
+                    <div class="form-section">
+                        <label for="format">Output Format</label>
+                        <select id="format" name="format" required onchange="togglePdfOptions()">
+                            <option value="ANKI">Anki TSV</option>
+                            <option value="PLECO">Pleco</option>
+                            <option value="MEMRISE">Memrise</option>
+                            <option value="PDF_FLASHCARDS">📄 Paper Flashcards (PDF)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- PDF-specific options (hidden by default) -->
+                <div id="pdfOptions" style="display: none;">
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                        <label style="color: var(--text-secondary); font-size: 13px; font-weight: 600; margin-bottom: 12px; display: block;">
+                            📋 Paper Flashcard Options
+                        </label>
+                        <div class="options-grid">
+                            <!-- Card Style -->
+                            <div class="form-section">
+                                <label for="cardStyle">Card Size</label>
+                                <select id="cardStyle" name="cardStyle">
+                                    <option value="INDEX_CARD_3x5" selected>3×5 Index Card (Standard)</option>
+                                    <option value="BUSINESS_CARD">Business Card</option>
+                                    <option value="POSTCARD">Postcard</option>
+                                </select>
+                            </div>
+
+                            <!-- Tone Colors -->
+                            <div class="form-section">
+                                <label for="toneColors">Tone Colors</label>
+                                <select id="toneColors" name="toneColors">
+                                    <option value="true" selected>Enabled (Anki Colors)</option>
+                                    <option value="false">Disabled (Grayscale)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn-submit">Generate Flashcards</button>
+                    <button type="reset" class="btn-reset">Clear</button>
+                </div>
+
+                <div class="description">
+                    Upload a UTF-8 encoded .txt file with Chinese text. The tool will extract vocabulary and generate flashcards
+                    with definitions and pinyin pronunciation. Compatible with Anki, Pleco, and Memrise.
+                </div>
+
+                <!-- Text Input (hidden from form, used separately) -->
+                <textarea id="textInput" name="textInput" style="display: none;"></textarea>
+            </form>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-label">
+                📝 Paste Text
+                <span class="optional-badge">Optional</span>
+            </div>
+            <textarea id="sidebarTextInput" placeholder="Paste your Chinese text here..." class="sidebar-textarea"></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Toggle PDF-specific options based on format selection
+        function togglePdfOptions() {
+            const format = document.getElementById('format').value;
+            const pdfOptions = document.getElementById('pdfOptions');
+            if (format === 'PDF_FLASHCARDS') {
+                pdfOptions.style.display = 'block';
+            } else {
+                pdfOptions.style.display = 'none';
+            }
+        }
+
+        // Sync sidebar textarea with form input
+        const sidebarTextInput = document.getElementById('sidebarTextInput');
+        const textInput = document.getElementById('textInput');
+        const uploadFile = document.getElementById('uploadFile');
+
+        sidebarTextInput.addEventListener('input', function() {
+            textInput.value = this.value;
+        });
+
+        // Form validation
+        document.getElementById('generateForm').addEventListener('submit', function(e) {
+            const hasFile = uploadFile.files.length > 0;
+            const hasText = sidebarTextInput.value.trim().length > 0;
+
+            if (!hasFile && !hasText) {
+                e.preventDefault();
+                alert('Please either upload a file or paste text');
+                return false;
+            }
+        });
+
+        // File input display
+        document.getElementById('uploadFile').addEventListener('change', function() {
+            const fileName = this.files[0]?.name || '';
+            document.getElementById('fileName').textContent = fileName ? '📄 ' + fileName : '';
+        });
+
+        // Drag and drop
+        const fileInput = document.getElementById('uploadFile');
+        const fileLabel = document.querySelector('.file-input-label');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            fileLabel.style.borderColor = '#667eea';
+            fileLabel.style.background = '#f0f4ff';
+        }
+
+        function unhighlight(e) {
+            fileLabel.style.borderColor = '#ddd';
+            fileLabel.style.background = '#fafafa';
+        }
+
+        fileLabel.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(event);
+        }
+    </script>
 </body>
 </html>
