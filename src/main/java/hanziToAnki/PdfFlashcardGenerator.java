@@ -40,6 +40,7 @@ public class PdfFlashcardGenerator {
     private static final float DEFINITION_SIZE_RATIO = 0.15f;  // 15% of Chinese font size
     
     private final CardStyle cardStyle;
+    private final boolean useToneColors;
     private final int cardWidth;
     private final int cardHeight;
     private final int cardsPerRow;
@@ -49,11 +50,16 @@ public class PdfFlashcardGenerator {
     private final Font fontDefinition;
     
     public PdfFlashcardGenerator() {
-        this(CardStyle.INDEX_CARD_3x5);
+        this(CardStyle.INDEX_CARD_3x5, true);
     }
     
     public PdfFlashcardGenerator(CardStyle cardStyle) {
+        this(cardStyle, true);
+    }
+    
+    public PdfFlashcardGenerator(CardStyle cardStyle, boolean useToneColors) {
         this.cardStyle = cardStyle;
+        this.useToneColors = useToneColors;
         this.cardWidth = cardStyle.widthPoints() * SCALE;
         this.cardHeight = cardStyle.heightPoints() * SCALE;
         
@@ -138,9 +144,17 @@ public class PdfFlashcardGenerator {
         int frontHeight = (cardHeight - MARGIN) / 2;
         
         g2d.setFont(fontChinese);
-        g2d.setColor(Color.BLACK);
         
         String hanzi = chineseWord.simplified();
+        String pinyinWithNumbers = chineseWord.pinyinTones() != null ? chineseWord.pinyinTones() : "";
+        int tone = getToneFromPinyin(pinyinWithNumbers);
+        
+        if (useToneColors) {
+            g2d.setColor(ToneColor.getToneColor(tone));
+        } else {
+            g2d.setColor(Color.BLACK);
+        }
+        
         FontMetrics fm = g2d.getFontMetrics();
         int hanziWidth = fm.stringWidth(hanzi);
         int hanziX = x + (cardWidth - MARGIN - hanziWidth) / 2;
@@ -155,14 +169,17 @@ public class PdfFlashcardGenerator {
         
         // Draw pinyin with tone marks
         g2d.setFont(fontPinyin);
-        g2d.setColor(new Color(64, 64, 64)); // Dark gray
         
-        String pinyinWithNumbers = chineseWord.pinyinTones() != null ? chineseWord.pinyinTones() : "";
         String pinyinWithMarks = convertPinyinToToneMarks(pinyinWithNumbers);
         int pinyinX = x + PADDING;
         int pinyinY = backY + 14;
         
-        g2d.drawString(pinyinWithMarks, pinyinX, pinyinY);
+        if (useToneColors) {
+            drawColoredPinyin(g2d, pinyinWithNumbers, pinyinX, pinyinY, fontPinyin);
+        } else {
+            g2d.setColor(new Color(64, 64, 64)); // Dark gray
+            g2d.drawString(pinyinWithMarks, pinyinX, pinyinY);
+        }
         
         // Draw definition with text wrapping - add more space between pinyin and definition
         g2d.setFont(fontDefinition);
@@ -174,6 +191,37 @@ public class PdfFlashcardGenerator {
         int maxWidth = cardWidth - MARGIN - 2 * PADDING;
         
         drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, fontDefinition);
+    }
+    
+    private int getToneFromPinyin(String pinyinWithNumbers) {
+        if (pinyinWithNumbers == null || pinyinWithNumbers.isEmpty()) {
+            return 5;
+        }
+        try {
+            String firstSyllable = pinyinWithNumbers.split(" ")[0];
+            return Integer.parseInt("" + firstSyllable.charAt(firstSyllable.length() - 1));
+        } catch (Exception e) {
+            return 5;
+        }
+    }
+    
+    private void drawColoredPinyin(Graphics2D g2d, String pinyinWithNumbers, int x, int y, Font font) {
+        if (pinyinWithNumbers == null || pinyinWithNumbers.isEmpty()) {
+            return;
+        }
+        
+        String[] syllables = pinyinWithNumbers.split(" ");
+        int currentX = x;
+        
+        for (String syllable : syllables) {
+            int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+            g2d.setColor(ToneColor.getToneColor(tone));
+            String marked = ToneHelper.convertNumberedSyllableToAccentedSyllable(syllable);
+            g2d.drawString(marked, currentX, y);
+            
+            FontMetrics fm = g2d.getFontMetrics();
+            currentX += fm.stringWidth(marked) + fm.stringWidth(" ");
+        }
     }
     
     private String convertPinyinToToneMarks(String pinyinWithNumbers) {

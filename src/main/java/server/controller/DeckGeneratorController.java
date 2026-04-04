@@ -36,7 +36,8 @@ public class DeckGeneratorController {
             @RequestParam(value = "hskLevel", defaultValue = "0") int hskLevel,
             @RequestParam(value = "hanziType", defaultValue = "SIMP") String hanziTypeStr,
             @RequestParam(value = "format", defaultValue = "ANKI") String formatStr,
-            @RequestParam(value = "cardStyle", defaultValue = "INDEX_CARD_3x5") String cardStyleStr
+            @RequestParam(value = "cardStyle", defaultValue = "INDEX_CARD_3x5") String cardStyleStr,
+            @RequestParam(value = "toneColors", defaultValue = "true") boolean toneColors
     ) throws IOException, URISyntaxException {
 
         // Validate that either file or text is provided
@@ -90,7 +91,7 @@ public class DeckGeneratorController {
             if (outputFormat == OutputFormat.PDF_FLASHCARDS) {
                 // Generate PDF flashcards
                 List<String> inputLines = FileUtils.fileToStringArray(inputFile.getAbsolutePath());
-                fileContent = deckProducer.producePdfFlashcards(inputLines, options, cardStyle);
+                fileContent = deckProducer.producePdfFlashcards(inputLines, options, cardStyle, toneColors);
                 fileExtension = "pdf";
                 contentType = "application/pdf";
             } else {

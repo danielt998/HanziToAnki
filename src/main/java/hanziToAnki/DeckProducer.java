@@ -49,10 +49,14 @@ public class DeckProducer {
     }
 
     public byte[] producePdfFlashcards(List<String> lines, ExportOptions exportOptions) {
-        return producePdfFlashcards(lines, exportOptions, CardStyle.INDEX_CARD_3x5);
+        return producePdfFlashcards(lines, exportOptions, CardStyle.INDEX_CARD_3x5, true);
     }
 
     public byte[] producePdfFlashcards(List<String> lines, ExportOptions exportOptions, CardStyle cardStyle) {
+        return producePdfFlashcards(lines, exportOptions, cardStyle, true);
+    }
+
+    public byte[] producePdfFlashcards(List<String> lines, ExportOptions exportOptions, CardStyle cardStyle, boolean useToneColors) {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
@@ -67,7 +71,7 @@ public class DeckProducer {
         List<Word> wordList = new ArrayList<>(words);
         
         try {
-            PdfFlashcardGenerator generator = new PdfFlashcardGenerator(cardStyle);
+            PdfFlashcardGenerator generator = new PdfFlashcardGenerator(cardStyle, useToneColors);
             return generator.generateFlashcardPdf(wordList);
         } catch (IOException e) {
             logger.error("Failed to generate PDF flashcards", e);

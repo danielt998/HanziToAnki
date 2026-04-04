@@ -26,7 +26,7 @@ public class Main {
         for (String fileName : parsedArgs.fileNames()) {
             if (parsedArgs.options().outputFormat() == OutputFormat.PDF_FLASHCARDS) {
                 var inputLines = FileUtils.fileToStringArray(fileName);
-                byte[] pdfContent = deckProducer.producePdfFlashcards(inputLines, parsedArgs.options(), parsedArgs.cardStyle());
+                byte[] pdfContent = deckProducer.producePdfFlashcards(inputLines, parsedArgs.options(), parsedArgs.cardStyle(), parsedArgs.useToneColors());
                 Files.write(Paths.get(parsedArgs.outputFileName()), pdfContent);
                 logger.info("Generated PDF flashcards: {}", parsedArgs.outputFileName());
             } else {

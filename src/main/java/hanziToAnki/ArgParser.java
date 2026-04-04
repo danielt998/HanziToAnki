@@ -45,6 +45,7 @@ public class ArgParser {
         int hskLevelToExclude = 0;
         ChineseWordFinder.STRATEGY strategy = ChineseWordFinder.STRATEGY.ANSJ_SEGMENTATION;
         CardStyle cardStyle = CardStyle.INDEX_CARD_3x5;
+        boolean useToneColors = true;
 
         for (int argNo = 0; argNo < args.length - 1; argNo++) {
             switch (args[argNo]) {
@@ -122,14 +123,15 @@ public class ArgParser {
                         System.out.println("Error: --card-style requires a style argument");
                     }
                 }
+                case "--no-tone-colors" -> useToneColors = false;
                 default -> fileNames.add(args[argNo]);
             }
         }
 
         var options = new ExportOptions(useWordList, allWords, hskLevelToExclude, strategy, outputFormat, charType);
-        return new ParsedArgs(options, fileNames, outputFileName, cardStyle);
+        return new ParsedArgs(options, fileNames, outputFileName, cardStyle, useToneColors);
     }
 
-    public record ParsedArgs(ExportOptions options, List<String> fileNames, String outputFileName, CardStyle cardStyle) {
+    public record ParsedArgs(ExportOptions options, List<String> fileNames, String outputFileName, CardStyle cardStyle, boolean useToneColors) {
     }
 }
