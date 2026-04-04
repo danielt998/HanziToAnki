@@ -1,10 +1,11 @@
 package hanziToAnki.chinese;
 
 import hanziToAnki.DictionaryExtractor;
-
 import hanziToAnki.Word;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import org.ansj.splitWord.analysis.ToAnalysis;
 import org.ansj.domain.Term;
 
