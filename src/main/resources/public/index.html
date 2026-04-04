@@ -6,19 +6,19 @@
     <title>HanziToAnki - Flashcard Generator</title>
     <style>
         :root {
-            /* Light theme (default) */
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --primary-color: #667eea;
-            --primary-dark: #764ba2;
-            --secondary-color: #667eea;
-            --text-primary: #333;
-            --text-secondary: #666;
-            --text-tertiary: #999;
-            --bg-primary: white;
-            --bg-secondary: #f5f5f5;
-            --bg-tertiary: #fafafa;
-            --border-color: #ddd;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            /* Dark theme (default) - cool, professional */
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --primary-color: #64b5f6;
+            --primary-dark: #2196f3;
+            --secondary-color: #64b5f6;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --border-color: #404040;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
         }
 
         body[data-theme="dark"] {
@@ -98,38 +98,6 @@
             padding: 20px;
             color: var(--text-primary);
             transition: background 0.3s ease;
-        }
-
-        .theme-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 8px;
-            z-index: 1000;
-        }
-
-        .theme-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .theme-btn.active {
-            background: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         .container {
@@ -374,15 +342,6 @@
     </style>
 </head>
 <body>
-    <div class="theme-switcher">
-        <span style="color: white; font-weight: 600; align-self: center; margin-right: 10px;">Theme:</span>
-        <button type="button" class="theme-btn active" data-theme="light" title="Light Theme">☀️</button>
-        <button type="button" class="theme-btn" data-theme="dark" title="Dark Theme">🌙</button>
-        <button type="button" class="theme-btn" data-theme="sunset" title="Sunset Theme">🌅</button>
-        <button type="button" class="theme-btn" data-theme="ocean" title="Ocean Theme">🌊</button>
-        <button type="button" class="theme-btn" data-theme="forest" title="Forest Theme">🌲</button>
-    </div>
-
     <div class="container">
         <div class="header">
             <h1>HanziToAnki</h1>
@@ -482,34 +441,7 @@
     </div>
 
     <script>
-        // Theme Switcher
-        const themeBtns = document.querySelectorAll('.theme-btn');
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', savedTheme);
-        
-        // Set active button
-        themeBtns.forEach(btn => {
-            if (btn.dataset.theme === savedTheme) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-
-        themeBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const theme = this.dataset.theme;
-                document.body.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-                
-                // Update active button
-                themeBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Mode toggle
+        // Mode toggle for file/text input
         const inputToggleBtns = document.querySelectorAll('.toggle-btn[data-mode]');
         const fileSection = document.getElementById('fileSection');
         const textSection = document.getElementById('textSection');

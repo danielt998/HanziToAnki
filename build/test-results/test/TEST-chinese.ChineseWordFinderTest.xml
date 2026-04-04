@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chinese.ChineseWordFinderTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:10:21" hostname="fedora" time="0.004">
+<testsuite name="chinese.ChineseWordFinderTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-04T16:12:10" hostname="fedora" time="0.008">
   <properties/>
-  <testcase name="defaultStrategyReturnsTrigramAndBigrams()" classname="chinese.ChineseWordFinderTest" time="0.002"/>
-  <testcase name="allCombinationsTest()" classname="chinese.ChineseWordFinderTest" time="0.001"/>
+  <testcase name="defaultStrategyReturnsTrigramAndBigrams()" classname="chinese.ChineseWordFinderTest" time="0.003"/>
+  <testcase name="allCombinationsTest()" classname="chinese.ChineseWordFinderTest" time="0.0"/>
   <testcase name="defaultStrategyReturnsMonogramPlusBigram()" classname="chinese.ChineseWordFinderTest" time="0.0"/>
-  <testcase name="defaultStrategyReturnsBigramPlusMonogram()" classname="chinese.ChineseWordFinderTest" time="0.001"/>
-  <testcase name="triBiMonogramsStrategyReturnsTrigramAndNoBigrams()" classname="chinese.ChineseWordFinderTest" time="0.0"/>
-  <testcase name="singleCharOnlyTest()" classname="chinese.ChineseWordFinderTest" time="0.0"/>
-  <system-out><![CDATA[17:10:21.478 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
+  <testcase name="defaultStrategyReturnsBigramPlusMonogram()" classname="chinese.ChineseWordFinderTest" time="0.0"/>
+  <testcase name="triBiMonogramsStrategyReturnsTrigramAndNoBigrams()" classname="chinese.ChineseWordFinderTest" time="0.001"/>
+  <testcase name="singleCharOnlyTest()" classname="chinese.ChineseWordFinderTest" time="0.001"/>
+  <system-out><![CDATA[17:12:10.754 [Test worker] INFO hanziToAnki.chinese.ChineseDictionaryExtractor -- Successfully loaded dictionary with 111506 simplified and 112632 traditional words
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
