@@ -1,12 +1,13 @@
 package hanziToAnki;
 
 import static hanziToAnki.OutputFormat.ANKI;
+import static hanziToAnki.OutputFormat.PDF_FLASHCARDS;
 
 import hanziToAnki.chinese.ChineseGrader;
 import hanziToAnki.chinese.ChineseWordFinder;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -45,6 +46,29 @@ public class DeckProducer {
 
         logger.warn("Unrecognised output format: {}", exportOptions.outputFormat());
         return new ArrayList<>();
+    }
+
+    public byte[] producePdfFlashcards(List<String> lines, ExportOptions exportOptions) {
+        var words = generateWords(lines, exportOptions);
+
+        if (words.isEmpty() && !lines.isEmpty()) {
+            logger.warn("No words extracted. Please provide UTF-8 encoded files");
+            return new byte[0];
+        }
+
+        Grader grader = new ChineseGrader(extractor);
+        var wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
+        words.removeAll(wordsToExclude);
+
+        List<Word> wordList = new ArrayList<>(words);
+        
+        try {
+            PdfFlashcardGenerator generator = new PdfFlashcardGenerator();
+            return generator.generateFlashcardPdf(wordList);
+        } catch (IOException e) {
+            logger.error("Failed to generate PDF flashcards", e);
+            return new byte[0];
+        }
     }
 
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {

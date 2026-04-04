@@ -10,6 +10,7 @@ import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.List;
 
 import hanziToAnki.chinese.ChineseWordFinder;
 import org.springframework.http.HttpHeaders;
@@ -71,19 +72,33 @@ public class DeckGeneratorController {
                     : tempDirectory.getFileFromText(textInput);
             var flashcardFile = tempDirectory.getFile();
 
-            var outputLines = deckProducer.produceDeck(
-                    inputFile.getAbsolutePath(),
-                    options
-            );
-            FileUtils.writeToFile(outputLines, flashcardFile.getAbsolutePath());
-
-            // Read file content before the try-with-resources closes the temporary directory
-            byte[] fileContent = Files.readAllBytes(flashcardFile.toPath());
+            // Handle different output formats
+            byte[] fileContent;
+            String fileExtension;
+            String contentType;
+            
+            if (outputFormat == OutputFormat.PDF_FLASHCARDS) {
+                // Generate PDF flashcards
+                List<String> inputLines = FileUtils.fileToStringArray(inputFile.getAbsolutePath());
+                fileContent = deckProducer.producePdfFlashcards(inputLines, options);
+                fileExtension = "pdf";
+                contentType = "application/pdf";
+            } else {
+                // Generate text-based formats (ANKI, PLECO, MEMRISE)
+                var outputLines = deckProducer.produceDeck(
+                        inputFile.getAbsolutePath(),
+                        options
+                );
+                FileUtils.writeToFile(outputLines, flashcardFile.getAbsolutePath());
+                fileContent = Files.readAllBytes(flashcardFile.toPath());
+                fileExtension = "tsv";
+                contentType = "text/plain";
+            }
 
             HttpHeaders header = new HttpHeaders();
-            header.setContentType(MediaType.TEXT_PLAIN);
+            header.setContentType(MediaType.parseMediaType(contentType));
             header.set(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=" + "flashcards.tsv");
+                    "attachment; filename=" + "flashcards." + fileExtension);
             header.setContentLength(fileContent.length);
 
             return new ResponseEntity<>(fileContent, header, HttpStatus.OK);
