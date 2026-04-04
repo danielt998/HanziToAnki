@@ -84,8 +84,13 @@ public class ArgParser {
                         outputFormat = switch (format) {
                             case "pleco" -> OutputFormat.PLECO;
                             case "memrise" -> OutputFormat.MEMRISE;
+                            case "pdf_flashcards", "pdf-flashcards", "pdf" -> OutputFormat.PDF_FLASHCARDS;
                             default -> OutputFormat.ANKI;
                         };
+                        // Update output filename extension for PDF
+                        if (outputFormat == OutputFormat.PDF_FLASHCARDS) {
+                            outputFileName = outputFileName.replace(".tsv", ".pdf");
+                        }
                     } catch (IndexOutOfBoundsException e) {
                         System.out.println("Error: -f/--format requires a format argument");
                     }
