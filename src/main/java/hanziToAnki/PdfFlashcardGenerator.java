@@ -1,6 +1,7 @@
 package hanziToAnki;
 
 import hanziToAnki.chinese.ChineseWord;
+import hanziToAnki.chinese.ToneHelper;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -133,11 +134,12 @@ public class PdfFlashcardGenerator {
         g2d.setFont(FONT_PINYIN);
         g2d.setColor(new Color(64, 64, 64)); // Dark gray
         
-        String pinyin = chineseWord.pinyinTones() != null ? chineseWord.pinyinTones() : "";
+        String pinyinWithNumbers = chineseWord.pinyinTones() != null ? chineseWord.pinyinTones() : "";
+        String pinyinWithMarks = convertPinyinToToneMarks(pinyinWithNumbers);
         int pinyinX = x + PADDING;
         int pinyinY = backY + 14;
         
-        g2d.drawString(pinyin, pinyinX, pinyinY);
+        g2d.drawString(pinyinWithMarks, pinyinX, pinyinY);
         
         // Draw definition with text wrapping - add more space between pinyin and definition
         g2d.setFont(FONT_DEFINITION);
@@ -149,6 +151,24 @@ public class PdfFlashcardGenerator {
         int maxWidth = CARD_WIDTH - MARGIN - 2 * PADDING;
         
         drawWrappedText(g2d, definition, defX, defY, maxWidth, backBottom, FONT_DEFINITION);
+    }
+    
+    private String convertPinyinToToneMarks(String pinyinWithNumbers) {
+        if (pinyinWithNumbers == null || pinyinWithNumbers.isEmpty()) {
+            return "";
+        }
+        
+        String[] syllables = pinyinWithNumbers.split(" ");
+        StringBuilder result = new StringBuilder();
+        
+        for (int i = 0; i < syllables.length; i++) {
+            if (i > 0) {
+                result.append(" ");
+            }
+            result.append(ToneHelper.convertNumberedSyllableToAccentedSyllable(syllables[i]));
+        }
+        
+        return result.toString();
     }
     
     private void drawWrappedText(Graphics2D g2d, String text, int x, int y, int maxWidth, int maxY, Font font) {
