@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DeckProducer {
-
+    private static final Logger logger = LoggerFactory.getLogger(DeckProducer.class);
     private final DictionaryExtractor extractor;
 
     public DeckProducer(DictionaryExtractor extractor) {
@@ -27,8 +29,8 @@ public class DeckProducer {
         var words = generateWords(lines, exportOptions);
 
         if (words.isEmpty() && !lines.isEmpty()) {
-            System.out.println("Please provide UTF-8 encoded files -"
-                    + " other encodings (e.g. GBK, Big5) are not currently supported");
+            logger.warn("No words extracted. Please provide UTF-8 encoded files - "
+                    + "other encodings (e.g. GBK, Big5) are not currently supported");
             return new ArrayList<>();
         }
 
@@ -41,8 +43,7 @@ public class DeckProducer {
             return deckStyler.style(words);
         }
 
-        // We may support Memrise, Pleco, etc. at a later date
-        System.out.println("Unrecognised output format");
+        logger.warn("Unrecognised output format: {}", exportOptions.outputFormat());
         return new ArrayList<>();
     }
 

@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*Notes:
   This is a mess of a piece of code that I pulled from another of my projects, it needs sorting out
@@ -34,6 +36,7 @@ import java.util.Objects;
   Capitals are causing issues too...
 */
 public class ChineseDictionaryExtractor implements DictionaryExtractor {
+    private static final Logger logger = LoggerFactory.getLogger(ChineseDictionaryExtractor.class);
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
 
@@ -49,11 +52,14 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private void readInDictionary(Path path) {
         try {
             Files.readAllLines(path, StandardCharsets.UTF_8).stream()
-                    .filter(line -> line.charAt(0) != COMMENT_CHARACTER)
+                    .filter(line -> !line.isEmpty() && line.charAt(0) != COMMENT_CHARACTER)
                     .map(this::getWordFromLine)
+                    .filter(Objects::nonNull)
                     .forEach(this::putWordToMaps);
+            logger.info("Successfully loaded dictionary with {} simplified and {} traditional words",
+                    simplifiedMapping.size(), traditionalMapping.size());
         } catch (IOException e) {
-            System.out.println("Could not load dictionary file at " + path);
+            logger.error("Could not load dictionary file at {}", path, e);
         }
     }
 
