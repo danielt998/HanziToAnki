@@ -5,3 +5,4 @@ gradle.properties
 *.tsv
 chinese_union_simp.txt
 META-INF/
+*.txt
