@@ -24,8 +24,10 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     private static final String DEFAULT_DICTIONARY_FILENAME = "cedict_ts.u8";
     private static final char COMMENT_CHARACTER = '#';
 
-    private final Map<String, Word> simplifiedMapping = new HashMap<>();
-    private final Map<String, Word> traditionalMapping = new HashMap<>();
+    // Pre-size maps to reduce rehashes during bulk dictionary load. CEDICT has ~110k entries.
+    private static final int EXPECTED_DICT_ENTRIES = 140000;
+    private final Map<String, Word> simplifiedMapping = new HashMap<>(EXPECTED_DICT_ENTRIES);
+    private final Map<String, Word> traditionalMapping = new HashMap<>(EXPECTED_DICT_ENTRIES);
 
     @Override
     public void readInDictionary() {
