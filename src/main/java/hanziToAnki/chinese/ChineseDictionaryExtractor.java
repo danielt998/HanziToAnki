@@ -78,25 +78,56 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
      * Parses a CC-CEDICT format line: "Traditional Simplified [pinyin] /definition/"
      */
     private Word getWordFromLine(String line) {
-        String[] definitionParts = line.split(" /");
-        if (definitionParts.length < 2) {
+        // Expected format: "Traditional Simplified [pinyin] /definition/"
+        int pinyinStart = line.indexOf('[');
+        int pinyinEnd = (pinyinStart == -1) ? -1 : line.indexOf(']', pinyinStart);
+        if (pinyinStart == -1 || pinyinEnd == -1) {
             return null;
         }
-        String definition = definitionParts[1];
 
-        String[] pinyinParts = definitionParts[0].split("\\[");
-        if (pinyinParts.length < 2) {
-            return null;
+        String pinyinRaw = line.substring(pinyinStart + 1, pinyinEnd);
+        // build pinyin without tone numbers and spaces (e.g. Ni3 hao3 -> nihao)
+        StringBuilder noTones = new StringBuilder(pinyinRaw.length());
+        for (int i = 0; i < pinyinRaw.length(); i++) {
+            char c = pinyinRaw.charAt(i);
+            if (c >= '1' && c <= '5') continue;
+            if (c == ' ') continue;
+            noTones.append(c);
         }
-        String pinyinNoTones = pinyinParts[1].replaceAll("[\\[\\]12345 ]", "").toLowerCase();
-        String pinyinWithTones = pinyinParts[1].replaceAll("[\\[\\]]", "").toLowerCase();
+        String pinyinNoTones = noTones.toString().toLowerCase();
+        String pinyinWithTones = pinyinRaw.toLowerCase();
 
-        String[] characterParts = pinyinParts[0].split(" ");
-        if (characterParts.length < 2) {
+        // characters part is before the pinyin
+        String charsPart = line.substring(0, pinyinStart).trim();
+        if (charsPart.isEmpty()) {
             return null;
         }
-        String traditional = characterParts[0];
-        String simplified = characterParts[1];
+        int firstSpace = charsPart.indexOf(' ');
+        if (firstSpace == -1) {
+            return null;
+        }
+        int startSimplified = firstSpace + 1;
+        // skip any extra spaces
+        while (startSimplified < charsPart.length() && charsPart.charAt(startSimplified) == ' ') {
+            startSimplified++;
+        }
+        if (startSimplified >= charsPart.length()) {
+            return null;
+        }
+        int endSimplified = charsPart.indexOf(' ', startSimplified);
+        String traditional = charsPart.substring(0, firstSpace);
+        String simplified = (endSimplified == -1) ? charsPart.substring(startSimplified) : charsPart.substring(startSimplified, endSimplified);
+
+        // definition section starts at the first '/' after pinyin
+        int defStart = line.indexOf('/', pinyinEnd);
+        if (defStart == -1) {
+            return null;
+        }
+        int defEnd = line.lastIndexOf('/');
+        if (defEnd <= defStart) {
+            return null;
+        }
+        String definition = line.substring(defStart + 1, defEnd);
 
         return new ChineseWord(traditional, simplified, pinyinNoTones, pinyinWithTones, definition);
     }
