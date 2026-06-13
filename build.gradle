@@ -8,12 +8,12 @@ plugins {
 group 'org.example'
 version '1.0.0'
 
-sourceCompatibility = 21
-targetCompatibility = 21
+sourceCompatibility = 25
+targetCompatibility = 25
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -59,7 +59,12 @@ sourceSets {
 
 compileJava {
     options.encoding = "UTF-8"
-    options.release = 21
+    options.release = 25
+    options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += ['--enable-preview']
 }
 
 compileTestJava {
