@@ -5,3 +5,6 @@ gradle.properties
 *.tsv
 META-INF/
 *.txt
+# Performance artifacts
+bench_times*
+.cache/
