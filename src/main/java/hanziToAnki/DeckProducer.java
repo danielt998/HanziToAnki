@@ -8,6 +8,7 @@ import hanziToAnki.chinese.ChineseWordFinder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public class DeckProducer {
             return lines.stream()
                     .map(s -> extractor.getWord(s))
                     .flatMap(java.util.Optional::stream)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
         ChineseWordFinder wordFinder = new ChineseWordFinder(extractor);
