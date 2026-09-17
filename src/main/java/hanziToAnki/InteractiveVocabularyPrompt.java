@@ -1,23 +1,33 @@
 package hanziToAnki;
 
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
-import java.util.Scanner;
+import java.io.IOException;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 public final class InteractiveVocabularyPrompt {
     private InteractiveVocabularyPrompt() {
     }
 
-    public static void run() {
+    public static void run() throws IOException {
         DictionaryExtractor extractor = new ChineseDictionaryExtractor();
         extractor.readInDictionary();
         VocabularyScriptRunner runner = new VocabularyScriptRunner(extractor);
-        Scanner input = new Scanner(System.in);
 
-        try {
+        try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
+            LineReader input = LineReaderBuilder.builder().terminal(terminal).build();
             System.out.println("Vocabulary shell. Type help for commands or exit to quit.");
             while (true) {
-                System.out.print("vocab> ");
-                String statement = nextLine(input).trim();
+                String statement;
+                try {
+                    statement = input.readLine("vocab> ").trim();
+                } catch (UserInterruptException ignored) {
+                    continue;
+                }
                 if (statement.equalsIgnoreCase("exit") || statement.equalsIgnoreCase("quit")) {
                     return;
                 }
@@ -38,7 +48,7 @@ public final class InteractiveVocabularyPrompt {
                     System.out.println(exception.getMessage());
                 }
             }
-        } catch (InputClosedException ignored) {
+        } catch (EndOfFileException ignored) {
             System.out.println("Interactive vocabulary builder cancelled.");
         }
     }
@@ -50,13 +60,4 @@ public final class InteractiveVocabularyPrompt {
         System.out.println("Operators: +, -, &, and parentheses. Commands: variables, help, exit.");
     }
 
-    private static String nextLine(Scanner input) {
-        if (!input.hasNextLine()) {
-            throw new InputClosedException();
-        }
-        return input.nextLine();
-    }
-
-    private static final class InputClosedException extends RuntimeException {
-    }
 }

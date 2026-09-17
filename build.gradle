@@ -33,6 +33,7 @@ dependencies {
     
     // ANSJ for Chinese word segmentation (Jieba-like algorithms)
     implementation 'org.ansj:ansj_seg:5.1.6'
+    implementation 'org.jline:jline:3.26.3'
     
     // PDFBox for PDF generation (flashcards)
     implementation 'org.apache.pdfbox:pdfbox:3.0.1'

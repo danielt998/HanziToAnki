@@ -7,7 +7,8 @@ Run the builder from the project root:
 ```
 
 The prompt starts a vocabulary shell. It evaluates expressions, stores variables, and creates Anki TSV decks.
-Type `help` for its command summary, `variables` to list defined variables, and `exit` or `quit` to leave.
+Use the Up and Down arrow keys to browse and edit commands entered earlier in the current shell session. Type
+`help` for its command summary, `variables` to list defined variables, and `exit` or `quit` to leave.
 
 ## Scripts
 
