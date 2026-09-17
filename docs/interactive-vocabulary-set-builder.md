@@ -3,7 +3,7 @@
 Run the builder from the project root:
 
 ```bash
-./gradlew runCli -Pargs='--interactive'
+./gradlew --console=plain runCli -Pargs='--interactive'
 ```
 
 The prompt starts a vocabulary shell. It evaluates expressions, stores variables, and creates Anki TSV decks.
@@ -14,7 +14,7 @@ Type `help` for its command summary, `variables` to list defined variables, and 
 Save statements in a UTF-8 script file and run it with:
 
 ```bash
-./gradlew runCli -Pargs='--script study_plan.h2a'
+./gradlew --console=plain runCli -Pargs='--script study_plan.h2a'
 ```
 
 Scripts execute one statement per line. Blank lines and text after `#` are ignored, except when `#` is inside a
