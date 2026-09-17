@@ -8,6 +8,7 @@ import hanziToAnki.chinese.ChineseWord;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -66,5 +67,15 @@ public class DeckStylerTest {
         var expected = new String(resStream.readAllBytes(), StandardCharsets.UTF_8);
 
         assertEquals(expected, deckString);
+    }
+
+    @Test
+    void preservesUntonedPinyinSeparators() {
+        Word nameWord = new ChineseWord("中", "中", "Zhong", "zhong1 ·", "middle");
+        var deckStyler = new ChineseDeckStyler(ChineseDeckStyler.HanziType.SIMP);
+
+        var styledLines = deckStyler.style(new LinkedHashSet<>(List.of(nameWord)));
+
+        assertEquals("中\tmiddle\t<span class=\"tone1\">zhōng</span>·", styledLines.get(1));
     }
 }

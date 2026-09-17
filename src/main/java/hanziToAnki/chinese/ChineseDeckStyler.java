@@ -45,10 +45,15 @@ public class ChineseDeckStyler implements DeckStyler {
 
     private static String getPinyinWithHtml(ChineseWord word) {
         String pinyin = word.pinyinTones();
-        String[] syllables = pinyin.split(" ");
+        String[] syllables = pinyin.split("\\s+");
         StringBuilder builder = new StringBuilder();
         for (String syllable : syllables) {
-            int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+            char toneCharacter = syllable.charAt(syllable.length() - 1);
+            if (!Character.isDigit(toneCharacter)) {
+                builder.append(syllable);
+                continue;
+            }
+            int tone = Character.getNumericValue(toneCharacter);
             builder.append(getOpeningHtmlTag(tone));
             builder.append(ToneHelper.convertNumberedSyllableToAccentedSyllable(syllable));
             builder.append(CLOSING_HTML_TAG);
