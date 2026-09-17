@@ -23,14 +23,14 @@ public final class InteractiveVocabularyPrompt {
 
         try {
             System.out.println("Vocabulary set builder");
-            System.out.println("Sources: a vocabulary/Anki TSV file path, hsk1 through hsk6, or hsk1-5 for cumulative HSK.");
+            System.out.println("Functions: old_hsk(\"5\"), old_hsk(\"1-5\"), old_hsk(\"1,3,5\"), and open_cards(\"path/to/list.tsv\").");
             while (true) {
                 System.out.print("Set expression: ");
                 String expression = nextLine(input).trim();
                 try {
                     LinkedHashSet<Word> result = new VocabularySetExpression(
                             expression,
-                            source -> loadSource(source, vocabulary),
+                            (functionName, argument) -> loadSource(functionName, argument, vocabulary),
                             vocabulary).evaluate();
                     writeDeck(input, extractor, result);
                     break;
@@ -67,20 +67,36 @@ public final class InteractiveVocabularyPrompt {
         System.out.printf("Wrote %d vocabulary cards to %s.%n", result.size(), output);
     }
 
-    private static Set<Word> loadSource(String source, VocabularySetOperations vocabulary) {
-        String normalisedSource = source.toLowerCase(Locale.ROOT);
-        if (normalisedSource.matches("hsk[1-6]")) {
-            return vocabulary.hskLevel(Character.getNumericValue(normalisedSource.charAt(3)));
-        }
-        if (normalisedSource.matches("hsk1-[1-6]")) {
-            return vocabulary.hskLevelsUpTo(Character.getNumericValue(normalisedSource.charAt(5)));
-        }
+    private static Set<Word> loadSource(
+            String functionName, String argument, VocabularySetOperations vocabulary) {
+        return switch (functionName.toLowerCase(Locale.ROOT)) {
+            case "old_hsk" -> loadHskLevels(argument, vocabulary);
+            case "open_cards" -> loadCards(argument, vocabulary);
+            default -> throw new IllegalArgumentException("Unknown function '" + functionName + "'");
+        };
+    }
 
-        File file = new File(source);
+    private static Set<Word> loadHskLevels(String argument, VocabularySetOperations vocabulary) {
+        if (argument.matches("1-[1-6]")) {
+            return vocabulary.hskLevelsUpTo(Character.getNumericValue(argument.charAt(2)));
+        }
+        LinkedHashSet<Word> result = new LinkedHashSet<>();
+        for (String level : argument.split(",")) {
+            if (!level.matches("[1-6]")) {
+                throw new IllegalArgumentException(
+                        "old_hsk expects a level such as \"5\", a range such as \"1-5\", or levels such as \"1,3,5\"");
+            }
+            result = vocabulary.union(result, vocabulary.hskLevel(Integer.parseInt(level)));
+        }
+        return result;
+    }
+
+    private static Set<Word> loadCards(String filename, VocabularySetOperations vocabulary) {
+        File file = new File(filename);
         if (file.isFile() && file.canRead()) {
             return vocabulary.fromFile(file);
         }
-        throw new IllegalArgumentException("Source must be a readable file path, hsk1 through hsk6, or hsk1-5");
+        throw new IllegalArgumentException("open_cards expects a readable file path");
     }
 
     private static String nextLine(Scanner input) {

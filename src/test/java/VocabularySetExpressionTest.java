@@ -21,13 +21,13 @@ class VocabularySetExpressionTest {
         ChineseWord three = word("三");
         VocabularySetOperations operations = new VocabularySetOperations(emptyExtractor());
         Map<String, Set<Word>> sources = Map.of(
-                "book", new LinkedHashSet<>(Set.of(one, two, three)),
-                "hsk5", new LinkedHashSet<>(Set.of(two)),
-                "known", new LinkedHashSet<>(Set.of(three)));
+                "open_cards:book", new LinkedHashSet<>(Set.of(one, two, three)),
+                "old_hsk:5", new LinkedHashSet<>(Set.of(two)),
+                "open_cards:known", new LinkedHashSet<>(Set.of(three)));
 
         var result = new VocabularySetExpression(
-                "\"book\"-(hsk5 + \"known\")",
-                sources::get,
+                "open_cards(\"book\")-(old_hsk(\"5\") + open_cards(\"known\"))",
+                (functionName, argument) -> sources.get(functionName + ":" + argument),
                 operations).evaluate();
 
         assertEquals(Set.of(one), result);
@@ -38,7 +38,10 @@ class VocabularySetExpressionTest {
         VocabularySetOperations operations = new VocabularySetOperations(emptyExtractor());
 
         assertThrows(IllegalArgumentException.class, () ->
-                new VocabularySetExpression("book - (known", ignored -> Set.of(), operations).evaluate());
+                new VocabularySetExpression(
+                        "open_cards(\"book\") - (open_cards(\"known\")",
+                        (functionName, argument) -> Set.of(),
+                        operations).evaluate());
     }
 
     private static ChineseWord word(String value) {

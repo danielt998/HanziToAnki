@@ -9,17 +9,18 @@ Run the builder from the project root:
 The prompt accepts one set expression and writes an Anki TSV deck. Enter an output filename when prompted, or
 press Enter to write `vocabulary.tsv`.
 
-## Sources
+## Functions
 
-| Source | Meaning |
+| Function | Meaning |
 |---|---|
-| `"path/to/list.txt"` | A newline-separated vocabulary list. |
-| `"path/to/anki-export.tsv"` | An Anki TSV export. The first column from each row is used as the word. |
-| `hsk1` through `hsk6` | Vocabulary from exactly that HSK level. |
-| `hsk1-1` through `hsk1-6` | Cumulative vocabulary from HSK 1 up to the specified level. |
+| `open_cards("path/to/list.txt")` | A newline-separated vocabulary list. |
+| `open_cards("path/to/anki-export.tsv")` | An Anki TSV export. The first column from each row is used as the word. |
+| `old_hsk("5")` | Vocabulary from exactly HSK level 5. |
+| `old_hsk("1-5")` | Cumulative vocabulary from HSK 1 through HSK 5. |
+| `old_hsk("1,3,5")` | The union of the exact HSK 1, 3, and 5 vocabularies. |
 
-Always quote file paths with either single or double quotes. This allows paths containing spaces and keeps
-operators unambiguous.
+Quote file paths with either single or double quotes. This allows paths containing spaces and keeps operators
+unambiguous.
 
 ## Operators
 
@@ -38,28 +39,29 @@ override these rules. Whitespace is optional around operators.
 Create a deck of Book A words, excluding HSK 5 and all known words from an Anki export:
 
 ```text
-"book_a_vocabulary.tsv" - (hsk5 + "known_hsk_6_cards.tsv")
+open_cards("book_a_vocabulary.tsv") - (old_hsk("5") + open_cards("known_hsk_6_cards.tsv"))
 ```
 
 Keep only Book A words that occur in either HSK 5 or HSK 6:
 
 ```text
-"book_a_vocabulary.tsv" & (hsk5 + hsk6)
+open_cards("book_a_vocabulary.tsv") & (old_hsk("5") + old_hsk("6"))
 ```
 
 Combine two book lists, then remove all vocabulary through HSK 4:
 
 ```text
-(book_a.tsv + book_b.tsv) - hsk1-4
+(open_cards("book_a.tsv") + open_cards("book_b.tsv")) - old_hsk("1-4")
 ```
 
 Find words shared by two exported decks:
 
 ```text
-"hsk_5_deck.tsv" & "hsk_6_deck.tsv"
+open_cards("hsk_5_deck.tsv") & open_cards("hsk_6_deck.tsv")
 ```
 
 ## Errors and empty results
 
-The prompt explains syntax errors and lets you enter a corrected expression. A source must be a readable file or
-one of the HSK forms listed above. If the resulting set is empty, no deck is written.
+The prompt explains syntax errors and lets you enter a corrected expression. `open_cards` requires a readable
+file, and `old_hsk` accepts only the argument forms listed above. If the resulting set is empty, no deck is
+written.

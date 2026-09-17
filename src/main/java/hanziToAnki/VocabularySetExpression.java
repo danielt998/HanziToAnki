@@ -2,17 +2,17 @@ package hanziToAnki;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public final class VocabularySetExpression {
     private final String expression;
-    private final Function<String, Set<Word>> sourceLoader;
+    private final BiFunction<String, String, Set<Word>> sourceLoader;
     private final VocabularySetOperations operations;
     private int position;
 
     public VocabularySetExpression(
             String expression,
-            Function<String, Set<Word>> sourceLoader,
+            BiFunction<String, String, Set<Word>> sourceLoader,
             VocabularySetOperations operations) {
         this.expression = expression;
         this.sourceLoader = sourceLoader;
@@ -64,18 +64,43 @@ public final class VocabularySetExpression {
             return result;
         }
 
-        String source = parseSource();
+        String functionName = parseFunctionName();
+        skipWhitespace();
+        if (!consume('(')) {
+            throw error("Expected '(' after function name");
+        }
+        String argument = parseFunctionArgument();
+        skipWhitespace();
+        if (!consume(')')) {
+            throw error("Expected ')' after function argument");
+        }
         try {
-            return new LinkedHashSet<>(sourceLoader.apply(source));
+            return new LinkedHashSet<>(sourceLoader.apply(functionName, argument));
         } catch (IllegalArgumentException exception) {
             throw error(exception.getMessage());
         }
     }
 
-    private String parseSource() {
+    private String parseFunctionName() {
         skipWhitespace();
         if (position >= expression.length()) {
-            throw error("Expected a source");
+            throw error("Expected a function");
+        }
+        int start = position;
+        while (position < expression.length()
+                && (Character.isLetterOrDigit(expression.charAt(position)) || expression.charAt(position) == '_')) {
+            position++;
+        }
+        if (start == position) {
+            throw error("Expected a function name");
+        }
+        return expression.substring(start, position);
+    }
+
+    private String parseFunctionArgument() {
+        skipWhitespace();
+        if (position >= expression.length()) {
+            throw error("Expected a function argument");
         }
         char firstCharacter = expression.charAt(position);
         if (firstCharacter == '"' || firstCharacter == '\'') {
@@ -84,46 +109,21 @@ public final class VocabularySetExpression {
                 position++;
             }
             if (position == expression.length()) {
-                throw error("Unclosed quoted file path");
+                throw error("Unclosed quoted function argument");
             }
-            String source = expression.substring(start, position);
+            String argument = expression.substring(start, position);
             position++;
-            return source;
+            return argument;
         }
-
-        String hskSource = parseHskSource();
-        if (hskSource != null) {
-            return hskSource;
-        }
-
-        throw error("File paths must be enclosed in single or double quotes");
-    }
-
-    private String parseHskSource() {
         int start = position;
-        if (position + 6 <= expression.length()
-                && expression.regionMatches(true, position, "hsk1-", 0, 5)
-                && expression.charAt(position + 5) >= '1'
-                && expression.charAt(position + 5) <= '6'
-                && isSourceBoundary(position + 6)) {
-            position += 6;
-            return expression.substring(start, position);
+        while (position < expression.length() && expression.charAt(position) != ')') {
+            position++;
         }
-        if (position + 4 <= expression.length()
-                && expression.regionMatches(true, position, "hsk", 0, 3)
-                && expression.charAt(position + 3) >= '1'
-                && expression.charAt(position + 3) <= '6'
-                && isSourceBoundary(position + 4)) {
-            position += 4;
-            return expression.substring(start, position);
+        String argument = expression.substring(start, position).trim();
+        if (argument.isEmpty()) {
+            throw error("Expected a function argument");
         }
-        return null;
-    }
-
-    private boolean isSourceBoundary(int sourceEnd) {
-        return sourceEnd == expression.length()
-                || Character.isWhitespace(expression.charAt(sourceEnd))
-                || "+-&()".indexOf(expression.charAt(sourceEnd)) >= 0;
+        return argument;
     }
 
     private void skipWhitespace() {

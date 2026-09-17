@@ -43,11 +43,10 @@ Build a deck from vocabulary lists using union (`+`), subtraction (`-`), and int
 ./gradlew runCli -Pargs='--interactive'
 ```
 
-Enter a set expression with `+`, `-`, `&`, and parentheses. A vocabulary file (including an Anki TSV export;
-its first column is used) is a source and must be quoted. `hsk5` means that level only, while
-`hsk1-5` means all levels up to HSK 5. For example:
+Enter a set expression with `+`, `-`, `&`, and parentheses. `open_cards("filename")` loads a vocabulary or
+Anki TSV export (using its first column), while `old_hsk("5")` selects HSK 5. For example:
 ```text
-"book_a_vocabulary.tsv" - (hsk5 + "known_hsk_6_cards.tsv")
+open_cards("book_a_vocabulary.tsv") - (old_hsk("5") + open_cards("known_hsk_6_cards.tsv"))
 ```
 
 See the [interactive vocabulary set builder reference](docs/interactive-vocabulary-set-builder.md) for all
