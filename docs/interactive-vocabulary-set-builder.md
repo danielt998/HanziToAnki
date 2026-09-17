@@ -38,25 +38,25 @@ override these rules. Whitespace is optional around operators.
 Create a deck of Book A words, excluding HSK 5 and all known words from an Anki export:
 
 ```text
-"Book A vocabulary.tsv" - (hsk5 + "known HSK 6 cards.tsv")
+"book_a_vocabulary.tsv" - (hsk5 + "known_hsk_6_cards.tsv")
 ```
 
 Keep only Book A words that occur in either HSK 5 or HSK 6:
 
 ```text
-"Book A vocabulary.tsv" & (hsk5 + hsk6)
+"book_a_vocabulary.tsv" & (hsk5 + hsk6)
 ```
 
 Combine two book lists, then remove all vocabulary through HSK 4:
 
 ```text
-("Book A.tsv" + "Book B.tsv") - hsk1-4
+(book_a.tsv + book_b.tsv) - hsk1-4
 ```
 
 Find words shared by two exported decks:
 
 ```text
-"HSK 5 deck.tsv" & "HSK 6 deck.tsv"
+"hsk_5_deck.tsv" & "hsk_6_deck.tsv"
 ```
 
 ## Errors and empty results
