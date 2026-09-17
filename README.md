@@ -50,6 +50,9 @@ its first column is used) is a source and must be quoted. `hsk5` means that leve
 "Book A vocabulary.tsv" - (hsk5 + "known HSK 6 cards.tsv")
 ```
 
+See the [interactive vocabulary set builder reference](docs/interactive-vocabulary-set-builder.md) for all
+available sources, operators, precedence rules, and more examples.
+
 *Command-line* options:
 * `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
 * `-s --single-characters` Extract only single characters from the file 
