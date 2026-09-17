@@ -6,8 +6,29 @@ Run the builder from the project root:
 ./gradlew runCli -Pargs='--interactive'
 ```
 
-The prompt accepts one set expression and writes an Anki TSV deck. Enter an output filename when prompted, or
-press Enter to write `vocabulary.tsv`.
+The prompt starts a vocabulary shell. It evaluates expressions, stores variables, and creates Anki TSV decks.
+Type `help` for its command summary, `variables` to list defined variables, and `exit` or `quit` to leave.
+
+## Scripts
+
+Save statements in a UTF-8 script file and run it with:
+
+```bash
+./gradlew runCli -Pargs='--script study_plan.h2a'
+```
+
+Scripts execute one statement per line. Blank lines and text after `#` are ignored, except when `#` is inside a
+quoted filename. Errors identify the script filename and line number.
+
+```text
+# study_plan.h2a
+book = open_cards("book_a_vocabulary.tsv")
+known = open_cards("known_hsk_6_cards.tsv")
+new_words = book - (old_hsk("1-5") + known)
+write_cards(new_words, "book_a_new_words.tsv")
+```
+
+The same statements work directly in the interactive shell.
 
 ## Functions
 
@@ -21,6 +42,14 @@ press Enter to write `vocabulary.tsv`.
 
 Quote file paths with either single or double quotes. This allows paths containing spaces and keeps operators
 unambiguous.
+
+## Statements
+
+| Statement | Effect |
+|---|---|
+| `name = expression` | Stores the resulting set in `name`. Variable names start with a letter or underscore and may contain letters, numbers, and underscores. |
+| `expression` | Evaluates an expression and prints its word count. |
+| `write_cards(expression, "output.tsv")` | Writes the expression's words to an Anki TSV deck. |
 
 ## Operators
 
@@ -60,8 +89,16 @@ Find words shared by two exported decks:
 open_cards("hsk_5_deck.tsv") & open_cards("hsk_6_deck.tsv")
 ```
 
+Use variables to avoid reopening the same inputs:
+
+```text
+book = open_cards("book_a_vocabulary.tsv")
+known = open_cards("known_hsk_6_cards.tsv")
+write_cards(book - (old_hsk("1-5") + known), "book_a_new_words.tsv")
+```
+
 ## Errors and empty results
 
 The prompt explains syntax errors and lets you enter a corrected expression. `open_cards` requires a readable
 file, and `old_hsk` accepts only the argument forms listed above. If the resulting set is empty, no deck is
-written.
+written. Scripts stop at the first invalid statement.

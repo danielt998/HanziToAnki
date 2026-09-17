@@ -28,6 +28,7 @@ class VocabularySetExpressionTest {
         var result = new VocabularySetExpression(
                 "open_cards(\"book\")-(old_hsk(\"5\") + open_cards(\"known\"))",
                 (functionName, argument) -> sources.get(functionName + ":" + argument),
+                ignored -> Set.of(),
                 operations).evaluate();
 
         assertEquals(Set.of(one), result);
@@ -41,7 +42,26 @@ class VocabularySetExpressionTest {
                 new VocabularySetExpression(
                         "open_cards(\"book\") - (open_cards(\"known\")",
                         (functionName, argument) -> Set.of(),
+                        ignored -> Set.of(),
                         operations).evaluate());
+    }
+
+    @Test
+    void resolvesVariablesInExpressions() {
+        ChineseWord one = word("一");
+        ChineseWord two = word("二");
+        VocabularySetOperations operations = new VocabularySetOperations(emptyExtractor());
+        Map<String, Set<Word>> variables = Map.of(
+                "book", new LinkedHashSet<>(Set.of(one, two)),
+                "known", Set.of(two));
+
+        var result = new VocabularySetExpression(
+                "book - known",
+                (functionName, argument) -> Set.of(),
+                variables::get,
+                operations).evaluate();
+
+        assertEquals(Set.of(one), result);
     }
 
     private static ChineseWord word(String value) {

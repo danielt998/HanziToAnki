@@ -43,14 +43,16 @@ Build a deck from vocabulary lists using union (`+`), subtraction (`-`), and int
 ./gradlew runCli -Pargs='--interactive'
 ```
 
-Enter a set expression with `+`, `-`, `&`, and parentheses. `open_cards("filename")` loads a vocabulary or
-Anki TSV export (using its first column), while `old_hsk("5")` selects HSK 5. For example:
+The interactive shell supports set expressions, variable assignment, and deck creation. `open_cards("filename")`
+loads a vocabulary or Anki TSV export (using its first column), while `old_hsk("5")` selects HSK 5. For example:
 ```text
-open_cards("book_a_vocabulary.tsv") - (old_hsk("5") + open_cards("known_hsk_6_cards.tsv"))
+book = open_cards("book_a_vocabulary.tsv")
+new_words = book - old_hsk("1-5")
+write_cards(new_words, "book_a_new_words.tsv")
 ```
 
 See the [interactive vocabulary set builder reference](docs/interactive-vocabulary-set-builder.md) for all
-available sources, operators, precedence rules, and more examples.
+available functions, shell commands, script syntax, precedence rules, and more examples.
 
 *Command-line* options:
 * `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted

@@ -3,19 +3,23 @@ package hanziToAnki;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public final class VocabularySetExpression {
     private final String expression;
     private final BiFunction<String, String, Set<Word>> sourceLoader;
+    private final Function<String, Set<Word>> variableLoader;
     private final VocabularySetOperations operations;
     private int position;
 
     public VocabularySetExpression(
             String expression,
             BiFunction<String, String, Set<Word>> sourceLoader,
+            Function<String, Set<Word>> variableLoader,
             VocabularySetOperations operations) {
         this.expression = expression;
         this.sourceLoader = sourceLoader;
+        this.variableLoader = variableLoader;
         this.operations = operations;
     }
 
@@ -64,10 +68,14 @@ public final class VocabularySetExpression {
             return result;
         }
 
-        String functionName = parseFunctionName();
+        String name = parseName();
         skipWhitespace();
         if (!consume('(')) {
-            throw error("Expected '(' after function name");
+            try {
+                return new LinkedHashSet<>(variableLoader.apply(name));
+            } catch (IllegalArgumentException exception) {
+                throw error(exception.getMessage());
+            }
         }
         String argument = parseFunctionArgument();
         skipWhitespace();
@@ -75,16 +83,16 @@ public final class VocabularySetExpression {
             throw error("Expected ')' after function argument");
         }
         try {
-            return new LinkedHashSet<>(sourceLoader.apply(functionName, argument));
+            return new LinkedHashSet<>(sourceLoader.apply(name, argument));
         } catch (IllegalArgumentException exception) {
             throw error(exception.getMessage());
         }
     }
 
-    private String parseFunctionName() {
+    private String parseName() {
         skipWhitespace();
         if (position >= expression.length()) {
-            throw error("Expected a function");
+            throw error("Expected a variable or function");
         }
         int start = position;
         while (position < expression.length()
@@ -92,7 +100,7 @@ public final class VocabularySetExpression {
             position++;
         }
         if (start == position) {
-            throw error("Expected a function name");
+            throw error("Expected a variable or function name");
         }
         return expression.substring(start, position);
     }

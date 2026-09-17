@@ -15,6 +15,7 @@ public class ArgParser {
     public static void printUsage() {
         System.out.println("Usage: java hanziToAnki.Main [OPTIONS] filename");
         System.out.println("       java hanziToAnki.Main --interactive");
+        System.out.println("       java hanziToAnki.Main --script filename");
         System.out.println("options:");
         System.out.println(
                 "\t-w --word-list:\tRead from an input file containing a list of words, separated"
@@ -34,6 +35,7 @@ public class ArgParser {
                 .map(ChineseDeckStyler.HanziType::name)
                 .collect(Collectors.joining(", ")));
         System.out.println("\t-i --interactive:\tBuild a vocabulary deck by combining files and HSK lists with set operations.");
+        System.out.println("\t-S --script <filename>:\tRun a vocabulary set script.");
     }
 
     public static ParsedArgs parseArgs(String[] args) {

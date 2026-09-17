@@ -3,6 +3,7 @@ package hanziToAnki;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.slf4j.Logger;
@@ -14,6 +15,15 @@ public class Main {
     public static void main(String[] args) throws IOException {
         if (args.length == 1 && (args[0].equals("-i") || args[0].equals("--interactive"))) {
             InteractiveVocabularyPrompt.run();
+            return;
+        }
+        if (args.length > 0 && (args[0].equals("--script") || args[0].equals("-S"))) {
+            if (args.length != 2) {
+                throw new IllegalArgumentException("--script requires exactly one script filename");
+            }
+            DictionaryExtractor extractor = new ChineseDictionaryExtractor();
+            extractor.readInDictionary();
+            new VocabularyScriptRunner(extractor).runScript(Path.of(args[1]));
             return;
         }
 
