@@ -3,11 +3,11 @@ package hanziToAnki.chinese;
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.Grader;
 import hanziToAnki.Word;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,14 +41,17 @@ public class ChineseGrader implements Grader {
     }
 
     private Set<Word> getWordsFromNewlineSeparatedFile(String filename) {
-        try {
-            URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
-            Path path = Path.of(uri);
-            return Files.readAllLines(path).stream()
+        try (InputStream vocabularyStream = ChineseGrader.class.getClassLoader().getResourceAsStream(filename)) {
+            if (vocabularyStream == null) {
+                logger.error("Failed to load vocabulary resource: {}", filename);
+                return Set.of();
+            }
+            return new BufferedReader(new InputStreamReader(vocabularyStream, StandardCharsets.UTF_8))
+                    .lines()
                     .map(extractor::getWord)
                     .flatMap(java.util.Optional::stream)
                     .collect(Collectors.toSet());
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Failed to load vocabulary from file: {}", filename, e);
             return Set.of();
         }
