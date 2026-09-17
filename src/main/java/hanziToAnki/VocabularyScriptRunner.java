@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -18,17 +19,29 @@ public final class VocabularyScriptRunner {
     private static final Pattern ASSIGNMENT = Pattern.compile("^([A-Za-z_][A-Za-z0-9_]*)\\s*=\\s*(.+)$");
     private final DictionaryExtractor extractor;
     private final VocabularySetOperations vocabulary;
+    private final Path workingDirectory;
     private final Map<String, LinkedHashSet<Word>> variables = new LinkedHashMap<>();
 
     public VocabularyScriptRunner(DictionaryExtractor extractor) {
+        this(extractor, Path.of("."));
+    }
+
+    public VocabularyScriptRunner(DictionaryExtractor extractor, Path workingDirectory) {
         this.extractor = extractor;
         this.vocabulary = new VocabularySetOperations(extractor);
+        this.workingDirectory = workingDirectory;
     }
 
     public String execute(String statement) {
         String command = removeComment(statement).trim();
         if (command.isEmpty()) {
             return "";
+        }
+        if (command.equalsIgnoreCase("ls")) {
+            return listFiles(false);
+        }
+        if (command.equalsIgnoreCase("lv") || command.equalsIgnoreCase("list_vocab")) {
+            return listFiles(true);
         }
 
         Matcher assignment = ASSIGNMENT.matcher(command);
@@ -115,6 +128,7 @@ public final class VocabularyScriptRunner {
         if (separator < 0) {
             throw new IllegalArgumentException("write_cards expects a set expression and an output filename");
         }
+
         LinkedHashSet<Word> result = evaluate(arguments.substring(0, separator));
         if (result.isEmpty()) {
             return "The resulting vocabulary set is empty; no deck was written.";
@@ -126,6 +140,28 @@ public final class VocabularyScriptRunner {
                 OutputFormat.ANKI, ChineseDeckStyler.HanziType.SIMP);
         FileUtils.writeToFile(new DeckProducer(extractor).produceDeckFromWords(result, options), filename);
         return "Wrote " + result.size() + " vocabulary cards to " + filename + ".";
+    }
+
+    private String listFiles(boolean vocabularyFilesOnly) {
+        try (var files = Files.list(workingDirectory)) {
+            return files
+                    .filter(path -> !path.getFileName().toString().startsWith("."))
+                    .filter(path -> !vocabularyFilesOnly || isVocabularyFile(path))
+                    .sorted(Comparator.comparing(path -> path.getFileName().toString()))
+                    .map(path -> path.getFileName() + (Files.isDirectory(path) ? "/" : ""))
+                    .reduce((left, right) -> left + System.lineSeparator() + right)
+                    .orElse("No matching files.");
+        } catch (IOException exception) {
+            throw new IllegalArgumentException("Could not list files in " + workingDirectory, exception);
+        }
+    }
+
+    private boolean isVocabularyFile(Path path) {
+        if (!Files.isRegularFile(path)) {
+            return false;
+        }
+        String filename = path.getFileName().toString().toLowerCase(Locale.ROOT);
+        return filename.endsWith(".csv") || filename.endsWith(".tsv");
     }
 
     private String functionArguments(String statement, String functionName) {

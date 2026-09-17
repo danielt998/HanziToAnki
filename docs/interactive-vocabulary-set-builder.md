@@ -54,6 +54,8 @@ unambiguous.
 | `name = expression` | Stores the resulting set in `name`. Variable names start with a letter or underscore and may contain letters, numbers, and underscores. |
 | `expression` | Evaluates an expression and prints its word count. |
 | `write_cards(expression, "output.tsv")` | Writes the expression's words to an Anki TSV deck. |
+| `ls` | Lists non-hidden files and directories in the current working directory. |
+| `lv` or `list_vocab` | Lists `.csv` and `.tsv` files in the current working directory. |
 
 ## Operators
 

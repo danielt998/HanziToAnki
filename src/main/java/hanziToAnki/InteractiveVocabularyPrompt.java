@@ -57,7 +57,7 @@ public final class InteractiveVocabularyPrompt {
         System.out.println("variable = expression");
         System.out.println("write_cards(expression, \"output.tsv\")");
         System.out.println("Functions: old_hsk(\"5\"), old_hsk(\"1-5\"), old_hsk(\"1,3,5\"), open_cards(\"input.tsv\")");
-        System.out.println("Operators: +, -, &, and parentheses. Commands: variables, help, exit.");
+        System.out.println("Operators: +, -, &, and parentheses. Commands: ls, lv, list_vocab, variables, help, exit.");
     }
 
 }

@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import hanziToAnki.DictionaryExtractor;
 import hanziToAnki.VocabularyScriptRunner;
@@ -26,6 +27,26 @@ class VocabularyScriptRunnerTest {
         new VocabularyScriptRunner(extractor()).runScript(script);
 
         assertTrue(Files.readString(output).contains("word"));
+    }
+
+    @Test
+    void listsVocabularyFilesOnly(@TempDir Path temporaryDirectory) throws Exception {
+        Files.writeString(temporaryDirectory.resolve("words.tsv"), "");
+        Files.writeString(temporaryDirectory.resolve("export.CSV"), "");
+        Files.writeString(temporaryDirectory.resolve("notes.txt"), "");
+        Files.createDirectory(temporaryDirectory.resolve("archive"));
+        VocabularyScriptRunner runner = new VocabularyScriptRunner(extractor(), temporaryDirectory);
+
+        String allFiles = runner.execute("ls");
+        String vocabularyFiles = runner.execute("list_vocab");
+
+        assertTrue(allFiles.contains("words.tsv"));
+        assertTrue(allFiles.contains("notes.txt"));
+        assertTrue(allFiles.contains("archive/"));
+        assertTrue(vocabularyFiles.contains("words.tsv"));
+        assertTrue(vocabularyFiles.contains("export.CSV"));
+        assertFalse(vocabularyFiles.contains("notes.txt"));
+        assertFalse(vocabularyFiles.contains("archive/"));
     }
 
     private static DictionaryExtractor extractor() {
