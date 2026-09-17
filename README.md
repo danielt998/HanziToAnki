@@ -36,6 +36,20 @@ java -jar build/libs/HanziToAnki-1.0.0.jar input.txt -f ANKI -o output.anki
 ./gradlew runCli -Pargs='input.txt -f ANKI -o output.anki'
 ```
 
+### Interactive Vocabulary Set Builder
+
+Build a deck from vocabulary lists using union (`+`), subtraction (`-`), and intersection (`&`):
+```bash
+./gradlew runCli -Pargs='--interactive'
+```
+
+Enter a set expression with `+`, `-`, `&`, and parentheses. A vocabulary file (including an Anki TSV export;
+its first column is used) is a source and must be quoted. `hsk5` means that level only, while
+`hsk1-5` means all levels up to HSK 5. For example:
+```text
+"Book A vocabulary.tsv" - (hsk5 + "known HSK 6 cards.tsv")
+```
+
 *Command-line* options:
 * `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
 * `-s --single-characters` Extract only single characters from the file 

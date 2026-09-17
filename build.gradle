@@ -101,6 +101,7 @@ task runCli {
             classpath = sourceSets.main.runtimeClasspath
             mainClass = 'hanziToAnki.Main'
             args = cliArgs
+            standardInput = System.in
         }
     }
 }

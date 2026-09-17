@@ -28,12 +28,15 @@ public class ChineseGrader implements Grader {
     public Set<Word> getAccumulativeVocabulary(int hskLevel) {
         Set<Word> accumulativeVocabulary = new HashSet<>();
         for (int level = 1; level <= hskLevel; level++) {
-            accumulativeVocabulary.addAll(getHskVocabularyOneLevel(level));
+            accumulativeVocabulary.addAll(getVocabulary(level));
         }
         return accumulativeVocabulary;
     }
 
-    private Set<Word> getHskVocabularyOneLevel(int level) {
+    public Set<Word> getVocabulary(int level) {
+        if (level < 1 || level > 6) {
+            throw new IllegalArgumentException("HSK level must be between 1 and 6");
+        }
         return getWordsFromNewlineSeparatedFile(VOCAB_DIRECTORY + level);
     }
 

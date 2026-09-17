@@ -12,6 +12,11 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
+        if (args.length == 1 && (args[0].equals("-i") || args[0].equals("--interactive"))) {
+            InteractiveVocabularyPrompt.run();
+            return;
+        }
+
         if (args.length == 0 || args[0].equals("-h") || args[0].equals("-help") || args[0].equals("--help")) {
             ArgParser.printUsage();
             return;

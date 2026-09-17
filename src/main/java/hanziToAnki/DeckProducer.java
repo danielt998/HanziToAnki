@@ -37,13 +37,18 @@ public class DeckProducer {
             return Collections.emptyList();
         }
 
+        return produceDeckFromWords(words, exportOptions);
+    }
+
+    public List<String> produceDeckFromWords(Set<Word> words, ExportOptions exportOptions) {
+        Set<Word> filteredWords = new LinkedHashSet<>(words);
         Grader grader = new ChineseGrader(extractor);
         Set<Word> wordsToExclude = grader.getAccumulativeVocabulary(exportOptions.hskLevelToExclude());
-        words.removeAll(wordsToExclude);
+        filteredWords.removeAll(wordsToExclude);
 
         if (exportOptions.outputFormat() == ANKI) {
-            DeckStyler deckStyler = DeckStylerFactory.getDeckStyler(words, exportOptions.hanziType());
-            return deckStyler.style(words);
+            DeckStyler deckStyler = DeckStylerFactory.getDeckStyler(filteredWords, exportOptions.hanziType());
+            return deckStyler.style(filteredWords);
         }
 
         logger.warn("Unrecognised output format: {}", exportOptions.outputFormat());
