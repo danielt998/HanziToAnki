@@ -40,7 +40,7 @@ java -jar build/libs/HanziToAnki-1.0.0.jar input.txt -f ANKI -o output.anki
 
 Build a deck from vocabulary lists using union (`+`), subtraction (`-`), and intersection (`&`):
 ```bash
-./gradlew --console=plain runCli -Pargs='--interactive'
+./run-vocabulary-shell
 ```
 
 The interactive shell supports set expressions, variable assignment, and deck creation. `open_cards("filename")`

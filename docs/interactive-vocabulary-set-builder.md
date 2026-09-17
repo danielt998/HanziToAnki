@@ -3,12 +3,15 @@
 Run the builder from the project root:
 
 ```bash
-./gradlew --console=plain runCli -Pargs='--interactive'
+./run-vocabulary-shell
 ```
 
 The prompt starts a vocabulary shell. It evaluates expressions, stores variables, and creates Anki TSV decks.
 Use the Up and Down arrow keys to browse and edit commands entered earlier in the current shell session. Type
 `help` for its command summary, `variables` to list defined variables, and `exit` or `quit` to leave.
+
+`run-vocabulary-shell` builds the JAR, then starts it directly so the shell receives your terminal. Do not use
+`runCli` for the interactive shell: Gradle mediates its child process's terminal and prevents arrow-key history.
 
 ## Scripts
 
