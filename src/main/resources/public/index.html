@@ -90,9 +90,9 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: var(--primary-gradient);
-            min-height: 100vh;
-            display: flex;
-            align-items: stretch;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 156px minmax(0, 1fr);
             padding: 0;
             color: var(--text-primary);
             transition: background 0.3s ease;
@@ -412,9 +412,361 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
+        .app-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 24px 12px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .app-tab {
+            padding: 12px 14px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .app-tab.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .app-panel {
+            min-width: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-panel[hidden] {
+            display: none;
+        }
+
+        .reader-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(210px, 280px);
+            gap: 24px;
+            height: 100%;
+            padding: 32px;
+        }
+
+        .reader-layout main {
+            display: flex;
+            min-height: 0;
+            flex-direction: column;
+        }
+
+        .reader-layout aside {
+            display: flex;
+            min-height: 0;
+            flex-direction: column;
+            min-width: 0;
+            padding-left: 16px;
+            border-left: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .reader-source {
+            margin: 18px 0;
+        }
+
+        .reader-settings {
+            margin-bottom: 16px;
+        }
+
+        .reader-source summary,
+        .reader-settings summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            list-style: none;
+        }
+
+        .reader-source summary::-webkit-details-marker,
+        .reader-settings summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .reader-source summary::after,
+        .reader-settings summary::after {
+            content: "›";
+            margin-left: auto;
+            color: var(--primary-color);
+            font-size: 22px;
+            line-height: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .reader-source[open] summary,
+        .reader-settings[open] summary {
+            border-color: var(--primary-color);
+        }
+
+        .reader-source[open] summary::after,
+        .reader-settings[open] summary::after {
+            transform: rotate(90deg);
+        }
+
+        .reader-source[open] summary {
+            margin-bottom: 12px;
+        }
+
+        .reader-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .reader-settings-grid label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .reader-settings-grid select {
+            width: 100%;
+            margin-top: 6px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .reader-setting-full {
+            grid-column: 1 / -1;
+        }
+
+        .reader-pdf-options {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .reader-text {
+            width: 100%;
+            min-height: 210px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            resize: vertical;
+        }
+
+        .reader-actions {
+            display: flex;
+            gap: 12px;
+            margin: 14px 0 20px;
+        }
+
+        .reader-actions button {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .reader-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .reader-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .reader-terms {
+            min-height: 0;
+            flex: 1;
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 20px;
+            line-height: 2;
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+
+        .reader-token {
+            border-radius: 4px;
+            padding: 2px 1px;
+        }
+
+        .reader-token.lookupable {
+            cursor: pointer;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .reader-token.lookupable:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .reader-token.selected {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-color: var(--primary-color);
+        }
+
+        .reader-terms.segment-colors .reader-token.lookupable:nth-child(4n + 1) {
+            color: #ff6b6b;
+        }
+
+        .reader-terms.segment-colors .reader-token.lookupable:nth-child(4n + 2) {
+            color: #4dd0e1;
+        }
+
+        .reader-terms.segment-colors .reader-token.lookupable:nth-child(4n + 3) {
+            color: #ffd166;
+        }
+
+        .reader-terms.segment-colors .reader-token.lookupable:nth-child(4n) {
+            color: #c77dff;
+        }
+
+        .reader-terms.segment-colors .reader-token.selected {
+            color: white;
+        }
+
+        .reader-card-list {
+            display: flex;
+            min-height: 0;
+            flex: 1;
+            flex-direction: column;
+            gap: 10px;
+            margin: 14px 0;
+            overflow-y: auto;
+        }
+
+        #downloadCards {
+            align-self: flex-start;
+            height: 40px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 0 0 40px;
+        }
+
+        .reader-card {
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .reader-card strong {
+            font-size: 18px;
+        }
+
+        .reader-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .reader-card-delete {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .reader-card-delete:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .reader-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .reader-empty, .reader-status {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                height: auto;
+                min-height: 100vh;
+                display: block;
+            }
+
+            .app-tabs {
+                flex-direction: row;
+                padding: 12px 20px;
+                border-right: 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .app-tab {
+                text-align: center;
+            }
+
+            .app-panel {
+                height: auto;
+                min-height: calc(100vh - 61px);
+                overflow: visible;
+            }
+
+            .reader-layout {
+                grid-template-columns: 1fr;
+                padding: 24px 20px;
+                height: auto;
+            }
+
+            .reader-layout aside {
+                padding-left: 0;
+                border-left: 0;
+                border-top: 1px solid var(--border-color);
+                padding-top: 20px;
+            }
+
+            .reader-settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reader-pdf-options {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
+    <nav class="app-tabs" aria-label="Application sections">
+        <button class="app-tab active" type="button" data-panel="exportPanel">Flashcard Generator</button>
+        <button class="app-tab" type="button" data-panel="readerPanel">Text Reader</button>
+    </nav>
+    <section class="app-panel" id="exportPanel">
     <div class="main-wrapper">
         <div class="container">
             <div class="header">
@@ -540,6 +892,88 @@
             <textarea id="sidebarTextInput" placeholder="Paste your Chinese text here..." class="sidebar-textarea"></textarea>
         </div>
     </div>
+    </section>
+
+    <section class="app-panel" id="readerPanel" hidden>
+        <div class="reader-layout">
+            <main>
+                <div class="header">
+                    <h1>Chinese Text Reader</h1>
+                    <p>Segment a passage, look up its words, and save the ones you want to study.</p>
+                </div>
+                <details class="reader-source" id="readerSource" open>
+                    <summary>Edit source text</summary>
+                    <label class="sidebar-label" for="readerText">Chinese text</label>
+                    <textarea class="reader-text" id="readerText" placeholder="Paste Chinese text here..."></textarea>
+                    <div class="reader-actions">
+                        <button class="reader-primary" type="button" id="segmentText">Look up words</button>
+                        <button class="reader-secondary" type="button" id="clearReader">Clear</button>
+                    </div>
+                </details>
+                <label class="reader-status">
+                    <input type="checkbox" id="segmentColors" checked>
+                    Color recognized word segments
+                </label>
+                <p class="reader-status" id="readerStatus" aria-live="polite"></p>
+                <div class="reader-terms" id="readerTerms"></div>
+            </main>
+            <aside>
+                <h2>Selected flashcards</h2>
+                <p class="reader-empty" id="readerEmpty">Select words from the passage to add them here.</p>
+                <div class="reader-card-list" id="readerCards"></div>
+                <details class="reader-settings">
+                    <summary>Flashcard settings</summary>
+                    <div class="reader-settings-grid">
+                        <label class="reader-setting-full" for="readerOutputFormat">
+                            Output Format
+                            <select id="readerOutputFormat">
+                                <option value="ANKI">Anki TSV</option>
+                                <option value="PDF_FLASHCARDS">Paper Flashcards (PDF)</option>
+                            </select>
+                        </label>
+                        <label for="readerHanziType">
+                            Character Type
+                            <select id="readerHanziType">
+                                <option value="SIMP">Simplified (简体)</option>
+                                <option value="TRAD">Traditional (繁體)</option>
+                                <option value="SIMP_AND_TRAD">Both (混合)</option>
+                            </select>
+                        </label>
+                        <label for="readerHskLevel">
+                            Minimum HSK Level
+                            <select id="readerHskLevel">
+                                <option value="0">Include All (0)</option>
+                                <option value="1">Exclude HSK 1</option>
+                                <option value="2">Exclude HSK 1-2</option>
+                                <option value="3">Exclude HSK 1-3</option>
+                                <option value="4">Exclude HSK 1-4</option>
+                                <option value="5">Exclude HSK 1-5</option>
+                                <option value="6">Exclude HSK 1-6</option>
+                            </select>
+                        </label>
+                        <div class="reader-pdf-options" id="readerPdfOptions" hidden>
+                            <label for="readerCardStyle">
+                                Card Size
+                                <select id="readerCardStyle">
+                                    <option value="INDEX_CARD_3x5">3×5 Index Card</option>
+                                    <option value="BUSINESS_CARD">Business Card</option>
+                                    <option value="POSTCARD">Postcard</option>
+                                </select>
+                            </label>
+                            <label for="readerToneColors">
+                                Tone Colors
+                                <select id="readerToneColors">
+                                    <option value="true">Enabled</option>
+                                    <option value="false">Grayscale</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </details>
+                <button class="reader-primary" type="button" id="downloadCards" disabled>Download Anki TSV</button>
+            </aside>
+        </div>
+    </section>
 
     <script>
         // Toggle PDF-specific options based on format selection
@@ -622,6 +1056,167 @@
             const event = new Event('change', { bubbles: true });
             fileInput.dispatchEvent(event);
         }
+
+        const readerTerms = document.getElementById('readerTerms');
+        const readerCards = document.getElementById('readerCards');
+        const readerEmpty = document.getElementById('readerEmpty');
+        const readerStatus = document.getElementById('readerStatus');
+        const selectedReaderCards = [];
+
+        document.querySelectorAll('.app-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.app-tab').forEach(button => button.classList.remove('active'));
+                document.querySelectorAll('.app-panel').forEach(panel => panel.hidden = true);
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.panel).hidden = false;
+            });
+        });
+
+        function renderSelectedWords() {
+            readerCards.replaceChildren();
+            selectedReaderCards.forEach(cardEntry => {
+                const word = cardEntry.word;
+                const card = document.createElement('div');
+                card.className = 'reader-card';
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'reader-card-header';
+                const wordDetails = document.createElement('div');
+                const heading = document.createElement('strong');
+                heading.textContent = word.simplified;
+                const pinyin = document.createElement('span');
+                pinyin.textContent = ` ${word.pinyin}`;
+                wordDetails.append(heading, pinyin);
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'reader-card-delete';
+                removeButton.setAttribute('aria-label', `Delete ${word.simplified}`);
+                removeButton.title = `Delete ${word.simplified}`;
+                removeButton.textContent = '🗑';
+                removeButton.addEventListener('click', () => {
+                    const index = selectedReaderCards.findIndex(entry => entry.id === cardEntry.id);
+                    selectedReaderCards.splice(index, 1);
+                    document.querySelector(`[data-reader-token-id="${cardEntry.id}"]`)
+                        ?.classList.remove('selected');
+                    renderSelectedWords();
+                });
+                const definition = document.createElement('p');
+                definition.textContent = word.definition;
+                cardHeader.append(wordDetails, removeButton);
+                card.append(cardHeader, definition);
+                readerCards.append(card);
+            });
+            readerEmpty.hidden = selectedReaderCards.length > 0;
+            document.getElementById('downloadCards').disabled = selectedReaderCards.length === 0;
+        }
+
+        document.getElementById('segmentText').addEventListener('click', async () => {
+            const text = document.getElementById('readerText').value;
+            if (!text.trim()) {
+                readerStatus.textContent = 'Paste some Chinese text first.';
+                return;
+            }
+
+            readerStatus.textContent = 'Looking up words...';
+            readerTerms.replaceChildren();
+            try {
+                const response = await fetch('/reader/segment', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: new URLSearchParams({text})
+                });
+                if (!response.ok) {
+                    throw new Error('The text could not be segmented.');
+                }
+
+                const tokens = await response.json();
+                if (!tokens.length) {
+                    readerStatus.textContent = 'No word segments were found in this text.';
+                    return;
+                }
+                readerStatus.textContent = 'Click an underlined word to highlight it and add a flashcard. Use Delete in the queue to remove a card.';
+                let position = 0;
+                tokens.forEach(token => {
+                    if (token.start > position) {
+                        readerTerms.append(document.createTextNode(text.slice(position, token.start)));
+                    }
+                    const term = document.createElement('span');
+                    term.className = 'reader-token';
+                    term.textContent = token.text;
+                    const tokenId = `${token.start}-${token.end}`;
+                    term.dataset.readerTokenId = tokenId;
+                    if (token.dictionary) {
+                        const word = token.dictionary;
+                        term.classList.add('lookupable');
+                        term.title = `${word.pinyin}: ${word.definition}`;
+                        if (selectedReaderCards.some(card => card.id === tokenId)) {
+                            term.classList.add('selected');
+                        }
+                        term.addEventListener('click', () => {
+                            if (!selectedReaderCards.some(card => card.id === tokenId)) {
+                                selectedReaderCards.push({id: tokenId, word});
+                                term.classList.add('selected');
+                                renderSelectedWords();
+                            }
+                        });
+                    }
+                    readerTerms.append(term);
+                    position = token.end;
+                });
+                if (position < text.length) {
+                    readerTerms.append(document.createTextNode(text.slice(position)));
+                }
+                readerTerms.classList.toggle(
+                    'segment-colors', document.getElementById('segmentColors').checked);
+                document.getElementById('readerSource').open = false;
+            } catch (error) {
+                readerStatus.textContent = error.message;
+            }
+        });
+
+        document.getElementById('clearReader').addEventListener('click', () => {
+            document.getElementById('readerText').value = '';
+            readerTerms.replaceChildren();
+            selectedReaderCards.length = 0;
+            readerStatus.textContent = '';
+            document.getElementById('readerSource').open = true;
+            renderSelectedWords();
+        });
+
+        document.getElementById('segmentColors').addEventListener('change', event => {
+            readerTerms.classList.toggle('segment-colors', event.target.checked);
+        });
+
+        document.getElementById('readerOutputFormat').addEventListener('change', event => {
+            document.getElementById('readerPdfOptions').hidden =
+                event.target.value !== 'PDF_FLASHCARDS';
+        });
+
+        document.getElementById('downloadCards').addEventListener('click', async () => {
+            const words = selectedReaderCards.map(card => card.word.simplified);
+            const exportOptions = new URLSearchParams(words.map(word => ['words', word]));
+            exportOptions.set('hanziType', document.getElementById('readerHanziType').value);
+            exportOptions.set('hskLevel', document.getElementById('readerHskLevel').value);
+            exportOptions.set('format', document.getElementById('readerOutputFormat').value);
+            exportOptions.set('cardStyle', document.getElementById('readerCardStyle').value);
+            exportOptions.set('toneColors', document.getElementById('readerToneColors').value);
+            const response = await fetch('/reader/export', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: exportOptions
+            });
+            if (!response.ok) {
+                readerStatus.textContent = 'The flashcards could not be downloaded.';
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(await response.blob());
+            link.download = document.getElementById('readerOutputFormat').value === 'PDF_FLASHCARDS'
+                ? 'reader-flashcards.pdf'
+                : 'reader-flashcards.tsv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
     </script>
 </body>
 </html>
