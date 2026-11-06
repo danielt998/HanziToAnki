@@ -41,7 +41,7 @@ public class ReaderController {
                     term.getName(),
                     term.getOffe(),
                     term.getOffe() + term.getName().length(),
-                    lookupWord(extractor, term.getName(), hskVocabularyByLevel)));
+                    lookUpWord(extractor, term.getName(), hskVocabularyByLevel)));
         }
         return ResponseEntity.ok(tokens);
     }
@@ -190,7 +190,7 @@ public class ReaderController {
                 .allMatch(character -> Character.UnicodeScript.of(character) == Character.UnicodeScript.HAN);
     }
 
-    private ReaderWord lookupWord(
+    private ReaderWord lookUpWord(
             ChineseDictionaryExtractor extractor, String text, List<Set<Word>> hskVocabularyByLevel) {
         if (!isChineseOnly(text)) {
             return null;
