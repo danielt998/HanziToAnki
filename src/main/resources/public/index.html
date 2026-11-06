@@ -622,10 +622,70 @@
             background: var(--bg-tertiary);
         }
 
+        .reader-token.lookupable:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
         .reader-token.selected {
             background: var(--primary-color);
             color: white;
             border-bottom-color: var(--primary-color);
+        }
+
+        .reader-popover {
+            position: fixed;
+            z-index: 10;
+            width: min(280px, calc(100vw - 32px));
+            padding: 14px;
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            box-shadow: var(--shadow);
+        }
+
+        .reader-popover-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .reader-popover-word {
+            font-size: 24px;
+        }
+
+        .reader-popover-pinyin,
+        .reader-popover-hsk,
+        .reader-popover-definition {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .reader-popover-definition {
+            margin: 10px 0;
+        }
+
+        .reader-popover-close,
+        .reader-popover-action {
+            border: 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .reader-popover-close {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .reader-popover-action {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--primary-gradient);
+            color: white;
         }
 
         .reader-terms.segment-colors .reader-token.lookupable:nth-child(4n + 1) {
@@ -916,6 +976,19 @@
                 </label>
                 <p class="reader-status" id="readerStatus" aria-live="polite"></p>
                 <div class="reader-terms" id="readerTerms"></div>
+                <div class="reader-popover" id="readerPopover" role="dialog" hidden>
+                    <div class="reader-popover-header">
+                        <div>
+                            <strong class="reader-popover-word" id="readerPopoverWord"></strong>
+                            <span class="reader-popover-pinyin" id="readerPopoverPinyin"></span>
+                            <p class="reader-popover-hsk" id="readerPopoverHsk"></p>
+                        </div>
+                        <button class="reader-popover-close" type="button" id="readerPopoverClose"
+                                aria-label="Close word details">×</button>
+                    </div>
+                    <p class="reader-popover-definition" id="readerPopoverDefinition"></p>
+                    <button class="reader-popover-action" type="button" id="readerPopoverAction"></button>
+                </div>
             </main>
             <aside>
                 <h2>Selected flashcards</h2>
@@ -1061,7 +1134,14 @@
         const readerCards = document.getElementById('readerCards');
         const readerEmpty = document.getElementById('readerEmpty');
         const readerStatus = document.getElementById('readerStatus');
+        const readerPopover = document.getElementById('readerPopover');
+        const readerPopoverWord = document.getElementById('readerPopoverWord');
+        const readerPopoverPinyin = document.getElementById('readerPopoverPinyin');
+        const readerPopoverHsk = document.getElementById('readerPopoverHsk');
+        const readerPopoverDefinition = document.getElementById('readerPopoverDefinition');
+        const readerPopoverAction = document.getElementById('readerPopoverAction');
         const selectedReaderCards = [];
+        const readerStateKey = 'hanzi-to-anki-reader-state';
 
         document.querySelectorAll('.app-tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -1103,13 +1183,132 @@
                 definition.textContent = word.definition;
                 cardHeader.append(wordDetails, removeButton);
                 card.append(cardHeader, definition);
+                if (cardEntry.sentence) {
+                    const context = document.createElement('p');
+                    context.className = 'reader-card-context';
+                    context.textContent = cardEntry.sentence;
+                    card.append(context);
+                }
                 readerCards.append(card);
             });
             readerEmpty.hidden = selectedReaderCards.length > 0;
             document.getElementById('downloadCards').disabled = selectedReaderCards.length === 0;
+            persistReaderState();
         }
 
-        document.getElementById('segmentText').addEventListener('click', async () => {
+        function getReaderSettings() {
+            return {
+                segmentColors: document.getElementById('segmentColors').checked,
+                outputFormat: document.getElementById('readerOutputFormat').value,
+                hanziType: document.getElementById('readerHanziType').value,
+                hskLevel: document.getElementById('readerHskLevel').value,
+                cardStyle: document.getElementById('readerCardStyle').value,
+                toneColors: document.getElementById('readerToneColors').value
+            };
+        }
+
+        function updateDownloadButtonLabel() {
+            document.getElementById('downloadCards').textContent =
+                document.getElementById('readerOutputFormat').value === 'PDF_FLASHCARDS'
+                    ? 'Download PDF'
+                    : 'Download Anki TSV';
+        }
+
+        function persistReaderState() {
+            localStorage.setItem(readerStateKey, JSON.stringify({
+                text: document.getElementById('readerText').value,
+                cards: selectedReaderCards,
+                settings: getReaderSettings()
+            }));
+        }
+
+        function restoreReaderState() {
+            const storedState = localStorage.getItem(readerStateKey);
+            if (!storedState) {
+                return;
+            }
+
+            try {
+                const state = JSON.parse(storedState);
+                document.getElementById('readerText').value = state.text || '';
+                const settingIds = {
+                    segmentColors: 'segmentColors',
+                    outputFormat: 'readerOutputFormat',
+                    hanziType: 'readerHanziType',
+                    hskLevel: 'readerHskLevel',
+                    cardStyle: 'readerCardStyle',
+                    toneColors: 'readerToneColors'
+                };
+                Object.entries(state.settings || {}).forEach(([name, value]) => {
+                    const setting = document.getElementById(settingIds[name]);
+                    if (setting) {
+                        setting[name === 'segmentColors' ? 'checked' : 'value'] = value;
+                    }
+                });
+                (state.cards || []).forEach(card => {
+                    if (card?.id && card?.word?.simplified) {
+                        selectedReaderCards.push(card);
+                    }
+                });
+            } catch (error) {
+                localStorage.removeItem(readerStateKey);
+                readerStatus.textContent = 'Saved reader state could not be restored.';
+            }
+
+            document.getElementById('readerPdfOptions').hidden =
+                document.getElementById('readerOutputFormat').value !== 'PDF_FLASHCARDS';
+            updateDownloadButtonLabel();
+            renderSelectedWords();
+        }
+
+        function getSentence(text, start, end) {
+            let sentenceStart = 0;
+            let sentenceEnd = text.length;
+            const sentenceBoundary = /[。！？!?]/g;
+            let match;
+            while ((match = sentenceBoundary.exec(text)) !== null) {
+                if (match.index < start) {
+                    sentenceStart = match.index + 1;
+                } else {
+                    sentenceEnd = match.index + 1;
+                    break;
+                }
+            }
+            return text.slice(sentenceStart, sentenceEnd).trim();
+        }
+
+        function hideReaderPopover() {
+            readerPopover.hidden = true;
+        }
+
+        function showReaderPopover(term, word, tokenId, sentence) {
+            readerPopoverWord.textContent = word.simplified;
+            readerPopoverPinyin.textContent = ` ${word.pinyin}`;
+            readerPopoverHsk.textContent = word.hskLevel
+                ? `HSK ${word.hskLevel}`
+                : 'Not in HSK 1–6';
+            readerPopoverDefinition.textContent = word.definition;
+            const selected = selectedReaderCards.some(card => card.id === tokenId);
+            readerPopoverAction.textContent = selected ? 'Remove from flashcards' : 'Add to flashcards';
+            readerPopoverAction.onclick = () => {
+                const index = selectedReaderCards.findIndex(card => card.id === tokenId);
+                if (index >= 0) {
+                    selectedReaderCards.splice(index, 1);
+                    term.classList.remove('selected');
+                } else {
+                    selectedReaderCards.push({id: tokenId, word, sentence});
+                    term.classList.add('selected');
+                }
+                renderSelectedWords();
+                hideReaderPopover();
+            };
+            const bounds = term.getBoundingClientRect();
+            readerPopover.style.left = `${Math.max(16, Math.min(bounds.left, window.innerWidth - 296))}px`;
+            readerPopover.style.top = `${Math.min(bounds.bottom + 8, window.innerHeight - 190)}px`;
+            readerPopover.hidden = false;
+        }
+
+        async function segmentReaderText() {
             const text = document.getElementById('readerText').value;
             if (!text.trim()) {
                 readerStatus.textContent = 'Paste some Chinese text first.';
@@ -1147,15 +1346,21 @@
                     if (token.dictionary) {
                         const word = token.dictionary;
                         term.classList.add('lookupable');
+                        term.tabIndex = 0;
                         term.title = `${word.pinyin}: ${word.definition}`;
                         if (selectedReaderCards.some(card => card.id === tokenId)) {
                             term.classList.add('selected');
                         }
-                        term.addEventListener('click', () => {
-                            if (!selectedReaderCards.some(card => card.id === tokenId)) {
-                                selectedReaderCards.push({id: tokenId, word});
-                                term.classList.add('selected');
-                                renderSelectedWords();
+                        const showWordDetails = () => {
+                            showReaderPopover(term, word, tokenId, getSentence(text, token.start, token.end));
+                        };
+                        term.addEventListener('pointerenter', showWordDetails);
+                        term.addEventListener('focus', showWordDetails);
+                        term.addEventListener('click', showWordDetails);
+                        term.addEventListener('keydown', event => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                showWordDetails();
                             }
                         });
                     }
@@ -1168,10 +1373,13 @@
                 readerTerms.classList.toggle(
                     'segment-colors', document.getElementById('segmentColors').checked);
                 document.getElementById('readerSource').open = false;
+                persistReaderState();
             } catch (error) {
                 readerStatus.textContent = error.message;
             }
-        });
+        }
+
+        document.getElementById('segmentText').addEventListener('click', segmentReaderText);
 
         document.getElementById('clearReader').addEventListener('click', () => {
             document.getElementById('readerText').value = '';
@@ -1184,16 +1392,34 @@
 
         document.getElementById('segmentColors').addEventListener('change', event => {
             readerTerms.classList.toggle('segment-colors', event.target.checked);
+            persistReaderState();
         });
 
         document.getElementById('readerOutputFormat').addEventListener('change', event => {
             document.getElementById('readerPdfOptions').hidden =
                 event.target.value !== 'PDF_FLASHCARDS';
+            updateDownloadButtonLabel();
+            persistReaderState();
+        });
+
+        ['readerHanziType', 'readerHskLevel', 'readerCardStyle', 'readerToneColors'].forEach(id => {
+            document.getElementById(id).addEventListener('change', persistReaderState);
+        });
+
+        document.getElementById('readerText').addEventListener('input', persistReaderState);
+        document.getElementById('readerPopoverClose').addEventListener('click', hideReaderPopover);
+        document.addEventListener('click', event => {
+            if (!readerPopover.hidden && !readerPopover.contains(event.target)
+                    && !event.target.closest('.reader-token')) {
+                hideReaderPopover();
+            }
         });
 
         document.getElementById('downloadCards').addEventListener('click', async () => {
             const words = selectedReaderCards.map(card => card.word.simplified);
+            const contexts = selectedReaderCards.map(card => card.sentence || '');
             const exportOptions = new URLSearchParams(words.map(word => ['words', word]));
+            contexts.forEach(context => exportOptions.append('contexts', context));
             exportOptions.set('hanziType', document.getElementById('readerHanziType').value);
             exportOptions.set('hskLevel', document.getElementById('readerHskLevel').value);
             exportOptions.set('format', document.getElementById('readerOutputFormat').value);
@@ -1217,6 +1443,11 @@
             link.click();
             URL.revokeObjectURL(link.href);
         });
+
+        restoreReaderState();
+        if (document.getElementById('readerText').value.trim()) {
+            segmentReaderText();
+        }
     </script>
 </body>
 </html>
