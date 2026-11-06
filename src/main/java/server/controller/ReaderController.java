@@ -4,12 +4,17 @@ import hanziToAnki.CardStyle;
 import hanziToAnki.DeckProducer;
 import hanziToAnki.ExportOptions;
 import hanziToAnki.OutputFormat;
+import hanziToAnki.Word;
 import hanziToAnki.chinese.ChineseDeckStyler;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
+import hanziToAnki.chinese.ChineseGrader;
 import hanziToAnki.chinese.ChineseWord;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
 import org.ansj.domain.Term;
 import org.ansj.splitWord.analysis.ToAnalysis;
 import org.springframework.http.HttpHeaders;
@@ -29,13 +34,14 @@ public class ReaderController {
         }
 
         ChineseDictionaryExtractor extractor = createExtractor();
+        List<Set<Word>> hskVocabularyByLevel = getHskVocabularyByLevel(extractor);
         List<ReaderToken> tokens = new ArrayList<>();
         for (Term term : ToAnalysis.parse(text).getTerms()) {
             tokens.add(new ReaderToken(
                     term.getName(),
                     term.getOffe(),
                     term.getOffe() + term.getName().length(),
-                    lookupWord(extractor, term.getName())));
+                    lookUpWord(extractor, term.getName(), hskVocabularyByLevel)));
         }
         return ResponseEntity.ok(tokens);
     }
@@ -43,6 +49,7 @@ public class ReaderController {
     @PostMapping("/reader/export")
     public ResponseEntity<byte[]> export(
             @RequestParam List<String> words,
+            @RequestParam(required = false) List<String> contexts,
             @RequestParam(defaultValue = "0") int hskLevel,
             @RequestParam(defaultValue = "SIMP") String hanziTypeValue,
             @RequestParam(defaultValue = "ANKI") String formatValue,
@@ -57,11 +64,8 @@ public class ReaderController {
         }
 
         ChineseDictionaryExtractor extractor = createExtractor();
-        List<String> selectedWords = words.stream()
-                .filter(word -> extractor.getWord(word).isPresent())
-                .distinct()
-                .toList();
-        if (selectedWords.isEmpty()) {
+        List<ReaderSelection> selections = getSelections(words, contexts, extractor);
+        if (selections.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -72,11 +76,12 @@ public class ReaderController {
         MediaType contentType;
         String filename;
         if (format == OutputFormat.PDF_FLASHCARDS) {
-            content = deckProducer.producePdfFlashcards(selectedWords, options, cardStyle, toneColors);
+            content = deckProducer.producePdfFlashcards(
+                    selections.stream().map(ReaderSelection::word).toList(), options, cardStyle, toneColors);
             contentType = MediaType.APPLICATION_PDF;
             filename = "reader-flashcards.pdf";
         } else {
-            List<String> cards = deckProducer.produceDeck(selectedWords, options);
+            List<String> cards = produceAnkiCards(deckProducer, selections, options, hanziType);
             content = String.join(System.lineSeparator(), cards).getBytes(StandardCharsets.UTF_8);
             contentType = MediaType.parseMediaType("text/tab-separated-values");
             filename = "reader-flashcards.tsv";
@@ -93,6 +98,65 @@ public class ReaderController {
         ChineseDictionaryExtractor extractor = new ChineseDictionaryExtractor();
         extractor.readInDictionary();
         return extractor;
+    }
+
+    private List<ReaderSelection> getSelections(
+            List<String> words, List<String> contexts, ChineseDictionaryExtractor extractor) {
+        List<String> selectionContexts = contexts == null ? Collections.emptyList() : contexts;
+        List<ReaderSelection> selections = new ArrayList<>();
+        for (int index = 0; index < words.size(); index++) {
+            String word = words.get(index);
+            if (extractor.getWord(word).isPresent()) {
+                String context = index < selectionContexts.size() ? selectionContexts.get(index) : "";
+                selections.add(new ReaderSelection(word, context));
+            }
+        }
+        return selections;
+    }
+
+    private List<String> produceAnkiCards(
+            DeckProducer deckProducer,
+            List<ReaderSelection> selections,
+            ExportOptions options,
+            ChineseDeckStyler.HanziType hanziType) {
+        List<String> cards = new ArrayList<>();
+        for (ReaderSelection selection : selections) {
+            List<String> styledCard = deckProducer.produceDeck(List.of(selection.word()), options);
+            if (styledCard.size() < 2) {
+                continue;
+            }
+            if (cards.isEmpty()) {
+                cards.add(styledCard.getFirst());
+            }
+            cards.add(addContext(styledCard.get(1), selection.context(), hanziType));
+        }
+        return cards;
+    }
+
+    private String addContext(String card, String context, ChineseDeckStyler.HanziType hanziType) {
+        if (context == null || context.isBlank()) {
+            return card;
+        }
+        String[] fields = card.split("\t", -1);
+        int definitionIndex = hanziType == ChineseDeckStyler.HanziType.SIMP_AND_TRAD ? 2 : 1;
+        fields[definitionIndex] += "<br><br><span class=\"sentence-context\">"
+                + escapeHtml(context) + "</span>";
+        return String.join("\t", fields);
+    }
+
+    private String escapeHtml(String text) {
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
+    private List<Set<Word>> getHskVocabularyByLevel(ChineseDictionaryExtractor extractor) {
+        ChineseGrader grader = new ChineseGrader(extractor);
+        return IntStream.rangeClosed(1, 6)
+                .mapToObj(grader::getAccumulativeVocabulary)
+                .toList();
     }
 
     private ChineseDeckStyler.HanziType parseHanziType(String value) {
@@ -126,7 +190,8 @@ public class ReaderController {
                 .allMatch(character -> Character.UnicodeScript.of(character) == Character.UnicodeScript.HAN);
     }
 
-    private ReaderWord lookupWord(ChineseDictionaryExtractor extractor, String text) {
+    private ReaderWord lookUpWord(
+            ChineseDictionaryExtractor extractor, String text, List<Set<Word>> hskVocabularyByLevel) {
         if (!isChineseOnly(text)) {
             return null;
         }
@@ -134,13 +199,30 @@ public class ReaderController {
                 .filter(ChineseWord.class::isInstance)
                 .map(ChineseWord.class::cast)
                 .map(word -> new ReaderWord(
-                        word.simplified(), word.traditional(), word.pinyinTones(), word.definition()))
+                        word.simplified(),
+                        word.traditional(),
+                        word.pinyinTones(),
+                        word.definition(),
+                        getHskLevel(word, hskVocabularyByLevel)))
                 .orElse(null);
+    }
+
+    private Integer getHskLevel(Word word, List<Set<Word>> hskVocabularyByLevel) {
+        for (int index = 0; index < hskVocabularyByLevel.size(); index++) {
+            if (hskVocabularyByLevel.get(index).contains(word)) {
+                return index + 1;
+            }
+        }
+        return null;
     }
 
     public record ReaderToken(String text, int start, int end, ReaderWord dictionary) {
     }
 
-    public record ReaderWord(String simplified, String traditional, String pinyin, String definition) {
+    public record ReaderWord(
+            String simplified, String traditional, String pinyin, String definition, Integer hskLevel) {
+    }
+
+    private record ReaderSelection(String word, String context) {
     }
 }

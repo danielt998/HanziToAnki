@@ -22,23 +22,35 @@ class ReaderControllerTest {
                 .map(ReaderController.ReaderToken::dictionary)
                 .filter(java.util.Objects::nonNull)
                 .anyMatch(word -> word.simplified().equals("中文")));
+        assertTrue(response.getBody().stream()
+                .map(ReaderController.ReaderToken::dictionary)
+                .filter(java.util.Objects::nonNull)
+                .anyMatch(word -> word.hskLevel() != null));
     }
 
     @Test
     void exportsSelectedWordsAsAnkiTsv() {
         var response = controller.export(
-                List.of("中文", "学习"), 0, "SIMP", "ANKI", "INDEX_CARD_3x5", true);
+                List.of("中文", "学习"),
+                List.of("我喜欢中文。", "我喜欢学习。"),
+                0,
+                "SIMP",
+                "ANKI",
+                "INDEX_CARD_3x5",
+                true);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("attachment; filename=reader-flashcards.tsv",
                 response.getHeaders().getFirst("Content-Disposition"));
-        assertTrue(new String(response.getBody(), StandardCharsets.UTF_8).contains("中文"));
+        String cards = new String(response.getBody(), StandardCharsets.UTF_8);
+        assertTrue(cards.contains("中文"));
+        assertTrue(cards.contains("我喜欢中文。"));
     }
 
     @Test
     void rejectsInvalidReaderExportSettings() {
         var response = controller.export(
-                List.of("中文"), 7, "SIMP", "ANKI", "INDEX_CARD_3x5", true);
+                List.of("中文"), List.of(), 7, "SIMP", "ANKI", "INDEX_CARD_3x5", true);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -46,7 +58,13 @@ class ReaderControllerTest {
     @Test
     void exportsSelectedWordsAsPdfFlashcards() {
         var response = controller.export(
-                List.of("中文"), 0, "SIMP", "PDF_FLASHCARDS", "BUSINESS_CARD", false);
+                List.of("中文"),
+                List.of("我喜欢中文。"),
+                0,
+                "SIMP",
+                "PDF_FLASHCARDS",
+                "BUSINESS_CARD",
+                false);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("application/pdf", response.getHeaders().getContentType().toString());
