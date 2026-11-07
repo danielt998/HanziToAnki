@@ -36,6 +36,24 @@ java -jar build/libs/HanziToAnki-1.0.0.jar input.txt -f ANKI -o output.anki
 ./gradlew runCli -Pargs='input.txt -f ANKI -o output.anki'
 ```
 
+### Interactive Vocabulary Set Builder
+
+Build a deck from vocabulary lists using union (`+`), subtraction (`-`), and intersection (`&`):
+```bash
+./run-vocabulary-shell
+```
+
+The interactive shell supports set expressions, variable assignment, and deck creation. `open_cards("filename")`
+loads a vocabulary or Anki TSV export (using its first column), while `old_hsk("5")` selects HSK 5. For example:
+```text
+book = open_cards("book_a_vocabulary.tsv")
+new_words = book - old_hsk("1-5")
+write_cards(new_words, "book_a_new_words.tsv")
+```
+
+See the [interactive vocabulary set builder reference](docs/interactive-vocabulary-set-builder.md) for all
+available functions, shell commands, script syntax, precedence rules, and more examples.
+
 *Command-line* options:
 * `-w --word-list` Read from an input file containing a list of words, separated by line breaks. Without this flag, individual characters are extracted
 * `-s --single-characters` Extract only single characters from the file 

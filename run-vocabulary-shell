@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+./gradlew --console=plain bootJar
+exec java -jar build/libs/HanziToAnki-1.0.0.jar --interactive

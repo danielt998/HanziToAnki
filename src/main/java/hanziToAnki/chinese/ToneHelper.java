@@ -43,7 +43,11 @@ public class ToneHelper {
     public static String convertNumberedSyllableToAccentedSyllable(String syllable) {
         syllable = syllable.replace("u:", "ü").replace("U:", "Ü");
 
-        int tone = Integer.parseInt("" + syllable.charAt(syllable.length() - 1));
+        char toneCharacter = syllable.charAt(syllable.length() - 1);
+        if (!Character.isDigit(toneCharacter)) {
+            return syllable;
+        }
+        int tone = Character.getNumericValue(toneCharacter);
         if (syllable.contains("iu")) {
             return syllable.replace('u', getCharWithTone('u', tone)).substring(0, syllable.length() - 1);
         }
