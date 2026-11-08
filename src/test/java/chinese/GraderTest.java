@@ -41,9 +41,9 @@ class GraderTest {
 
     @ParameterizedTest(name = "Word ''{0}'' first appears in HSK tier {1}")
     @CsvSource({
-        "爱, 1",
+        "北京, 1",
         "帮助, 2",
-        "阿姨, 3",
+        "爱好, 3",
         "安全, 4",
         "爱惜, 5",
         "癌症, 6"
