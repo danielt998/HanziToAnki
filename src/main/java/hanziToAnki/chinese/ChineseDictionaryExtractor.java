@@ -39,12 +39,32 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
     private void readInDictionary(InputStream stream) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-            reader.lines()
+            // Collect lines first so IO is completed before parallel processing.
+            java.util.List<String> lines = reader.lines()
                     .filter(line -> !line.isEmpty() && line.charAt(0) != COMMENT_CHARACTER)
+                    .toList();
+
+            int cores = Math.max(1, Runtime.getRuntime().availableProcessors());
+            logger.info("Parsing dictionary with {} lines using up to {} threads", lines.size(), cores);
+
+            java.util.concurrent.ConcurrentHashMap<String, Word> simpLocal = new java.util.concurrent.ConcurrentHashMap<>(EXPECTED_DICT_ENTRIES);
+            java.util.concurrent.ConcurrentHashMap<String, Word> tradLocal = new java.util.concurrent.ConcurrentHashMap<>(EXPECTED_DICT_ENTRIES);
+
+            lines.parallelStream()
                     .map(this::getWordFromLine)
                     .filter(Objects::nonNull)
-                    .forEach(this::putWordToMaps);
-            logger.info("Successfully loaded dictionary with {} simplified and {} traditional words",
+                    .forEach(word -> {
+                        if (word instanceof ChineseWord w) {
+                            simpLocal.put(w.simplified(), word);
+                            tradLocal.put(w.traditional(), word);
+                        }
+                    });
+
+            // Merge into the primary maps
+            simplifiedMapping.putAll(simpLocal);
+            traditionalMapping.putAll(tradLocal);
+
+            logger.info("Successfully loaded dictionary with {} simplified and {} traditional words (parallel)",
                     simplifiedMapping.size(), traditionalMapping.size());
         } catch (IOException e) {
             logger.error("Could not load dictionary file", e);
