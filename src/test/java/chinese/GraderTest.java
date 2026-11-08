@@ -55,13 +55,13 @@ class GraderTest {
         // Should not be in any lower tier
         for (int level = 1; level < expectedFirstLevel; level++) {
             assertFalse(grader.getAccumulativeVocabulary(level).contains(word),
-                    () -> String.format("Word '%s' should not be in HSK level %d", wordText, level));
+                    "Word '" + wordText + "' should not be in HSK level " + level);
         }
 
         // Should be in expected tier and all subsequent tiers
         for (int level = expectedFirstLevel; level <= 6; level++) {
             assertTrue(grader.getAccumulativeVocabulary(level).contains(word),
-                    () -> String.format("Word '%s' should be present in accumulative HSK level %d", wordText, level));
+                    "Word '" + wordText + "' should be present in accumulative HSK level " + level);
         }
     }
 
@@ -72,7 +72,7 @@ class GraderTest {
             Set<Word> currentTier = grader.getAccumulativeVocabulary(level);
             Set<Word> nextTier = grader.getAccumulativeVocabulary(level + 1);
             assertTrue(nextTier.containsAll(currentTier),
-                    () -> String.format("HSK level %d words must be a subset of level %d", level, level + 1));
+                    "HSK level " + level + " words must be a subset of level " + (level + 1));
         }
     }
 }
