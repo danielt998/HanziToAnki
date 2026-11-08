@@ -1,9 +1,11 @@
 package chinese;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import hanziToAnki.Word;
 import hanziToAnki.chinese.ChineseDictionaryExtractor;
 import hanziToAnki.chinese.ChineseWord;
 import java.net.URISyntaxException;
@@ -25,7 +27,7 @@ class DictionaryExtractorTest {
     @Test
     @DisplayName("Extract single word by simplified character")
     void canExtractSomeWord() {
-        var word = extractor.getWord("哦");
+        Optional<Word> word = extractor.getWord("哦");
         assertNotNull(word);
         assertTrue(word.isPresent());
     }
@@ -33,7 +35,7 @@ class DictionaryExtractorTest {
     @Test
     @DisplayName("Extract word with Er-hua suffix fallback")
     void canExtractErHuaTest() {
-        var word = extractor.getWord("奴儿");
+        Optional<Word> word = extractor.getWord("奴儿");
         assertTrue(word.isPresent());
         assertEquals(extractor.getWord("奴"), word);
     }
@@ -41,14 +43,17 @@ class DictionaryExtractorTest {
     @Test
     @DisplayName("Lookup by either Simplified or Traditional returns identical word mapping")
     void canExtractBySimplifiedAndTraditional() {
-        Optional<?> simplifiedLookup = extractor.getWord("爱");
-        Optional<?> traditionalLookup = extractor.getWord("愛");
+        Optional<Word> simplifiedLookup = extractor.getWord("爱");
+        Optional<Word> traditionalLookup = extractor.getWord("愛");
 
         assertTrue(simplifiedLookup.isPresent(), "Simplified '爱' should be present in dictionary");
         assertTrue(traditionalLookup.isPresent(), "Traditional '愛' should be present in dictionary");
         assertEquals(simplifiedLookup, traditionalLookup, "Simplified and Traditional lookups should resolve to the same word");
 
-        ChineseWord word = (ChineseWord) simplifiedLookup.get();
+        Word rawWord = simplifiedLookup.get();
+        assertInstanceOf(ChineseWord.class, rawWord, "Extracted word must be an instance of ChineseWord");
+        ChineseWord word = (ChineseWord) rawWord;
+
         assertEquals("爱", word.simplified());
         assertEquals("愛", word.traditional());
         assertEquals("ai", word.pinyin());
@@ -59,10 +64,12 @@ class DictionaryExtractorTest {
     @Test
     @DisplayName("Extract multi-character words with pinyin tones and definitions")
     void canExtractMultiCharacterWord() {
-        Optional<?> wordOpt = extractor.getWord("你好");
+        Optional<Word> wordOpt = extractor.getWord("你好");
 
         assertTrue(wordOpt.isPresent(), "Multi-character word '你好' should be present");
+        assertInstanceOf(ChineseWord.class, wordOpt.get(), "Extracted word must be an instance of ChineseWord");
         ChineseWord word = (ChineseWord) wordOpt.get();
+
         assertEquals("你好", word.simplified());
         assertEquals("ni3 hao3", word.pinyinTones());
         assertEquals("nihao", word.pinyin());
