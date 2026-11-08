@@ -36,7 +36,7 @@ class GraderTest {
         assertEquals(596, grader.getAccumulativeVocabulary(3).size());
         assertEquals(1192, grader.getAccumulativeVocabulary(4).size());
         assertEquals(2491, grader.getAccumulativeVocabulary(5).size());
-        assertEquals(4988, grader.getAccumulativeVocabulary(6).size());
+        assertEquals(4989, grader.getAccumulativeVocabulary(6).size());
     }
 
     @ParameterizedTest(name = "Word ''{0}'' first appears in HSK tier {1}")
