@@ -120,7 +120,7 @@ public class ChineseWordFinder {
                 if (monogramOverlap) {
                     words.addAll(monograms);
                 }
-            } else if (!bigrams.isEmpty() && includeTrigrams) {
+            } else if (!bigrams.isEmpty() && includeBigrams) {
                 words.addAll(bigrams);
                 if (monogramOverlap) {
                     words.addAll(monograms);
