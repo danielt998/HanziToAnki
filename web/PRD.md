@@ -159,3 +159,34 @@ web/
 - **Dictionary Load**: Pre-indexed dictionary (~2.5 MB gzipped) fetched asynchronously and stored permanently in browser `IndexedDB`.
 - **Segmentation Throughput**: > 50,000 characters/second using native `Intl.Segmenter`.
 - **Zero Server Overhead**: 100% static hosting on GitHub Pages with HTTPS and CDN distribution.
+
+---
+
+## 5. UI/UX & Visual Design: Modern Playful Neo-Chinoiserie
+
+### 5.1 The Aesthetic Vibe
+A delightful blend of **modern, high-polish minimalism** with **playful traditional Chinese visual culture**:
+- **Warm & Organic Paper Tones**:
+  - Background: Warm Rice Paper white (`#FBF9F5` in light mode, deep Charcoal Tea `#1A1D20` in dark mode).
+  - Primary Brand Accent: Vermilion / Lacquer Red (`#DC2626`).
+  - Secondary Accents: Imperial Amber (`#D97706`), Jade Green (`#059669`), and Porcelain Indigo (`#2563EB`).
+- **Traditional Motifs Reimagined**:
+  - **Seal Stamp Badges (`印章`)**: HSK levels displayed inside subtle vermilion square seals with rounded corners and authentic border styling (e.g. `[ HSK 4 ]` stamped badge).
+  - **Bao the Scholar Mascot**: A cute, encouraging dumpling character that appears on empty states and congratulates users (*"Bao filtered out 2,400 words! 320 spicy new words ready for Anki."*).
+  - **Lantern & Cloud Micro-Details**: Subtle wave or cloud separators on card borders without cluttering the clean modern typography.
+
+### 5.2 Responsive & Adaptive Layouts
+- **Mobile-First Experience (< 768px)**:
+  - **Bottom Navigation Bar**: Ergonomic thumb-friendly bottom dock with lively bouncy icon tabs (🏮 Text to Deck, 🎛️ Tuner, 📖 Reader, ⚙️ Settings).
+  - **Large Touch Targets**: Checkboxes and tuner chips have generous hit areas ($\ge 48\text{px}$) with haptic-like micro-animations on touch.
+  - **Full-Screen Reader**: Tap any word to summon a sleek bottom-sheet definition drawer.
+- **Desktop Experience ($\ge 768px$)**:
+  - **Top Navigation Bar**: Slim floating header with quick-switch tabs, tone palette selector, and dark mode toggle.
+  - **Split-View Interactive Reader**: Left side for paste/source text; right side for live interactive Pleco-style reader with hovering tooltips and persistent sidebar vocabulary inspector.
+  - **Keyboard Navigation**: Standard Anki shortcuts (`Space` to flip card preview, `1-4` to rate familiarity, `Cmd/Ctrl + Enter` to export).
+
+### 5.3 Typography & Readability
+- **Hanzi Character Stack**: Optimized for stroke clarity and aesthetic balance:
+  `font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;`
+- **Calligraphic Accents**: `Ma Shan Zheng` / `Noto Serif SC` for decorative headers, seal stamps, and proverb banners.
+- **Comfortable Reading Metrics**: 1.8x line height on Chinese paragraphs with generous character spacing (`tracking-wide`) to prevent glyph crowding.
