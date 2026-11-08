@@ -8,9 +8,6 @@ plugins {
 group 'org.example'
 version '1.0.0'
 
-sourceCompatibility = 25
-targetCompatibility = 25
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
@@ -23,21 +20,21 @@ repositories {
 
 dependencies {
     implementation 'org.apache.tika:tika-core:2.9.2'
-    implementation 'org.jetbrains:annotations:24.1.0'
+    implementation 'org.jetbrains:annotations:26.0.1'
     
     // Spring Boot 3.4+
     implementation 'org.springframework.boot:spring-boot-starter-web:3.4.0'
     
     // SLF4J API for application code
-    implementation 'org.slf4j:slf4j-api:2.0.11'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
     
     // ANSJ for Chinese word segmentation (Jieba-like algorithms)
     implementation 'org.ansj:ansj_seg:5.1.6'
     
     // PDFBox for PDF generation (flashcards)
-    implementation 'org.apache.pdfbox:pdfbox:3.0.1'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.4'
     
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
 }
 
 application {
@@ -74,14 +71,13 @@ test {
     }
 }
 
-
-task printClasspath {
+tasks.register('printClasspath') {
     doLast {
         println configurations.runtimeClasspath.asPath
     }
 }
 
-task runApi {
+tasks.register('runApi') {
     description = "Run the Spring Boot API server"
     dependsOn 'classes'
     doLast {
@@ -92,7 +88,7 @@ task runApi {
     }
 }
 
-task runCli {
+tasks.register('runCli') {
     description = "Run the CLI tool (usage: ./gradlew runCli -Pargs='input.txt')"
     dependsOn 'classes'
     doLast {
@@ -106,14 +102,12 @@ task runCli {
 }
 
 jar {
-    // Spring Boot will handle the manifest
-    duplicatesStrategy = 'exclude'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-// Optional: Create separate lightweight JARs for CLI and API
-task cliJar(type: Jar) {
+tasks.register('cliJar', Jar) {
     description = "Create a standalone CLI JAR (without Spring Boot)"
-    archiveBaseName = "HanziToAnki-cli"
+    archiveBaseName.set("HanziToAnki-cli")
     from sourceSets.main.output
     exclude 'server/**'
     exclude 'public/**'
@@ -123,9 +117,9 @@ task cliJar(type: Jar) {
     dependsOn classes
 }
 
-task apiJar(type: Jar) {
+tasks.register('apiJar', Jar) {
     description = "Create a standalone API JAR (without CLI Main)"
-    archiveBaseName = "HanziToAnki-api"
+    archiveBaseName.set("HanziToAnki-api")
     from sourceSets.main.output
     exclude 'hanziToAnki/Main.class'
     manifest {
