@@ -78,8 +78,8 @@ class DeckProducerTest {
     @Test
     @DisplayName("HSK level exclusion filters out known vocabulary up to specified tier")
     void produceDeckWithHskLevelExclusion() {
-        // "你好" is in HSK 1, "帮助" is in HSK 2
-        List<String> input = List.of("你好帮助");
+        // "北京" is in HSK 1, "帮助" is in HSK 2
+        List<String> input = List.of("北京帮助");
 
         // When hskLevelToExclude = 0: both words are kept
         ExportOptions optionsNoExclusion = new ExportOptions(
@@ -90,10 +90,10 @@ class DeckProducerTest {
         );
         List<String> deckNoExclusion = deckProducer.produceDeck(input, optionsNoExclusion);
         String textNoExclusion = String.join("\n", deckNoExclusion);
-        assertTrue(textNoExclusion.contains("你好"), "Should contain HSK 1 word when no levels excluded");
+        assertTrue(textNoExclusion.contains("北京"), "Should contain HSK 1 word when no levels excluded");
         assertTrue(textNoExclusion.contains("帮助"), "Should contain HSK 2 word when no levels excluded");
 
-        // When hskLevelToExclude = 1: HSK 1 ("你好") is filtered out, HSK 2 ("帮助") remains
+        // When hskLevelToExclude = 1: HSK 1 ("北京") is filtered out, HSK 2 ("帮助") remains
         ExportOptions optionsExcludeHsk1 = new ExportOptions(
             false, true, 1,
             ChineseWordFinder.STRATEGY.TRI_BI_MONOGRAMS_USE_ALL_CHARS,
@@ -102,7 +102,7 @@ class DeckProducerTest {
         );
         List<String> deckExcludeHsk1 = deckProducer.produceDeck(input, optionsExcludeHsk1);
         String textExcludeHsk1 = String.join("\n", deckExcludeHsk1);
-        assertFalse(textExcludeHsk1.contains("你好"), "Should exclude HSK 1 word '你好'");
+        assertFalse(textExcludeHsk1.contains("北京"), "Should exclude HSK 1 word '北京'");
         assertTrue(textExcludeHsk1.contains("帮助"), "Should keep HSK 2 word '帮助'");
 
         // When hskLevelToExclude = 2: both HSK 1 and HSK 2 are filtered out
@@ -114,7 +114,7 @@ class DeckProducerTest {
         );
         List<String> deckExcludeHsk2 = deckProducer.produceDeck(input, optionsExcludeHsk2);
         String textExcludeHsk2 = String.join("\n", deckExcludeHsk2);
-        assertFalse(textExcludeHsk2.contains("你好"), "Should exclude HSK 1 word '你好'");
+        assertFalse(textExcludeHsk2.contains("北京"), "Should exclude HSK 1 word '北京'");
         assertFalse(textExcludeHsk2.contains("帮助"), "Should exclude HSK 2 word '帮助'");
     }
 
