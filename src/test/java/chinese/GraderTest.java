@@ -31,18 +31,20 @@ class GraderTest {
     @Test
     @DisplayName("Accumulative vocabulary sizes match expected HSK dictionary counts")
     void getAccumulativeHskVocabularyTest() {
-        assertEquals(149, grader.getAccumulativeVocabulary(1).size());
-        assertEquals(297, grader.getAccumulativeVocabulary(2).size());
-        assertEquals(593, grader.getAccumulativeVocabulary(3).size());
-        assertEquals(1188, grader.getAccumulativeVocabulary(4).size());
-        assertEquals(2486, grader.getAccumulativeVocabulary(5).size());
-        assertEquals(4983, grader.getAccumulativeVocabulary(6).size());
+        assertEquals(150, grader.getAccumulativeVocabulary(1).size());
+        assertEquals(299, grader.getAccumulativeVocabulary(2).size());
+        assertEquals(596, grader.getAccumulativeVocabulary(3).size());
+        assertEquals(1192, grader.getAccumulativeVocabulary(4).size());
+        assertEquals(2491, grader.getAccumulativeVocabulary(5).size());
+        assertEquals(4988, grader.getAccumulativeVocabulary(6).size());
     }
 
     @ParameterizedTest(name = "Word ''{0}'' first appears in HSK tier {1}")
     @CsvSource({
+        "爱, 1",
         "北京, 1",
         "帮助, 2",
+        "阿姨, 3",
         "爱好, 3",
         "安全, 4",
         "爱惜, 5",
