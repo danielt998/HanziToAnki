@@ -93,10 +93,10 @@ public class ChineseWordFinder {
     }
 
     private List<Word> getNgrams(List<Word> wordList, int n) {
-        List<Word> newWordList = new ArrayList<>();
-        for (Word word: wordList) {
-            if(((hanziToAnki.chinese.ChineseWord)word).simplified().length() == n) {
-                newWordList.add(word);
+        var newWordList = new ArrayList<Word>();
+        for (var word : wordList) {
+            if (word instanceof ChineseWord cw && cw.simplified().length() == n) {
+                newWordList.add(cw);
             }
         }
         return newWordList;
@@ -165,12 +165,16 @@ public class ChineseWordFinder {
     }
 
     private char[] getCharsFromList(List<String> lines) {
-        String fullString = String.join("", lines);
-        return fullString.chars()
-                .filter(c -> Character.UnicodeScript.of(c) == Character.UnicodeScript.HAN)
-                .mapToObj(c -> String.valueOf((char) c))
-                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                .toString()
-                .toCharArray();
+        var sb = new StringBuilder();
+        for (var line : lines) {
+            for (int i = 0; i < line.length(); ) {
+                int codePoint = line.codePointAt(i);
+                if (Character.UnicodeScript.of(codePoint) == Character.UnicodeScript.HAN) {
+                    sb.appendCodePoint(codePoint);
+                }
+                i += Character.charCount(codePoint);
+            }
+        }
+        return sb.toString().toCharArray();
     }
 }
