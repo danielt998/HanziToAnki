@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { downloadFile, generateAnkiTsv } from '../lib/ankiExporter';
 import type { DictEntry } from '../lib/dictionary';
 import { getHskBadgeClasses } from '../lib/hskHelper';
-import { tokenizeForReader } from '../lib/segmentation';
+import { type SegmentationMode, tokenizeForReader } from '../lib/segmentation';
 import { getToneColor, getToneNumber, type TonePalette } from '../lib/toneHelper';
 
 interface ClipboardReaderProps {
@@ -25,14 +25,15 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
   colorHanziGlyphs,
 }) => {
   const [inputText, setInputText] = useState<string>(DEFAULT_ARTICLE);
+  const [segmentationMode, setSegmentationMode] = useState<SegmentationMode>('intl');
   const [selectedWord, setSelectedWord] = useState<DictEntry | null>(null);
   const [sessionDeck, setSessionDeck] = useState<DictEntry[]>([]);
   const [_copied, _setCopied] = useState<boolean>(false);
 
   // Tokenize text for reading
   const tokens = useMemo(() => {
-    return tokenizeForReader(inputText);
-  }, [inputText]);
+    return tokenizeForReader(inputText, segmentationMode);
+  }, [inputText, segmentationMode]);
 
   // Check if a word is in session deck
   const isInSessionDeck = (word: DictEntry | null) => {
@@ -100,16 +101,50 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
         {/* Reading Article Pane */}
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark rounded-2xl p-6 shadow-soft min-h-[420px]">
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-paper-border dark:border-paper-borderDark">
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-paper-border dark:border-paper-borderDark">
               <span className="text-xs font-bold uppercase tracking-wider text-chinese-ink dark:text-gray-300">
                 Reading Pane (Click words for definitions)
               </span>
-              <button
-                onClick={() => setInputText('')}
-                className="text-xs text-gray-700 dark:text-gray-400 hover:text-chinese-red transition font-medium"
-              >
-                Clear Text
-              </button>
+
+              <div className="flex items-center gap-3">
+                {/* Segmentation Mode Toggle */}
+                <fieldset
+                  className="inline-flex items-center bg-paper-light dark:bg-paper-dark border border-paper-border dark:border-paper-borderDark rounded-lg p-0.5"
+                  aria-label="Segmentation Engine"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setSegmentationMode('intl')}
+                    className={`px-2 py-1 text-[11px] font-semibold rounded-md transition ${
+                      segmentationMode === 'intl'
+                        ? 'bg-chinese-red text-white shadow-xs'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-chinese-ink dark:hover:text-white'
+                    }`}
+                    title="Intl.Segmenter: Native browser morphological segmentation"
+                  >
+                    Intl Browser
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSegmentationMode('cedict-greedy')}
+                    className={`px-2 py-1 text-[11px] font-semibold rounded-md transition ${
+                      segmentationMode === 'cedict-greedy'
+                        ? 'bg-chinese-red text-white shadow-xs'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-chinese-ink dark:hover:text-white'
+                    }`}
+                    title="Greedy CC-CEDICT: Dictionary compound matching (Jieba-like)"
+                  >
+                    Greedy CC-CEDICT
+                  </button>
+                </fieldset>
+
+                <button
+                  onClick={() => setInputText('')}
+                  className="text-xs text-gray-700 dark:text-gray-400 hover:text-chinese-red transition font-medium"
+                >
+                  Clear Text
+                </button>
+              </div>
             </div>
 
             {/* Interactive Tokenized Text */}
