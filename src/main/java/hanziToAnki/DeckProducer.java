@@ -83,7 +83,7 @@ public class DeckProducer {
     private Set<Word> generateWords(List<String> lines, ExportOptions options) {
         if (options.useWordList()) {
             return lines.stream()
-                    .map(s -> extractor.getWord(s))
+                    .map(extractor::getWord)
                     .flatMap(java.util.Optional::stream)
                     .collect(Collectors.toSet());
         }
