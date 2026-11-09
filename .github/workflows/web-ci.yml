@@ -40,6 +40,11 @@ jobs:
           cd web
           npm run build
 
+      - name: Verify bundle size budget
+        run: |
+          cd web
+          npm run check:size
+
       - name: Install Playwright Chromium browser
         run: |
           cd web

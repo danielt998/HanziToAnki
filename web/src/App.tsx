@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ClipboardReader } from './components/ClipboardReader';
 import { FlashcardTuner } from './components/FlashcardTuner';
-import { ActiveTab, Navbar } from './components/Navbar';
+import { type ActiveTab, Navbar } from './components/Navbar';
 import { SettingsModal } from './components/SettingsModal';
 import { TextToDeck } from './components/TextToDeck';
-import { dictionaryService } from './lib/dictionary';
-import { TonePalette } from './lib/toneHelper';
+import { type DictStatus, dictionaryService } from './lib/dictionary';
+import { type TonePalette } from './lib/toneHelper';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('text-to-deck');
@@ -16,7 +16,9 @@ export const App: React.FC = () => {
   const [tonePalette, setTonePalette] = useState<TonePalette>('standard');
   const [colorHanziGlyphs, setColorHanziGlyphs] = useState<boolean>(false);
   const [hskStandard, setHskStandard] = useState<'HSK2' | 'HSK3'>('HSK3');
-  const [dictReady, setDictReady] = useState<boolean>(false);
+  const [dictStatus, setDictStatus] = useState<DictStatus>(() =>
+    dictionaryService.getStatus(),
+  );
 
   // Initialize dark mode class on <html>
   useEffect(() => {
@@ -27,11 +29,11 @@ export const App: React.FC = () => {
     }
   }, [isDark]);
 
-  // Initialize dictionary on mount
+  // Subscribe to dictionary service status
   useEffect(() => {
-    dictionaryService.init().then(() => {
-      setDictReady(true);
-    });
+    const unsubscribe = dictionaryService.subscribeStatus(setDictStatus);
+    dictionaryService.init();
+    return unsubscribe;
   }, []);
 
   return (
@@ -45,7 +47,7 @@ export const App: React.FC = () => {
       />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-12">
-        {!dictReady ? (
+        {!dictStatus.isReady ? (
           <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
             <div className="w-12 h-12 border-4 border-chinese-red border-t-transparent rounded-full animate-spin mb-4" />
             <p className="font-bold text-chinese-ink dark:text-white font-display text-lg">
@@ -73,6 +75,14 @@ export const App: React.FC = () => {
           </>
         )}
       </main>
+
+      {/* Ambient lazy-download indicator */}
+      {dictStatus.isExtendedLoading && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark shadow-xl text-xs font-semibold text-chinese-ink dark:text-white animate-fade-in">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+          <span>Fetching full CC-CEDICT (~4 MB)...</span>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="border-t border-paper-border dark:border-paper-borderDark py-6 text-center text-xs text-gray-700 dark:text-gray-400 font-medium">

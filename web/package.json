@@ -10,7 +10,9 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
-    "test:e2e": "playwright test"
+    "check:size": "node scripts/check_size.js",
+    "test:e2e": "playwright test",
+    "prepare": "cd .. && git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "keywords": [],
   "author": "",

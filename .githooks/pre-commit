@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+# Fast pre-commit hook for HanziToAnki web workspace
+# Triggers only when changes within web/ are staged.
+
+if git diff --cached --name-only | grep -q '^web/'; then
+  echo "🔍 [Pre-Commit] Checking web workspace (Biome lint/format + TypeScript)..."
+  
+  # Ensure node is in PATH if using non-standard location
+  if ! command -v node >/dev/null 2>&1; then
+    if [ -d "/Users/james/s95b-debloat/node/bin" ]; then
+      export PATH="/Users/james/s95b-debloat/node/bin:$PATH"
+    fi
+  fi
+
+  cd web
+  
+  echo "  ⚡ Running Biome check..."
+  npm run check
+  
+  echo "  🏗️ Verifying TypeScript & Vite production build..."
+  npm run build
+  
+  echo "✅ [Pre-Commit] All web checks passed cleanly!"
+fi
