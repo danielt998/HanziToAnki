@@ -1,0 +1,51 @@
+name: Web CI (Lint, Build & E2E)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-ci.yml'
+  pull_request:
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-ci.yml'
+
+jobs:
+  web-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'web/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd web
+          npm ci
+
+      - name: Run Biome (Format & Lint Check)
+        run: |
+          cd web
+          npm run check
+
+      - name: Build web application
+        run: |
+          cd web
+          npm run build
+
+      - name: Install Playwright Chromium browser
+        run: |
+          cd web
+          npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E Tests (MacBook Air & Pixel 8 Viewports)
+        run: |
+          cd web
+          npm run test:e2e

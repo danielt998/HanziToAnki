@@ -52,7 +52,7 @@ The application consists of a single-page app (SPA) with a top navigation bar, a
    - One-click export to:
      - **Anki TSV** (tab-delimited text ready for `File > Import` in Anki desktop or AnkiMobile).
      - **Anki `.apkg`** (direct binary import with embedded CSS styles).
-     - **Pleco Bookmark List** (tab-delimited for Pleco flashcards).
+     - **Standard Bookmark List** (tab-delimited for flashcards).
 
 ---
 
@@ -84,14 +84,14 @@ The application consists of a single-page app (SPA) with a top navigation bar, a
 
 ---
 
-### Tab 3: Interactive Clipboard Reader (Pleco-Style)
+### Tab 3: Interactive Clip Reader
 *A responsive in-browser reading companion for immersion and reading practice.*
 
 1. **Interactive Reading Canvas**:
    - Users paste articles, news stories, social media posts, or song lyrics.
    - The reader automatically tokenizes the text into clickable word chips.
 2. **Word Tooltip & Popover**:
-   - Clicking or hovering over any word opens a rich, informative Pleco-style definition card:
+   - Clicking or hovering over any word opens a rich, informative definition card:
      - **Headwords**: Large Simplified and Traditional glyphs.
      - **Pronunciation**: Pinyin with standard tone marks and tone-colored accents.
      - **HSK Level**: Badge indicating HSK 1–9 tier or 成语 (Idiom) status.
@@ -107,7 +107,7 @@ The application consists of a single-page app (SPA) with a top navigation bar, a
 Accessible from any tab, persisted in `localStorage`:
 
 1. **Tone Color Palette**:
-   - **Pleco Standard** (Default): Tone 1 Red, Tone 2 Green, Tone 3 Blue, Tone 4 Purple, Tone 5 Grey.
+   - **Standard Mandarin** (Default): Tone 1 Red, Tone 2 Green, Tone 3 Blue, Tone 4 Purple, Tone 5 Grey.
    - **Hanping / Trainchinese**: Tone 1 Blue, Tone 2 Green, Tone 3 Orange, Tone 4 Red.
    - **Custom Palette**: User-selectable color picker for each tone.
 2. **Tone Coloring Target**:
@@ -182,7 +182,7 @@ A delightful blend of **modern, high-polish minimalism** with **playful traditio
   - **Full-Screen Reader**: Tap any word to summon a sleek bottom-sheet definition drawer.
 - **Desktop Experience ($\ge 768px$)**:
   - **Top Navigation Bar**: Slim floating header with quick-switch tabs, tone palette selector, and dark mode toggle.
-  - **Split-View Interactive Reader**: Left side for paste/source text; right side for live interactive Pleco-style reader with hovering tooltips and persistent sidebar vocabulary inspector.
+  - **Split-View Interactive Reader**: Left side for paste/source text; right side for live interactive clip reader with hovering tooltips and persistent sidebar vocabulary inspector.
   - **Keyboard Navigation**: Standard Anki shortcuts (`Space` to flip card preview, `1-4` to rate familiarity, `Cmd/Ctrl + Enter` to export).
 
 ### 5.3 Typography & Readability
