@@ -53,7 +53,7 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
   const handleExportSession = () => {
     if (sessionDeck.length === 0) return;
     const tsv = generateAnkiTsv(sessionDeck, 'SIMP_AND_TRAD');
-    downloadFile(tsv, 'Reading_Session_Deck.tsv');
+    downloadFile(tsv, 'reading_session_hanziToAnki.tsv');
     confetti({
       particleCount: 70,
       spread: 60,

@@ -18,6 +18,7 @@ const SAMPLE_DECK_CONTENT = `爱\tai4\tto love; affection\n北京\tbei3 jing1\tB
 
 export const FlashcardTuner: React.FC = () => {
   const [deckText, setDeckText] = useState<string>(SAMPLE_DECK_CONTENT);
+  const [sourceFilename, setSourceFilename] = useState<string>('sample_deck');
   const [enabledLevels, setEnabledLevels] = useState<Set<number>>(new Set([4])); // default: tuner set to HSK 4!
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -51,10 +52,18 @@ export const FlashcardTuner: React.FC = () => {
 
   const handleExport = () => {
     if (tunerResult.filteredCards.length === 0) return;
-    const outputLines = tunerResult.filteredCards
+    const metadataHeader = [
+      '#separator:tab',
+      '#html:true',
+      '#tags:hanziToAnki',
+      '# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)',
+    ].join('\n');
+    const cardsContent = tunerResult.filteredCards
       .map((c) => c.originalLine)
       .join('\n');
-    downloadFile(outputLines, 'Tuned_Flashcards.tsv');
+    const outputLines = `${metadataHeader}\n${cardsContent}`;
+    const exportName = `${sourceFilename}_tuned_hanziToAnki.tsv`;
+    downloadFile(outputLines, exportName);
     confetti({
       particleCount: 80,
       spread: 70,
@@ -65,10 +74,16 @@ export const FlashcardTuner: React.FC = () => {
 
   const handleCopy = () => {
     if (tunerResult.filteredCards.length === 0) return;
-    const outputLines = tunerResult.filteredCards
+    const metadataHeader = [
+      '#separator:tab',
+      '#html:true',
+      '#tags:hanziToAnki',
+      '# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)',
+    ].join('\n');
+    const cardsContent = tunerResult.filteredCards
       .map((c) => c.originalLine)
       .join('\n');
-    navigator.clipboard.writeText(outputLines);
+    navigator.clipboard.writeText(`${metadataHeader}\n${cardsContent}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -76,6 +91,11 @@ export const FlashcardTuner: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const base = file.name
+      .replace(/\.[^/.]+$/, '')
+      .replace(/_hanziToAnki$/i, '')
+      .replace(/_tuned$/i, '');
+    setSourceFilename(base || 'deck');
     const reader = new FileReader();
     reader.onload = (event) => {
       const text = event.target?.result as string;
@@ -113,7 +133,10 @@ export const FlashcardTuner: React.FC = () => {
             </label>
 
             <button
-              onClick={() => setDeckText(SAMPLE_DECK_CONTENT)}
+              onClick={() => {
+                setDeckText(SAMPLE_DECK_CONTENT);
+                setSourceFilename('sample_deck');
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark hover:border-chinese-red text-chinese-ink dark:text-white transition"
               title="Reset to sample deck"
             >

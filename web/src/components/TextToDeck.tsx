@@ -61,7 +61,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
   const handleExport = () => {
     if (extractedWords.length === 0) return;
     const tsv = generateAnkiTsv(extractedWords, hanziType);
-    downloadFile(tsv, 'HanziToAnki_Deck.tsv');
+    downloadFile(tsv, 'deck_hanziToAnki.tsv');
     confetti({
       particleCount: 80,
       spread: 70,

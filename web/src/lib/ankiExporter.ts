@@ -12,12 +12,23 @@ export interface CardItem {
 
 /**
  * Converts a set of dictionary entries to Anki TSV file lines.
+ * Includes official Anki metadata directives (#separator, #html, #tags).
  */
 export function generateAnkiTsv(
   words: (DictEntry | CardItem)[],
   hanziType: HanziExportType = 'SIMP_AND_TRAD',
+  includeDirectives: boolean = true,
 ): string {
   const lines: string[] = [];
+
+  if (includeDirectives) {
+    lines.push('#separator:tab');
+    lines.push('#html:true');
+    lines.push('#tags:hanziToAnki');
+    lines.push(
+      '# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)',
+    );
+  }
 
   // Anki headers
   switch (hanziType) {

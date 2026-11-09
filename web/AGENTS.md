@@ -59,3 +59,18 @@ All pull requests touching `web/` must pass the automated GitHub Actions CI chec
 2. **Typecheck & Build**: `npm run build` must complete cleanly with zero TypeScript errors.
 3. **Playwright E2E**: `npm run test:e2e` must pass all stories and generate updated screenshots.
 4. **Visual Comparison Table**: Embed the dual-column comparison table (Desktop vs Mobile) in the PR description using the template in `.github/pull_request_template.md`.
+
+---
+
+## 5. Export Naming & Metadata Directives
+
+To make exports easily identifiable and searchable in Anki and flashcard tools:
+- **Filename Suffix**: All generated or tuned deck files must append the `_hanziToAnki` suffix (e.g. `deck_hanziToAnki.tsv`, `Mandarin_tuned_hanziToAnki.tsv`, `reading_session_hanziToAnki.tsv`).
+- **Anki TSV Directives**: Output files include official Anki comment headers:
+  ```tsv
+  #separator:tab
+  #html:true
+  #tags:hanziToAnki
+  # Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)
+  ```
+- **APKG Packaging**: In `.apkg` files, the deck description is tagged with `Processed by HanziToAnki` and notes are tagged with `hanziToAnki` for instant browser filtering (`tag:hanziToAnki`).
