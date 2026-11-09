@@ -111,11 +111,7 @@ export function convertSyllableToAccented(syllable: string): string {
   const vowelChar = letters[targetIndex];
   const accented = VOWELS_TO_TONES[vowelChar]?.[toneNum] || vowelChar;
 
-  return (
-    letters.substring(0, targetIndex) +
-    accented +
-    letters.substring(targetIndex + 1)
-  );
+  return letters.substring(0, targetIndex) + accented + letters.substring(targetIndex + 1);
 }
 
 /**
@@ -129,9 +125,7 @@ export function formatPinyin(pinyinStr: string): string {
     .split(/\s+/)
     .map((part) => {
       // Handle punctuation or brackets
-      return part.replace(/([a-zA-ZüÜ:]+[1-5]?)/g, (match) =>
-        convertSyllableToAccented(match),
-      );
+      return part.replace(/([a-zA-ZüÜ:]+[1-5]?)/g, (match) => convertSyllableToAccented(match));
     })
     .join(' ');
 }
@@ -157,10 +151,7 @@ export function getToneNumber(syllable: string): 1 | 2 | 3 | 4 | 5 {
 /**
  * Returns CSS color string for a given tone number and palette.
  */
-export function getToneColor(
-  tone: 1 | 2 | 3 | 4 | 5,
-  palette: TonePalette = 'standard',
-): string {
+export function getToneColor(tone: 1 | 2 | 3 | 4 | 5, palette: TonePalette = 'standard'): string {
   const p = TONE_PALETTES[palette] || TONE_PALETTES.standard;
   switch (tone) {
     case 1:

@@ -55,9 +55,7 @@ export function resolveCardHsk(text: string): number {
  * Parses raw deck text (TSV or CSV) and extracts Chinese headwords and their HSK level.
  */
 export function parseDeck(rawContent: string): TunerCard[] {
-  const lines = rawContent
-    .split(/\r?\n/)
-    .filter((line) => line.trim().length > 0);
+  const lines = rawContent.split(/\r?\n/).filter((line) => line.trim().length > 0);
   const cards: TunerCard[] = [];
 
   for (let i = 0; i < lines.length; i++) {
@@ -66,21 +64,13 @@ export function parseDeck(rawContent: string): TunerCard[] {
     if (
       line.startsWith('#') ||
       (i === 0 &&
-        (line.includes('Simplified') ||
-          line.includes('Front') ||
-          line.includes('Expression')))
+        (line.includes('Simplified') || line.includes('Front') || line.includes('Expression')))
     ) {
       continue;
     }
 
-    const delimiter = line.includes('\t')
-      ? '\t'
-      : line.includes(',')
-        ? ','
-        : ';';
-    const cols = line
-      .split(delimiter)
-      .map((c) => c.trim().replace(/^"|"$/g, ''));
+    const delimiter = line.includes('\t') ? '\t' : line.includes(',') ? ',' : ';';
+    const cols = line.split(delimiter).map((c) => c.trim().replace(/^"|"$/g, ''));
 
     // Find all columns containing Chinese characters
     const hanziCandidates: {
@@ -130,10 +120,7 @@ export function parseDeck(rawContent: string): TunerCard[] {
  * Filters parsed cards based on which HSK levels are enabled.
  * enabledLevels is a Set containing numbers 1..6 (and 0 for untiered/other words).
  */
-export function filterDeck(
-  cards: TunerCard[],
-  enabledLevels: Set<number>,
-): TunerResult {
+export function filterDeck(cards: TunerCard[], enabledLevels: Set<number>): TunerResult {
   const hskCounts: Record<number, number> = {
     0: 0,
     1: 0,

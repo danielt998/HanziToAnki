@@ -100,9 +100,7 @@ class DictionaryService {
       // biome-ignore lint/suspicious/noExplicitAny: network connection API
       (navigator as any).connection?.saveData
     ) {
-      console.info(
-        'Data Saver is enabled. Skipping automatic full CC-CEDICT download.',
-      );
+      console.info('Data Saver is enabled. Skipping automatic full CC-CEDICT download.');
       return;
     }
 
@@ -193,11 +191,7 @@ class DictionaryService {
     }
 
     // Lazily fetch extended CC-CEDICT if missing word is Chinese and full dictionary is not loaded
-    if (
-      !this.isFullLoaded &&
-      !this.isExtendedLoading &&
-      /[\u4e00-\u9fa5]/.test(word)
-    ) {
+    if (!this.isFullLoaded && !this.isExtendedLoading && /[\u4e00-\u9fa5]/.test(word)) {
       this.loadExtendedDictionary();
     }
 

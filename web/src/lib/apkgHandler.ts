@@ -1,10 +1,6 @@
 import * as fflate from 'fflate';
 import initSqlJs from 'sql.js';
-import {
-  cleanHanziCandidate,
-  resolveCardHsk,
-  type TunerCard,
-} from './deckTuner';
+import { cleanHanziCandidate, resolveCardHsk, type TunerCard } from './deckTuner';
 import { isHanzi } from './segmentation';
 
 export interface ApkgContext {

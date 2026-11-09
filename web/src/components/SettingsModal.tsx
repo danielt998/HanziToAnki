@@ -1,6 +1,6 @@
 import { Check, X } from 'lucide-react';
-import React from 'react';
-import { TONE_PALETTES, TonePalette } from '../lib/toneHelper';
+import type React from 'react';
+import { TONE_PALETTES, type TonePalette } from '../lib/toneHelper';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -89,9 +89,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div>
                     <div className="font-semibold text-sm text-chinese-ink dark:text-gray-100 flex items-center gap-2">
                       {p.name}
-                      {isSelected && (
-                        <Check className="w-4 h-4 text-chinese-red" />
-                      )}
+                      {isSelected && <Check className="w-4 h-4 text-chinese-red" />}
                     </div>
                     <div className="text-xs text-gray-700 dark:text-gray-400 mt-0.5 font-medium">
                       {p.desc}
@@ -100,12 +98,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
                   {/* Palette color preview swatches */}
                   <div className="flex items-center gap-1">
-                    {[
-                      colors.tone1,
-                      colors.tone2,
-                      colors.tone3,
-                      colors.tone4,
-                    ].map((c, i) => (
+                    {[colors.tone1, colors.tone2, colors.tone3, colors.tone4].map((c, i) => (
                       <span
                         key={i}
                         className="w-4 h-4 rounded-full border border-black/10 dark:border-white/10"

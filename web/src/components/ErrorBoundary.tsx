@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -29,9 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen flex items-center justify-center p-6 bg-paper-light dark:bg-paper-dark text-chinese-ink dark:text-gray-100">
           <div className="max-w-md w-full bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark rounded-2xl p-6 shadow-soft text-center space-y-4">
             <div className="text-4xl">🍵</div>
-            <h2 className="text-lg font-bold font-display">
-              Something went sideways
-            </h2>
+            <h2 className="text-lg font-bold font-display">Something went sideways</h2>
             <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
               An unexpected error occurred while processing flashcard data.
             </p>
@@ -41,6 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </pre>
             )}
             <button
+              type="button"
               onClick={() => window.location.reload()}
               className="px-4 py-2 rounded-xl text-xs font-bold bg-chinese-red hover:bg-chinese-redHover text-white transition shadow-sm"
             >

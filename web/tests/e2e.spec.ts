@@ -14,9 +14,7 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     fs.mkdirSync('docs/screenshots', { recursive: true });
   });
 
-  test('Story 1: Text-to-Deck vocabulary extraction and Anki TSV preview', async ({
-    page,
-  }) => {
+  test('Story 1: Text-to-Deck vocabulary extraction and Anki TSV preview', async ({ page }) => {
     await page.setViewportSize(MACBOOK_AIR_VIEWPORT);
     await page.goto('/');
 
@@ -50,29 +48,21 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     });
   });
 
-  test('Story 2: Flashcard Tuner filters deck by exact HSK tiers', async ({
-    page,
-  }) => {
+  test('Story 2: Flashcard Tuner filters deck by exact HSK tiers', async ({ page }) => {
     await page.setViewportSize(MACBOOK_AIR_VIEWPORT);
     await page.goto('/');
 
     // Switch to Tuner tab
     await page.getByRole('button', { name: 'Flashcard Tuner' }).click();
-    await expect(
-      page.getByRole('heading', { name: 'Flashcard Tuner' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Flashcard Tuner' })).toBeVisible();
 
     // By default, only HSK 4 is enabled. Verify HSK 4 cards are isolated
     await expect(page.getByText('Cards Kept')).toBeVisible();
-    await expect(
-      page.getByRole('cell', { name: '安全', exact: true }),
-    ).toBeVisible();
+    await expect(page.getByRole('cell', { name: '安全', exact: true })).toBeVisible();
 
     // Toggle HSK 5 on
     await page.getByText('HSK 5', { exact: true }).click();
-    await expect(
-      page.getByRole('cell', { name: '爱惜', exact: true }),
-    ).toBeVisible(); // HSK 5
+    await expect(page.getByRole('cell', { name: '爱惜', exact: true })).toBeVisible(); // HSK 5
 
     // Capture Tab 2 Desktop Screenshot (MacBook Air)
     await page.screenshot({
@@ -89,9 +79,7 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     });
   });
 
-  test('Story 3: Interactive Clip Reader tokenization and session deck', async ({
-    page,
-  }) => {
+  test('Story 3: Interactive Clip Reader tokenization and session deck', async ({ page }) => {
     await page.setViewportSize(MACBOOK_AIR_VIEWPORT);
     await page.goto('/');
 
@@ -167,17 +155,15 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
 
     // Switch to Tuner tab
     await page.getByRole('button', { name: 'Flashcard Tuner' }).click();
-    await expect(
-      page.getByRole('heading', { name: 'Flashcard Tuner' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Flashcard Tuner' })).toBeVisible();
 
     // Upload minimal .apkg with HSK 1 (你好) and HSK 2 (帮助)
     await page.locator('input[type="file"]').setInputFiles(fixturePath);
 
     // Verify .apkg audio status banner appears
-    await expect(
-      page.getByText('Native .apkg package loaded (2 audio tracks)'),
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Native .apkg package loaded (2 audio tracks)')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Untoggle default HSK 4, and toggle HSK 1 only
     await page.getByText('HSK 4', { exact: true }).click(); // unselect HSK 4
@@ -185,12 +171,8 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
 
     // Verify cleanup: only HSK 1 word (朋友) is kept, HSK 2 word (帮助) is filtered out
     await expect(page.getByText('Kept Flashcards (1)')).toBeVisible();
-    await expect(
-      page.getByRole('cell', { name: '朋友', exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('cell', { name: '帮助', exact: true }),
-    ).not.toBeVisible();
+    await expect(page.getByRole('cell', { name: '朋友', exact: true })).toBeVisible();
+    await expect(page.getByRole('cell', { name: '帮助', exact: true })).not.toBeVisible();
 
     // Verify both Export .apkg and Export TSV are available
     const exportApkgBtn = page.getByRole('button', {
@@ -203,8 +185,6 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     const downloadPromise = page.waitForEvent('download');
     await exportApkgBtn.click();
     const download = await downloadPromise;
-    expect(download.suggestedFilename()).toBe(
-      'minimal_hsk1_hsk2_tuned_hanziToAnki.apkg',
-    );
+    expect(download.suggestedFilename()).toBe('minimal_hsk1_hsk2_tuned_hanziToAnki.apkg');
   });
 });

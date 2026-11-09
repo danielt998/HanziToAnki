@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { ClipboardReader } from './components/ClipboardReader';
 import { FlashcardTuner } from './components/FlashcardTuner';
 import { type ActiveTab, Navbar } from './components/Navbar';
 import { SettingsModal } from './components/SettingsModal';
 import { TextToDeck } from './components/TextToDeck';
 import { type DictStatus, dictionaryService } from './lib/dictionary';
-import { type TonePalette } from './lib/toneHelper';
+import type { TonePalette } from './lib/toneHelper';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('text-to-deck');
@@ -16,9 +17,7 @@ export const App: React.FC = () => {
   const [tonePalette, setTonePalette] = useState<TonePalette>('standard');
   const [colorHanziGlyphs, setColorHanziGlyphs] = useState<boolean>(false);
   const [hskStandard, setHskStandard] = useState<'HSK2' | 'HSK3'>('HSK3');
-  const [dictStatus, setDictStatus] = useState<DictStatus>(() =>
-    dictionaryService.getStatus(),
-  );
+  const [dictStatus, setDictStatus] = useState<DictStatus>(() => dictionaryService.getStatus());
 
   // Initialize dark mode class on <html>
   useEffect(() => {
@@ -60,17 +59,11 @@ export const App: React.FC = () => {
         ) : (
           <>
             {activeTab === 'text-to-deck' && (
-              <TextToDeck
-                tonePalette={tonePalette}
-                colorHanziGlyphs={colorHanziGlyphs}
-              />
+              <TextToDeck tonePalette={tonePalette} colorHanziGlyphs={colorHanziGlyphs} />
             )}
             {activeTab === 'tuner' && <FlashcardTuner />}
             {activeTab === 'reader' && (
-              <ClipboardReader
-                tonePalette={tonePalette}
-                colorHanziGlyphs={colorHanziGlyphs}
-              />
+              <ClipboardReader tonePalette={tonePalette} colorHanziGlyphs={colorHanziGlyphs} />
             )}
           </>
         )}

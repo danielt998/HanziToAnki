@@ -1,21 +1,9 @@
 import confetti from 'canvas-confetti';
-import {
-  Check,
-  Copy,
-  Download,
-  Filter,
-  Music,
-  RefreshCw,
-  Trash2,
-  Upload,
-} from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import { Check, Copy, Download, Filter, Music, RefreshCw, Trash2, Upload } from 'lucide-react';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 import { downloadFile } from '../lib/ankiExporter';
-import {
-  type ApkgContext,
-  exportTunedApkg,
-  parseApkg,
-} from '../lib/apkgHandler';
+import { type ApkgContext, exportTunedApkg, parseApkg } from '../lib/apkgHandler';
 import { filterDeck, parseDeck, type TunerCard } from '../lib/deckTuner';
 import { getHskBadgeClasses } from '../lib/hskHelper';
 
@@ -70,9 +58,7 @@ export const FlashcardTuner: React.FC = () => {
       '#tags:hanziToAnki',
       '# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)',
     ].join('\n');
-    const cardsContent = tunerResult.filteredCards
-      .map((c) => c.originalLine)
-      .join('\n');
+    const cardsContent = tunerResult.filteredCards.map((c) => c.originalLine).join('\n');
     const outputLines = `${metadataHeader}\n${cardsContent}`;
     const exportName = `${sourceFilename}_tuned_hanziToAnki.tsv`;
     downloadFile(outputLines, exportName);
@@ -92,9 +78,7 @@ export const FlashcardTuner: React.FC = () => {
       '#tags:hanziToAnki',
       '# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)',
     ].join('\n');
-    const cardsContent = tunerResult.filteredCards
-      .map((c) => c.originalLine)
-      .join('\n');
+    const cardsContent = tunerResult.filteredCards.map((c) => c.originalLine).join('\n');
     navigator.clipboard.writeText(`${metadataHeader}\n${cardsContent}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -171,20 +155,15 @@ export const FlashcardTuner: React.FC = () => {
               <span className="text-amber-500 text-2xl">🎛️</span> Flashcard Tuner
             </h2>
             <p className="text-xs text-gray-700 dark:text-gray-400 mt-0.5 font-medium">
-              Upload or paste existing flashcard decks. Toggle HSK levels to
-              keep only the cards you want to study. Runs 100% locally in your
-              browser.
+              Upload or paste existing flashcard decks. Toggle HSK levels to keep only the cards you
+              want to study. Runs 100% locally in your browser.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark hover:border-chinese-red text-chinese-ink dark:text-white cursor-pointer transition">
               <Upload className="w-3.5 h-3.5" />
-              <span>
-                {isProcessingApkg
-                  ? 'Processing .apkg...'
-                  : 'Upload .apkg / .tsv'}
-              </span>
+              <span>{isProcessingApkg ? 'Processing .apkg...' : 'Upload .apkg / .tsv'}</span>
               <input
                 type="file"
                 accept=".tsv,.txt,.csv,.apkg"
@@ -214,8 +193,7 @@ export const FlashcardTuner: React.FC = () => {
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold mb-3">
             <Music className="w-3.5 h-3.5" />
             <span>
-              Native .apkg package loaded (
-              {Object.keys(apkgContext.mediaMap).length} audio track
+              Native .apkg package loaded ({Object.keys(apkgContext.mediaMap).length} audio track
               {Object.keys(apkgContext.mediaMap).length === 1 ? '' : 's'})
             </span>
           </div>
@@ -316,9 +294,7 @@ export const FlashcardTuner: React.FC = () => {
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-bold text-chinese-ink dark:text-white">
-                Bao says:
-              </span>
+              <span className="text-sm font-bold text-chinese-ink dark:text-white">Bao says:</span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
                 {tunerResult.filteredCards.length} Cards Kept
               </span>
@@ -327,8 +303,7 @@ export const FlashcardTuner: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-gray-700 dark:text-gray-400 mt-1 font-medium leading-relaxed">
-              Target deck is tuned to your exact level. Ready for direct
-              re-export into Anki.
+              Target deck is tuned to your exact level. Ready for direct re-export into Anki.
             </p>
           </div>
         </div>
@@ -345,17 +320,13 @@ export const FlashcardTuner: React.FC = () => {
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}
-            <span className="hidden sm:inline">
-              {copied ? 'Copied!' : 'Copy Tuned TSV'}
-            </span>
+            <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy Tuned TSV'}</span>
           </button>
 
           {apkgContext && (
             <button
               onClick={handleExportApkg}
-              disabled={
-                tunerResult.filteredCards.length === 0 || isProcessingApkg
-              }
+              disabled={tunerResult.filteredCards.length === 0 || isProcessingApkg}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-600/20 disabled:opacity-40 transition"
               title="Export as native Anki .apkg preserving all embedded audio"
             >
@@ -389,12 +360,9 @@ export const FlashcardTuner: React.FC = () => {
         {tunerResult.filteredCards.length === 0 ? (
           <div className="p-12 text-center text-gray-700 dark:text-gray-400">
             <p className="text-3xl mb-2">🎋</p>
-            <p className="font-bold text-chinese-ink dark:text-white">
-              All cards filtered out!
-            </p>
+            <p className="font-bold text-chinese-ink dark:text-white">All cards filtered out!</p>
             <p className="text-xs mt-1 font-medium">
-              Check one or more HSK level boxes above to include vocabulary in
-              your tuned deck.
+              Check one or more HSK level boxes above to include vocabulary in your tuned deck.
             </p>
           </div>
         ) : (

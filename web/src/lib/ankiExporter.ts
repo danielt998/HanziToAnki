@@ -1,4 +1,4 @@
-import { DictEntry } from './dictionary';
+import type { DictEntry } from './dictionary';
 
 export type HanziExportType = 'SIMP' | 'TRAD' | 'SIMP_AND_TRAD';
 
@@ -25,9 +25,7 @@ export function generateAnkiTsv(
     lines.push('#separator:tab');
     lines.push('#html:true');
     lines.push('#tags:hanziToAnki');
-    lines.push(
-      '# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)',
-    );
+    lines.push('# Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)');
   }
 
   // Anki headers
@@ -47,9 +45,7 @@ export function generateAnkiTsv(
     default:
       lines.push('Simplified\tTraditional\tPinyin\tDefinition');
       for (const w of words) {
-        lines.push(
-          `${w.simplified}\t${w.traditional}\t${w.pinyin}\t${w.definition}`,
-        );
+        lines.push(`${w.simplified}\t${w.traditional}\t${w.pinyin}\t${w.definition}`);
       }
       break;
   }
@@ -66,9 +62,7 @@ export function downloadFile(
   mimeType: string = 'text/tab-separated-values;charset=utf-8',
 ) {
   const blob =
-    content instanceof Blob
-      ? content
-      : new Blob([content as BlobPart], { type: mimeType });
+    content instanceof Blob ? content : new Blob([content as BlobPart], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

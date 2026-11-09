@@ -1,4 +1,4 @@
-import { DictEntry, dictionaryService } from './dictionary';
+import { type DictEntry, dictionaryService } from './dictionary';
 
 export interface SegmentedWord {
   text: string;
@@ -50,12 +50,7 @@ export function segmentText(
         : 0;
 
       // Check HSK exclusion filter
-      if (
-        isChinese &&
-        excludeMax > 0 &&
-        hskLevel > 0 &&
-        hskLevel <= excludeMax
-      ) {
+      if (isChinese && excludeMax > 0 && hskLevel > 0 && hskLevel <= excludeMax) {
         continue;
       }
 
@@ -71,8 +66,7 @@ export function segmentText(
         for (const char of rawText) {
           if (isPureHanzi(char)) {
             const charEntry = dictionaryService.lookup(char);
-            const charHsk =
-              charEntry?.hskLevel || dictionaryService.getHskLevel(char);
+            const charHsk = charEntry?.hskLevel || dictionaryService.getHskLevel(char);
             if (excludeMax > 0 && charHsk > 0 && charHsk <= excludeMax) {
               continue;
             }
@@ -92,15 +86,8 @@ export function segmentText(
     for (const token of tokens) {
       const isChinese = isHanzi(token);
       const dictEntry = isChinese ? dictionaryService.lookup(token) : null;
-      const hskLevel = isChinese
-        ? dictEntry?.hskLevel || dictionaryService.getHskLevel(token)
-        : 0;
-      if (
-        isChinese &&
-        excludeMax > 0 &&
-        hskLevel > 0 &&
-        hskLevel <= excludeMax
-      ) {
+      const hskLevel = isChinese ? dictEntry?.hskLevel || dictionaryService.getHskLevel(token) : 0;
+      if (isChinese && excludeMax > 0 && hskLevel > 0 && hskLevel <= excludeMax) {
         continue;
       }
       results.push({
@@ -159,9 +146,7 @@ export function tokenizeForReader(text: string): SegmentedWord[] {
         text: part,
         isChinese,
         dictEntry,
-        hskLevel: isChinese
-          ? dictEntry?.hskLevel || dictionaryService.getHskLevel(part)
-          : 0,
+        hskLevel: isChinese ? dictEntry?.hskLevel || dictionaryService.getHskLevel(part) : 0,
       };
     });
 }

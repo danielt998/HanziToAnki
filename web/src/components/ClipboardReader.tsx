@@ -1,11 +1,12 @@
 import confetti from 'canvas-confetti';
 import { Bookmark, Check, Download, Plus, X } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 import { downloadFile, generateAnkiTsv } from '../lib/ankiExporter';
-import { DictEntry } from '../lib/dictionary';
+import type { DictEntry } from '../lib/dictionary';
 import { getHskBadgeClasses } from '../lib/hskHelper';
 import { tokenizeForReader } from '../lib/segmentation';
-import { getToneColor, getToneNumber, TonePalette } from '../lib/toneHelper';
+import { getToneColor, getToneNumber, type TonePalette } from '../lib/toneHelper';
 
 interface ClipboardReaderProps {
   tonePalette: TonePalette;
@@ -42,9 +43,7 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
   const toggleAddToSessionDeck = (word: DictEntry | null) => {
     if (!word) return;
     if (isInSessionDeck(word)) {
-      setSessionDeck(
-        sessionDeck.filter((w) => w.simplified !== word.simplified),
-      );
+      setSessionDeck(sessionDeck.filter((w) => w.simplified !== word.simplified));
     } else {
       setSessionDeck([...sessionDeck, word]);
     }
@@ -68,13 +67,11 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
           <div>
             <h2 className="text-xl font-bold font-display text-chinese-ink dark:text-white flex items-center gap-2">
-              <span className="text-chinese-jade text-2xl">📖</span> Interactive
-              Clip Reader
+              <span className="text-chinese-jade text-2xl">📖</span> Interactive Clip Reader
             </h2>
             <p className="text-xs text-gray-700 dark:text-gray-400 mt-0.5 font-medium">
-              Click or tap any Chinese word to view instant definitions, pinyin
-              with tone coloring, and HSK level. Save unfamiliar words directly
-              to your session deck.
+              Click or tap any Chinese word to view instant definitions, pinyin with tone coloring,
+              and HSK level. Save unfamiliar words directly to your session deck.
             </p>
           </div>
 
@@ -119,12 +116,9 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
             {tokens.length === 0 ? (
               <div className="py-16 text-center text-gray-500">
                 <p className="text-3xl mb-2">📜</p>
-                <p className="font-bold text-chinese-ink dark:text-white">
-                  Reading Pane is Empty
-                </p>
+                <p className="font-bold text-chinese-ink dark:text-white">Reading Pane is Empty</p>
                 <p className="text-xs mt-1">
-                  Paste your own Chinese article below, or restore the sample
-                  story.
+                  Paste your own Chinese article below, or restore the sample story.
                 </p>
                 <button
                   onClick={() => setInputText(DEFAULT_ARTICLE)}
@@ -138,17 +132,13 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
                 {tokens.map((token, i) => {
                   if (!token.isChinese || !token.dictEntry) {
                     return (
-                      <span
-                        key={i}
-                        className="text-gray-600 dark:text-gray-400"
-                      >
+                      <span key={i} className="text-gray-600 dark:text-gray-400">
                         {token.text}
                       </span>
                     );
                   }
 
-                  const isSelected =
-                    selectedWord?.simplified === token.dictEntry.simplified;
+                  const isSelected = selectedWord?.simplified === token.dictEntry.simplified;
                   const inDeck = isInSessionDeck(token.dictEntry);
 
                   // Compute tone color if enabled
@@ -287,8 +277,8 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
                   No word selected
                 </p>
                 <p className="text-xs mt-1 font-medium">
-                  Click on any highlighted Chinese word in the reading pane to
-                  see its full definition.
+                  Click on any highlighted Chinese word in the reading pane to see its full
+                  definition.
                 </p>
               </div>
             )}

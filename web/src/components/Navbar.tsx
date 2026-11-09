@@ -1,5 +1,5 @@
 import { BookOpen, Layers, Moon, Settings, Sliders, Sun } from 'lucide-react';
-import React from 'react';
+import type React from 'react';
 
 export type ActiveTab = 'text-to-deck' | 'tuner' | 'reader';
 
@@ -47,6 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Tabs */}
         <nav className="hidden md:flex items-center gap-1 bg-paper-border/40 dark:bg-paper-cardDark p-1 rounded-xl border border-paper-border dark:border-paper-borderDark">
           <button
+            type="button"
             onClick={() => setActiveTab('text-to-deck')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
               activeTab === 'text-to-deck'
@@ -59,6 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('tuner')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
               activeTab === 'tuner'
@@ -71,6 +73,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('reader')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
               activeTab === 'reader'
@@ -86,18 +89,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Global Action Icons */}
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={toggleDark}
             title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition"
           >
-            {isDark ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : (
-              <Moon className="w-4 h-4" />
-            )}
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
           </button>
 
           <button
+            type="button"
             onClick={openSettings}
             title="Settings & Tone Palette"
             className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition"
@@ -110,6 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Floating Bottom Dock */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-paper-card/95 dark:bg-paper-cardDark/95 backdrop-blur-lg border-t border-paper-border dark:border-paper-borderDark px-4 py-2 flex justify-around shadow-lg">
         <button
+          type="button"
           onClick={() => setActiveTab('text-to-deck')}
           className={`flex flex-col items-center gap-1 text-xs font-medium py-1 px-3 rounded-lg transition ${
             activeTab === 'text-to-deck'
@@ -122,6 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('tuner')}
           className={`flex flex-col items-center gap-1 text-xs font-medium py-1 px-3 rounded-lg transition ${
             activeTab === 'tuner'
@@ -134,6 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('reader')}
           className={`flex flex-col items-center gap-1 text-xs font-medium py-1 px-3 rounded-lg transition ${
             activeTab === 'reader'

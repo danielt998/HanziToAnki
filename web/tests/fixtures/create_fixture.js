@@ -31,38 +31,41 @@ export async function generateTestApkg() {
   const now = 1619146800;
   const nowMs = 1619146800000;
 
-  db.run(
-    'INSERT INTO col VALUES (1, ?, ?, ?, 11, 0, 0, 0, "{}", "{}", "{}", "{}", "{}")',
-    [now, nowMs, nowMs],
-  );
+  db.run('INSERT INTO col VALUES (1, ?, ?, ?, 11, 0, 0, 0, "{}", "{}", "{}", "{}", "{}")', [
+    now,
+    nowMs,
+    nowMs,
+  ]);
 
   const note1Id = 1001; // HSK 1: 朋友 (Friend)
   const note2Id = 1002; // HSK 2: 帮助 (Help)
 
-  db.run(
-    'INSERT INTO notes VALUES (?, "guid1", 1, ?, -1, "", ?, 0, 0, 0, "")',
-    [note1Id, now, 'Friend\x1f朋友\x1fpéng you\x1f[sound:pengyou.mp3]'],
-  );
-  db.run(
-    'INSERT INTO notes VALUES (?, "guid2", 1, ?, -1, "", ?, 0, 0, 0, "")',
-    [note2Id, now, 'Help\x1f帮助\x1fbāng zhù\x1f[sound:bangzhu.mp3]'],
-  );
+  db.run('INSERT INTO notes VALUES (?, "guid1", 1, ?, -1, "", ?, 0, 0, 0, "")', [
+    note1Id,
+    now,
+    'Friend\x1f朋友\x1fpéng you\x1f[sound:pengyou.mp3]',
+  ]);
+  db.run('INSERT INTO notes VALUES (?, "guid2", 1, ?, -1, "", ?, 0, 0, 0, "")', [
+    note2Id,
+    now,
+    'Help\x1f帮助\x1fbāng zhù\x1f[sound:bangzhu.mp3]',
+  ]);
 
-  db.run(
-    'INSERT INTO cards VALUES (1, ?, 1, 0, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")',
-    [note1Id, now],
-  );
-  db.run(
-    'INSERT INTO cards VALUES (2, ?, 1, 0, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")',
-    [note2Id, now],
-  );
+  db.run('INSERT INTO cards VALUES (1, ?, 1, 0, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")', [
+    note1Id,
+    now,
+  ]);
+  db.run('INSERT INTO cards VALUES (2, ?, 1, 0, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")', [
+    note2Id,
+    now,
+  ]);
 
   const dbBytes = db.export();
 
   // Lightweight 24-byte silent MP3 payload
   const silentMp3 = new Uint8Array([
-    0xff, 0xfb, 0x90, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0xff, 0xfb, 0x90, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   ]);
 
   const mediaJson = JSON.stringify({

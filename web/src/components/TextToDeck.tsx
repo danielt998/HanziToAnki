@@ -1,14 +1,11 @@
 import confetti from 'canvas-confetti';
 import { Check, Copy, Download, Trash2 } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
-import {
-  downloadFile,
-  generateAnkiTsv,
-  HanziExportType,
-} from '../lib/ankiExporter';
+import type React from 'react';
+import { useMemo, useState } from 'react';
+import { downloadFile, generateAnkiTsv, type HanziExportType } from '../lib/ankiExporter';
 import { getHskBadgeClasses } from '../lib/hskHelper';
 import { segmentText } from '../lib/segmentation';
-import { TonePalette } from '../lib/toneHelper';
+import type { TonePalette } from '../lib/toneHelper';
 
 interface TextToDeckProps {
   tonePalette: TonePalette;
@@ -16,8 +13,7 @@ interface TextToDeckProps {
 }
 
 const SAMPLE_TEXTS = {
-  dialogue:
-    '你好！今天天气真好。我们一起去图书馆看书，好吗？我非常喜欢学习中文。',
+  dialogue: '你好！今天天气真好。我们一起去图书馆看书，好吗？我非常喜欢学习中文。',
   story:
     '从前有一只聪明的小兔子，它住在美丽的大森林里。有一天，兔子遇到了一只饥饿的老虎。老虎想吃兔子，但是兔子想出了一个好办法。',
   idioms:
@@ -25,8 +21,8 @@ const SAMPLE_TEXTS = {
 };
 
 export const TextToDeck: React.FC<TextToDeckProps> = ({
-  tonePalette,
-  colorHanziGlyphs,
+  tonePalette: _tonePalette,
+  colorHanziGlyphs: _colorHanziGlyphs,
 }) => {
   const [inputText, setInputText] = useState(SAMPLE_TEXTS.dialogue);
   const [hanziType, setHanziType] = useState<HanziExportType>('SIMP_AND_TRAD');
@@ -46,11 +42,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
     const seen = new Set<string>();
     const unique = [];
     for (const seg of segments) {
-      if (
-        seg.isChinese &&
-        seg.dictEntry &&
-        !seen.has(seg.dictEntry.simplified)
-      ) {
+      if (seg.isChinese && seg.dictEntry && !seen.has(seg.dictEntry.simplified)) {
         seen.add(seg.dictEntry.simplified);
         unique.push(seg.dictEntry);
       }
@@ -85,8 +77,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
             <h2 className="text-xl font-bold font-display text-chinese-ink dark:text-white flex items-center gap-2">
-              <span className="text-chinese-red text-2xl">🏮</span> Text to Anki
-              Deck
+              <span className="text-chinese-red text-2xl">🏮</span> Text to Anki Deck
             </h2>
             <p className="text-xs text-gray-700 dark:text-gray-400 mt-0.5 font-medium">
               Paste Chinese articles, dialogues, or sentences. Uses native{' '}
@@ -174,9 +165,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
               onChange={(e) => setHanziType(e.target.value as HanziExportType)}
               className="w-full p-2.5 rounded-xl border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark text-xs font-semibold text-chinese-ink dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-chinese-red"
             >
-              <option value="SIMP_AND_TRAD">
-                Simplified + Traditional (4 cols)
-              </option>
+              <option value="SIMP_AND_TRAD">Simplified + Traditional (4 cols)</option>
               <option value="SIMP">Simplified Only</option>
               <option value="TRAD">Traditional Only</option>
             </select>
@@ -216,8 +205,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
                 Bao the Scholar says:
               </span>
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-chinese-red/10 text-chinese-red border border-chinese-red/25">
-                {extractedWords.length}{' '}
-                {extractedWords.length === 1 ? 'word' : 'words'} found
+                {extractedWords.length} {extractedWords.length === 1 ? 'word' : 'words'} found
               </span>
             </div>
             <p className="text-xs text-gray-700 dark:text-gray-400 mt-1 font-medium leading-relaxed">
@@ -242,9 +230,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
             ) : (
               <Copy className="w-3.5 h-3.5" />
             )}
-            <span className="hidden sm:inline">
-              {copied ? 'Copied!' : 'Copy TSV'}
-            </span>
+            <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy TSV'}</span>
           </button>
 
           <button
@@ -262,8 +248,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
       <div className="bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark rounded-2xl overflow-hidden shadow-soft">
         <div className="p-4 border-b border-paper-border dark:border-paper-borderDark flex items-center justify-between">
           <h3 className="font-bold text-sm text-chinese-ink dark:text-white flex items-center gap-2">
-            <span>🎴</span> Generated Flashcards Preview (
-            {extractedWords.length})
+            <span>🎴</span> Generated Flashcards Preview ({extractedWords.length})
           </h3>
           <span className="text-xs text-gray-700 dark:text-gray-400 font-medium">
             Click row or copy for Anki TSV import
@@ -273,9 +258,7 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
         {extractedWords.length === 0 ? (
           <div className="p-12 text-center text-gray-700 dark:text-gray-400">
             <p className="text-3xl mb-2">🎋</p>
-            <p className="font-bold text-chinese-ink dark:text-white">
-              No words to display
-            </p>
+            <p className="font-bold text-chinese-ink dark:text-white">No words to display</p>
             <p className="text-xs mt-1 font-medium">
               Type or paste Chinese text above, or lower the HSK exclusion tier.
             </p>

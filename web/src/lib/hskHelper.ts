@@ -6,10 +6,7 @@
  * - +3 or more tiers above: Red (stretch / advanced)
  * - Untiered / Level 0: Neutral gray
  */
-export function getHskBadgeClasses(
-  level: number,
-  baseLevel: number = 1,
-): string {
+export function getHskBadgeClasses(level: number, baseLevel: number = 1): string {
   if (level <= 0) {
     return 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700';
   }

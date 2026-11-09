@@ -6,9 +6,11 @@
     "useIgnoreFile": true
   },
   "files": {
+    "ignoreUnknown": false,
     "includes": [
       "src/**",
       "tests/**",
+      "scripts/**",
       "vite.config.ts",
       "playwright.config.ts",
       "package.json",
@@ -20,30 +22,66 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
       "preset": "recommended",
-      "a11y": "off",
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error",
+        "noChildrenProp": "error",
+        "noNestedComponentDefinitions": "error"
+      },
       "style": {
-        "useImportType": "off",
+        "useImportType": "error",
+        "useExportType": "error",
+        "useNodejsImportProtocol": "error",
+        "useSelfClosingElements": "error",
         "noNonNullAssertion": "off"
       },
       "suspicious": {
+        "noExplicitAny": "warn",
         "noArrayIndexKey": "off"
       },
-      "correctness": {
-        "noUnusedFunctionParameters": "off"
+      "a11y": {
+        "useAltText": "error",
+        "useButtonType": "off",
+        "noStaticElementInteractions": "off",
+        "noLabelWithoutControl": "off",
+        "useKeyWithClickEvents": "off"
       }
     }
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single"
+  "overrides": [
+    {
+      "includes": ["src/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": {
+              "level": "warn",
+              "options": {
+                "allow": ["warn", "error", "info"]
+              }
+            }
+          }
+        }
+      }
     }
-  },
+  ],
   "css": {
     "parser": {
       "tailwindDirectives": true
