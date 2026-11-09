@@ -6,6 +6,7 @@ export interface TunerCard {
   chineseWord: string;
   hskLevel: number; // 0 for untiered, 1-6
   columns: string[];
+  noteId?: number | string;
 }
 
 export interface TunerResult {
@@ -15,7 +16,7 @@ export interface TunerResult {
   excludedCount: number;
 }
 
-function cleanHanziCandidate(raw: string): string {
+export function cleanHanziCandidate(raw: string): string {
   let text = raw
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
@@ -24,7 +25,7 @@ function cleanHanziCandidate(raw: string): string {
   return text.trim();
 }
 
-function resolveCardHsk(text: string): number {
+export function resolveCardHsk(text: string): number {
   const onlyHanzi = text.replace(/[^\u4e00-\u9fa5]/g, '');
   if (!onlyHanzi) return 0;
 

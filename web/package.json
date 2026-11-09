@@ -18,9 +18,11 @@
   "description": "",
   "dependencies": {
     "canvas-confetti": "^1.9.4",
+    "fflate": "^0.8.3",
     "lucide-react": "^1.70.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "sql.js": "^1.15.2"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.6",
@@ -30,6 +32,7 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/sql.js": "^1.4.11",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.6.2",
     "postcss": "^8.5.32",

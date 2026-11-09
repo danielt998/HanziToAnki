@@ -58,14 +58,17 @@ export function generateAnkiTsv(
 }
 
 /**
- * Triggers a browser file download of the given text content.
+ * Triggers a browser file download of the given text or binary content.
  */
 export function downloadFile(
-  content: string,
+  content: string | Uint8Array | Blob,
   filename: string,
   mimeType: string = 'text/tab-separated-values;charset=utf-8',
 ) {
-  const blob = new Blob([content], { type: mimeType });
+  const blob =
+    content instanceof Blob
+      ? content
+      : new Blob([content as BlobPart], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

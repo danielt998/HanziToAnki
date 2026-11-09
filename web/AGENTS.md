@@ -74,3 +74,21 @@ To make exports easily identifiable and searchable in Anki and flashcard tools:
   # Processed by HanziToAnki (https://github.com/danielt998/HanziToAnki)
   ```
 - **APKG Packaging**: In `.apkg` files, the deck description is tagged with `Processed by HanziToAnki` and notes are tagged with `hanziToAnki` for instant browser filtering (`tag:hanziToAnki`).
+
+---
+
+## 6. Native `.apkg` Ingestion & Audio Preservation
+
+Flashcard Tuner (Tab 2) supports direct ingestion and re-export of native Anki `.apkg` archives:
+
+- **Zero-Data-Loss Architecture**:
+  - Uses `fflate` for client-side streaming zip/unzip (~8 KB vs JSZip's 100 KB+).
+  - Uses `sql.js` WebAssembly (`sql-wasm-browser.wasm`) to query and modify `collection.anki2` directly in the browser sandbox.
+- **Embedded Audio Preservation**:
+  - Embedded audio files (e.g. `[sound:audio.mp3]`) and custom field structures are preserved without modification.
+  - Excluded notes and their orphaned audio files are cleanly pruned during export, keeping the exported deck lightweight.
+- **Minimal E2E Test Fixture**:
+  - Script: `web/tests/fixtures/create_fixture.js`.
+  - Fixture: `web/tests/fixtures/minimal_hsk1_hsk2.apkg` (1,022 bytes).
+  - Contains 1 HSK 1 card (`朋友` + silent audio frame) and 1 HSK 2 card (`帮助` + silent audio frame).
+  - Verified in `web/tests/e2e.spec.ts` (Story 5): cleans up the deck to keep only HSK 1, prunes HSK 2, and exports `minimal_hsk1_hsk2_tuned_hanziToAnki.apkg`.

@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { expect, test } from '@playwright/test';
+import { generateTestApkg } from './fixtures/create_fixture';
 
 // Real-world target device viewport dimensions:
 // Desktop: Apple MacBook Air 13" (1280 x 832)
@@ -150,5 +152,59 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     await page.screenshot({
       path: 'docs/screenshots/settings-modal-mobile.png',
     });
+  });
+
+  test('Story 5: Tuner cleans up .apkg deck with embedded audio and exports filtered .apkg', async ({
+    page,
+  }) => {
+    const fixturePath = path.resolve('tests/fixtures/minimal_hsk1_hsk2.apkg');
+    if (!fs.existsSync(fixturePath)) {
+      await generateTestApkg();
+    }
+
+    await page.setViewportSize(MACBOOK_AIR_VIEWPORT);
+    await page.goto('/');
+
+    // Switch to Tuner tab
+    await page.getByRole('button', { name: 'Flashcard Tuner' }).click();
+    await expect(
+      page.getByRole('heading', { name: 'Flashcard Tuner' }),
+    ).toBeVisible();
+
+    // Upload minimal .apkg with HSK 1 (你好) and HSK 2 (帮助)
+    await page.locator('input[type="file"]').setInputFiles(fixturePath);
+
+    // Verify .apkg audio status banner appears
+    await expect(
+      page.getByText('Native .apkg package loaded (2 audio tracks)'),
+    ).toBeVisible({ timeout: 10000 });
+
+    // Untoggle default HSK 4, and toggle HSK 1 only
+    await page.getByText('HSK 4', { exact: true }).click(); // unselect HSK 4
+    await page.getByText('HSK 1', { exact: true }).click(); // select HSK 1
+
+    // Verify cleanup: only HSK 1 word (朋友) is kept, HSK 2 word (帮助) is filtered out
+    await expect(page.getByText('Kept Flashcards (1)')).toBeVisible();
+    await expect(
+      page.getByRole('cell', { name: '朋友', exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('cell', { name: '帮助', exact: true }),
+    ).not.toBeVisible();
+
+    // Verify both Export .apkg and Export TSV are available
+    const exportApkgBtn = page.getByRole('button', {
+      name: 'Export .apkg (Audio Kept)',
+    });
+    await expect(exportApkgBtn).toBeVisible();
+    await expect(exportApkgBtn).toBeEnabled();
+
+    // Trigger download and verify exported filename contains _tuned_hanziToAnki.apkg
+    const downloadPromise = page.waitForEvent('download');
+    await exportApkgBtn.click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toBe(
+      'minimal_hsk1_hsk2_tuned_hanziToAnki.apkg',
+    );
   });
 });

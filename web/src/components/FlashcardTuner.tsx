@@ -4,13 +4,19 @@ import {
   Copy,
   Download,
   Filter,
+  Music,
   RefreshCw,
   Trash2,
   Upload,
 } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { downloadFile } from '../lib/ankiExporter';
-import { filterDeck, parseDeck } from '../lib/deckTuner';
+import {
+  type ApkgContext,
+  exportTunedApkg,
+  parseApkg,
+} from '../lib/apkgHandler';
+import { filterDeck, parseDeck, type TunerCard } from '../lib/deckTuner';
 import { getHskBadgeClasses } from '../lib/hskHelper';
 
 // Sample master deck for immediate interactive demo
@@ -21,11 +27,17 @@ export const FlashcardTuner: React.FC = () => {
   const [sourceFilename, setSourceFilename] = useState<string>('sample_deck');
   const [enabledLevels, setEnabledLevels] = useState<Set<number>>(new Set([4])); // default: tuner set to HSK 4!
   const [copied, setCopied] = useState<boolean>(false);
+  const [apkgContext, setApkgContext] = useState<ApkgContext | null>(null);
+  const [apkgCards, setApkgCards] = useState<TunerCard[] | null>(null);
+  const [isProcessingApkg, setIsProcessingApkg] = useState<boolean>(false);
 
   // Parse raw deck
   const parsedCards = useMemo(() => {
+    if (apkgCards && apkgContext) {
+      return apkgCards;
+    }
     return parseDeck(deckText);
-  }, [deckText]);
+  }, [deckText, apkgCards, apkgContext]);
 
   // Filter deck based on enabled HSK levels
   const tunerResult = useMemo(() => {
@@ -88,7 +100,33 @@ export const FlashcardTuner: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExportApkg = async () => {
+    if (!apkgContext || tunerResult.filteredCards.length === 0) return;
+    setIsProcessingApkg(true);
+    try {
+      const retainedIds = new Set(
+        tunerResult.filteredCards
+          .map((c) => c.noteId)
+          .filter((id): id is number | string => id !== undefined),
+      );
+      const apkgBytes = await exportTunedApkg(apkgContext, retainedIds);
+      const exportName = `${sourceFilename}_tuned_hanziToAnki.apkg`;
+      downloadFile(apkgBytes, exportName, 'application/octet-stream');
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#DC2626', '#F59E0B', '#10B981', '#3B82F6'],
+      });
+    } catch (err) {
+      console.error('Failed to export .apkg:', err);
+      alert('Failed to package .apkg file.');
+    } finally {
+      setIsProcessingApkg(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const base = file.name
@@ -96,12 +134,31 @@ export const FlashcardTuner: React.FC = () => {
       .replace(/_hanziToAnki$/i, '')
       .replace(/_tuned$/i, '');
     setSourceFilename(base || 'deck');
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target?.result as string;
-      if (text) setDeckText(text);
-    };
-    reader.readAsText(file);
+
+    if (file.name.toLowerCase().endsWith('.apkg')) {
+      setIsProcessingApkg(true);
+      try {
+        const buffer = await file.arrayBuffer();
+        const { cards, context } = await parseApkg(buffer);
+        setApkgContext(context);
+        setApkgCards(cards);
+        setDeckText(cards.map((c) => c.originalLine).join('\n'));
+      } catch (err) {
+        console.error('Failed to parse .apkg:', err);
+        alert('Could not parse .apkg file. Ensure it is a valid Anki package.');
+      } finally {
+        setIsProcessingApkg(false);
+      }
+    } else {
+      setApkgContext(null);
+      setApkgCards(null);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        if (text) setDeckText(text);
+      };
+      reader.readAsText(file);
+    }
   };
 
   return (
@@ -123,11 +180,16 @@ export const FlashcardTuner: React.FC = () => {
           <div className="flex items-center gap-2">
             <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark hover:border-chinese-red text-chinese-ink dark:text-white cursor-pointer transition">
               <Upload className="w-3.5 h-3.5" />
-              <span>Upload .tsv / .txt</span>
+              <span>
+                {isProcessingApkg
+                  ? 'Processing .apkg...'
+                  : 'Upload .apkg / .tsv'}
+              </span>
               <input
                 type="file"
-                accept=".tsv,.txt,.csv"
+                accept=".tsv,.txt,.csv,.apkg"
                 onChange={handleFileUpload}
+                disabled={isProcessingApkg}
                 className="hidden"
               />
             </label>
@@ -136,6 +198,8 @@ export const FlashcardTuner: React.FC = () => {
               onClick={() => {
                 setDeckText(SAMPLE_DECK_CONTENT);
                 setSourceFilename('sample_deck');
+                setApkgContext(null);
+                setApkgCards(null);
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark hover:border-chinese-red text-chinese-ink dark:text-white transition"
               title="Reset to sample deck"
@@ -146,18 +210,37 @@ export const FlashcardTuner: React.FC = () => {
           </div>
         </div>
 
+        {apkgContext && (
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold mb-3">
+            <Music className="w-3.5 h-3.5" />
+            <span>
+              Native .apkg package loaded (
+              {Object.keys(apkgContext.mediaMap).length} audio track
+              {Object.keys(apkgContext.mediaMap).length === 1 ? '' : 's'})
+            </span>
+          </div>
+        )}
+
         {/* Input Textarea */}
         <div className="relative">
           <textarea
             value={deckText}
-            onChange={(e) => setDeckText(e.target.value)}
+            onChange={(e) => {
+              setDeckText(e.target.value);
+              if (apkgCards) setApkgCards(null);
+              if (apkgContext) setApkgContext(null);
+            }}
             rows={3}
             placeholder="粘贴现有的Anki卡组TSV数据 / Paste existing deck TSV here..."
             className="w-full p-4 rounded-xl border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark text-chinese-ink dark:text-white font-mono text-xs leading-relaxed focus:ring-2 focus:ring-chinese-red focus:border-transparent outline-none transition"
           />
           {deckText && (
             <button
-              onClick={() => setDeckText('')}
+              onClick={() => {
+                setDeckText('');
+                setApkgContext(null);
+                setApkgCards(null);
+              }}
               className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-chinese-red rounded-lg transition"
               title="Clear input"
             >
@@ -251,7 +334,7 @@ export const FlashcardTuner: React.FC = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center flex-wrap">
           <button
             onClick={handleCopy}
             disabled={tunerResult.filteredCards.length === 0}
@@ -267,13 +350,27 @@ export const FlashcardTuner: React.FC = () => {
             </span>
           </button>
 
+          {apkgContext && (
+            <button
+              onClick={handleExportApkg}
+              disabled={
+                tunerResult.filteredCards.length === 0 || isProcessingApkg
+              }
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-600/20 disabled:opacity-40 transition"
+              title="Export as native Anki .apkg preserving all embedded audio"
+            >
+              <Music className="w-3.5 h-3.5" />
+              <span>Export .apkg (Audio Kept)</span>
+            </button>
+          )}
+
           <button
             onClick={handleExport}
             disabled={tunerResult.filteredCards.length === 0}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-chinese-red hover:bg-chinese-redHover text-white shadow-md shadow-chinese-red/20 disabled:opacity-40 transition"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export Tuned Deck</span>
+            <span>Export {apkgContext ? 'TSV' : 'Tuned Deck'}</span>
           </button>
         </div>
       </div>
