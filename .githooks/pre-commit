@@ -16,11 +16,14 @@ if git diff --cached --name-only | grep -q '^web/'; then
 
   cd web
   
-  echo "  ⚡ Running Biome check..."
-  npm run check
+  echo "  ⚡ Auto-formatting and fixing with Biome..."
+  npm run lint:fix
+  
+  # Re-stage any files modified by auto-formatting
+  git add -u .
   
   echo "  🏗️ Verifying TypeScript & Vite production build..."
   npm run build
   
-  echo "✅ [Pre-Commit] All web checks passed cleanly!"
+  echo "✅ [Pre-Commit] Code formatted and build verified!"
 fi
