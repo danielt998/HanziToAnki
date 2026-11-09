@@ -116,44 +116,66 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
             </div>
 
             {/* Interactive Tokenized Text */}
-            <div className="font-hanzi text-lg leading-loose tracking-wide text-chinese-ink dark:text-gray-100 selection:bg-chinese-red/20">
-              {tokens.map((token, i) => {
-                if (!token.isChinese || !token.dictEntry) {
+            {tokens.length === 0 ? (
+              <div className="py-16 text-center text-gray-500">
+                <p className="text-3xl mb-2">📜</p>
+                <p className="font-bold text-chinese-ink dark:text-white">
+                  Reading Pane is Empty
+                </p>
+                <p className="text-xs mt-1">
+                  Paste your own Chinese article below, or restore the sample
+                  story.
+                </p>
+                <button
+                  onClick={() => setInputText(DEFAULT_ARTICLE)}
+                  className="mt-3 px-3 py-1.5 rounded-xl text-xs font-semibold bg-chinese-red text-white hover:bg-chinese-redHover transition"
+                >
+                  Load Sample Story
+                </button>
+              </div>
+            ) : (
+              <div className="font-hanzi text-lg leading-loose tracking-wide text-chinese-ink dark:text-gray-100 selection:bg-chinese-red/20">
+                {tokens.map((token, i) => {
+                  if (!token.isChinese || !token.dictEntry) {
+                    return (
+                      <span
+                        key={i}
+                        className="text-gray-600 dark:text-gray-400"
+                      >
+                        {token.text}
+                      </span>
+                    );
+                  }
+
+                  const isSelected =
+                    selectedWord?.simplified === token.dictEntry.simplified;
+                  const inDeck = isInSessionDeck(token.dictEntry);
+
+                  // Compute tone color if enabled
+                  const toneNum = getToneNumber(token.dictEntry.pinyin);
+                  const toneStyle = colorHanziGlyphs
+                    ? { color: getToneColor(toneNum, tonePalette) }
+                    : {};
+
                   return (
-                    <span key={i} className="text-gray-600 dark:text-gray-400">
+                    <span
+                      key={i}
+                      onClick={() => setSelectedWord(token.dictEntry)}
+                      style={toneStyle}
+                      className={`inline-block px-1 py-0.5 mx-0.5 rounded-lg cursor-pointer transition select-none ${
+                        isSelected
+                          ? 'bg-chinese-red text-white shadow-sm ring-2 ring-chinese-red'
+                          : inDeck
+                            ? 'bg-emerald-500/15 border-b-2 border-emerald-500 hover:bg-emerald-500/25'
+                            : 'hover:bg-amber-400/20 hover:text-chinese-red'
+                      }`}
+                    >
                       {token.text}
                     </span>
                   );
-                }
-
-                const isSelected =
-                  selectedWord?.simplified === token.dictEntry.simplified;
-                const inDeck = isInSessionDeck(token.dictEntry);
-
-                // Compute tone color if enabled
-                const toneNum = getToneNumber(token.dictEntry.pinyin);
-                const toneStyle = colorHanziGlyphs
-                  ? { color: getToneColor(toneNum, tonePalette) }
-                  : {};
-
-                return (
-                  <span
-                    key={i}
-                    onClick={() => setSelectedWord(token.dictEntry)}
-                    style={toneStyle}
-                    className={`inline-block px-1 py-0.5 mx-0.5 rounded-lg cursor-pointer transition select-none ${
-                      isSelected
-                        ? 'bg-chinese-red text-white shadow-sm ring-2 ring-chinese-red'
-                        : inDeck
-                          ? 'bg-emerald-500/15 border-b-2 border-emerald-500 hover:bg-emerald-500/25'
-                          : 'hover:bg-amber-400/20 hover:text-chinese-red'
-                    }`}
-                  >
-                    {token.text}
-                  </span>
-                );
-              })}
-            </div>
+                })}
+              </div>
+            )}
           </div>
 
           {/* Collapsible Source Editor */}
