@@ -1,4 +1,4 @@
-import { Check, X } from 'lucide-react';
+import { Check, Settings, X } from 'lucide-react';
 import type React from 'react';
 import { TONE_PALETTES, type TonePalette } from '../lib/toneHelper';
 
@@ -25,26 +25,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const palettes: { key: TonePalette; name: string; desc: string }[] = [
+  const palettes: { key: TonePalette; name: string }[] = [
     {
       key: 'standard',
       name: 'Standard',
-      desc: 'Tone 1 Red, 2 Green, 3 Blue, 4 Purple',
     },
     {
       key: 'hanping',
       name: 'Hanping / Trainchinese',
-      desc: 'Tone 1 Blue, 2 Green, 3 Orange, 4 Red',
     },
     {
       key: 'rainbow',
       name: 'Vibrant Rainbow',
-      desc: 'Tone 1 Red, 2 Amber, 3 Emerald, 4 Blue',
     },
     {
       key: 'monochrome',
       name: 'Monochrome Minimal',
-      desc: 'Clean uncolored text',
     },
   ];
 
@@ -52,26 +48,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
         <button
+          type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-700 dark:text-gray-400 hover:text-chinese-ink dark:hover:text-white"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-xl font-bold font-display text-chinese-ink dark:text-white mb-1 flex items-center gap-2">
-          <span>⚙️</span> Preferences & Tone Settings
-        </h3>
+        <div className="flex items-center gap-2.5 mb-1">
+          <Settings className="w-5 h-5 text-chinese-red shrink-0" />
+          <h3 className="text-lg font-bold text-chinese-ink dark:text-white">
+            Preferences & Tone Settings
+          </h3>
+        </div>
         <p className="text-xs text-gray-700 dark:text-gray-400 mb-6 font-medium">
-          Personalize tone color coding, HSK standards, and reading preferences.
+          Personalize colors for tones 1–5, HSK standards, and reading preferences.
         </p>
 
         {/* Tone Palettes */}
-        <div className="space-y-4 mb-6">
-          <label className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block font-medium">
-            Tone Color Palette
-          </label>
+        <div className="space-y-3 mb-6">
+          <span className="text-xs font-bold uppercase tracking-wider text-chinese-ink dark:text-gray-300 block">
+            Tone Color Palette (Colors for Tones 1–5)
+          </span>
 
-          <div className="grid grid-cols-1 gap-2.5">
+          <div className="grid grid-cols-1 gap-2">
             {palettes.map((p) => {
               const colors = TONE_PALETTES[p.key];
               const isSelected = tonePalette === p.key;
@@ -83,30 +83,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${
                     isSelected
                       ? 'border-chinese-red bg-chinese-red/5 dark:bg-chinese-red/10 ring-1 ring-chinese-red'
-                      : 'border-paper-border dark:border-paper-borderDark hover:border-gray-400'
+                      : 'border-paper-border dark:border-paper-borderDark hover:border-gray-400 bg-paper-light dark:bg-paper-dark'
                   }`}
                 >
-                  <div>
-                    <div className="font-semibold text-sm text-chinese-ink dark:text-gray-100 flex items-center gap-2">
-                      {p.name}
-                      {isSelected && <Check className="w-4 h-4 text-chinese-red" />}
-                    </div>
-                    <div className="text-xs text-gray-700 dark:text-gray-400 mt-0.5 font-medium">
-                      {p.desc}
-                    </div>
+                  <div className="font-semibold text-sm text-chinese-ink dark:text-gray-100 flex items-center gap-2">
+                    {p.name}
+                    {isSelected && <Check className="w-4 h-4 text-chinese-red" />}
                   </div>
 
-                  {/* Palette color preview swatches */}
-                  <div className="flex items-center gap-1">
-                    {[colors.tone1, colors.tone2, colors.tone3, colors.tone4].map((c, i) => (
-                      <span
-                        key={i}
-                        className="w-4 h-4 rounded-full border border-black/10 dark:border-white/10"
-                        style={{
-                          backgroundColor: c === 'currentColor' ? '#666' : c,
-                        }}
-                      />
-                    ))}
+                  {/* Palette color preview swatches (Tones 1–5) */}
+                  <div className="flex items-center gap-1.5" title="Tones 1–5">
+                    {[colors.tone1, colors.tone2, colors.tone3, colors.tone4, colors.tone5].map(
+                      (c, i) => (
+                        <span
+                          key={i}
+                          className="w-4 h-4 rounded-full border border-black/10 dark:border-white/10"
+                          style={{
+                            backgroundColor: c === 'currentColor' ? '#6B7280' : c,
+                          }}
+                          title={`Tone ${i + 1}`}
+                        />
+                      ),
+                    )}
                   </div>
                 </div>
               );
@@ -116,9 +114,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Tone Coloring Target */}
         <div className="space-y-4 mb-6 pt-4 border-t border-paper-border dark:border-paper-borderDark">
-          <label className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block font-medium">
+          <span className="text-xs font-bold uppercase tracking-wider text-chinese-ink dark:text-gray-300 block">
             Color Target
-          </label>
+          </span>
           <label className="flex items-center justify-between cursor-pointer p-3 rounded-xl border border-paper-border dark:border-paper-borderDark hover:bg-gray-50 dark:hover:bg-gray-800/40">
             <div>
               <div className="text-sm font-semibold text-chinese-ink dark:text-gray-100">
@@ -139,11 +137,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* HSK Standard */}
         <div className="space-y-4 mb-6 pt-4 border-t border-paper-border dark:border-paper-borderDark">
-          <label className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block font-medium">
+          <span className="text-xs font-bold uppercase tracking-wider text-chinese-ink dark:text-gray-300 block">
             HSK Standard
-          </label>
+          </span>
           <div className="grid grid-cols-2 gap-3">
             <button
+              type="button"
               onClick={() => setHskStandard('HSK3')}
               className={`p-3 rounded-xl border text-left transition ${
                 hskStandard === 'HSK3'
@@ -160,6 +159,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </button>
 
             <button
+              type="button"
               onClick={() => setHskStandard('HSK2')}
               className={`p-3 rounded-xl border text-left transition ${
                 hskStandard === 'HSK2'
@@ -178,6 +178,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={onClose}
           className="w-full py-2.5 bg-chinese-red hover:bg-chinese-redHover text-white rounded-xl font-semibold text-sm shadow-md shadow-chinese-red/20 transition"
         >
