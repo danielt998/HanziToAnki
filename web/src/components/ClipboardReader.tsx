@@ -154,7 +154,7 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
                       style={toneStyle}
                       className={`inline-block px-1 py-0.5 mx-0.5 rounded-lg cursor-pointer transition select-none ${
                         isSelected
-                          ? 'bg-chinese-red text-white shadow-sm ring-2 ring-chinese-red'
+                          ? 'bg-amber-400/25 ring-2 ring-amber-500/70 shadow-sm'
                           : inDeck
                             ? 'bg-emerald-500/15 border-b-2 border-emerald-500 hover:bg-emerald-500/25'
                             : 'hover:bg-amber-400/20 hover:text-chinese-red'
