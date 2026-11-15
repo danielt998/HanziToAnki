@@ -31,12 +31,14 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
     public void readInDictionary() {
         try (InputStream dictionaryStream = getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME)) {
             if (dictionaryStream == null) {
-                logger.error("Dictionary file not found: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME);
-                return;
+                String errorMsg = "Dictionary resource not found: /dictionary/" + DEFAULT_DICTIONARY_FILENAME;
+                logger.error(errorMsg);
+                throw new IllegalStateException(errorMsg);
             }
             readInDictionary(dictionaryStream);
         } catch (IOException e) {
-            logger.error("Failed to read dictionary", e);
+            logger.error("Failed to read dictionary file: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME, e);
+            throw new IllegalStateException("Failed to read dictionary resource: /dictionary/" + DEFAULT_DICTIONARY_FILENAME, e);
         }
     }
 
