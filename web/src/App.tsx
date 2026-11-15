@@ -8,9 +8,18 @@ import { TextToDeck } from './components/TextToDeck';
 import { type DictStatus, dictionaryService } from './lib/dictionary';
 import type { TonePalette } from './lib/toneHelper';
 
+const THEME_STORAGE_KEY = 'hanzitoanki-theme';
+
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('text-to-deck');
   const [isDark, setIsDark] = useState<boolean>(() => {
+    try {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+      if (savedTheme === 'dark') return true;
+      if (savedTheme === 'light') return false;
+    } catch {
+      // Storage may be unavailable in restricted/private browsing contexts
+    }
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
@@ -19,12 +28,13 @@ export const App: React.FC = () => {
   const [hskStandard, setHskStandard] = useState<'HSK2' | 'HSK3'>('HSK3');
   const [dictStatus, setDictStatus] = useState<DictStatus>(() => dictionaryService.getStatus());
 
-  // Initialize dark mode class on <html>
+  // Sync dark mode class on <html> and persist theme preference
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    document.documentElement.classList.toggle('dark', isDark);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, isDark ? 'dark' : 'light');
+    } catch {
+      // Storage write may fail when blocked or quota is exceeded
     }
   }, [isDark]);
 
@@ -41,7 +51,7 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isDark={isDark}
-        toggleDark={() => setIsDark(!isDark)}
+        toggleDark={() => setIsDark((prev) => !prev)}
         openSettings={() => setIsSettingsOpen(true)}
       />
 
@@ -71,7 +81,7 @@ export const App: React.FC = () => {
 
       {/* Ambient lazy-download indicator */}
       {dictStatus.isExtendedLoading && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark shadow-xl text-xs font-semibold text-chinese-ink dark:text-white animate-fade-in">
+        <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-30 flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark shadow-xl text-xs font-semibold text-chinese-ink dark:text-white animate-fade-in">
           <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
           <span>Fetching full CC-CEDICT (~4 MB)...</span>
         </div>
