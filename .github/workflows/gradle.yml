@@ -6,8 +6,26 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'build.gradle*'
+      - 'settings.gradle*'
+      - 'gradle/**'
+      - 'gradlew*'
+      - '.github/workflows/gradle.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'build.gradle*'
+      - 'settings.gradle*'
+      - 'gradle/**'
+      - 'gradlew*'
+      - '.github/workflows/gradle.yml'
+
+concurrency:
+  group: gradle-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
