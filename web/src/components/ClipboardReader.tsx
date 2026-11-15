@@ -548,7 +548,7 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
                 </button>
               </div>
             ) : (
-              <div className="font-hanzi text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-wrap text-chinese-ink dark:text-gray-100 selection:bg-chinese-red/20">
+              <div className="font-hanzi text-lg sm:text-xl leading-[2.1] sm:leading-loose whitespace-pre-wrap text-chinese-ink dark:text-gray-100 selection:bg-chinese-red/20">
                 {tokens.map((token, i) => {
                   if (!token.isChinese || !token.dictEntry) {
                     if (!token.isChinese && !/\S/.test(token.text)) {
@@ -648,7 +648,7 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
           role="dialog"
           aria-modal="true"
           aria-label="Word Definition"
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 pb-20 bg-black/45 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/45 backdrop-blur-xs"
           onClick={() => setSelectedWord(null)}
         >
           <div
@@ -656,8 +656,9 @@ export const ClipboardReader: React.FC<ClipboardReaderProps> = ({
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={handleDialogKeyDown}
-            className="w-full max-w-md max-h-[75vh] overflow-y-auto bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark rounded-2xl p-5 shadow-2xl outline-none"
+            className="w-full max-w-md max-h-[75dvh] overflow-y-auto bg-paper-card dark:bg-paper-cardDark border-t sm:border border-paper-border dark:border-paper-borderDark rounded-t-2xl sm:rounded-2xl p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pb-5 shadow-2xl outline-none"
           >
+            <div className="sm:hidden w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600 mx-auto mb-3" />
             <WordInspectorCard
               selectedWord={selectedWord}
               isInDeck={isInSessionDeck(selectedWord)}
