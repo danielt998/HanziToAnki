@@ -87,6 +87,16 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     await page.getByRole('button', { name: 'Clip Reader' }).click();
     await expect(page.getByText('Interactive Clip Reader')).toBeVisible();
 
+    // Verify segmentation engine controls are visible
+    const intlBtn = page.getByRole('button', { name: 'Intl Browser' });
+    const greedyBtn = page.getByRole('button', { name: 'Greedy CC-CEDICT' });
+    await expect(intlBtn).toBeVisible();
+    await expect(greedyBtn).toBeVisible();
+
+    // Toggle to Greedy CC-CEDICT mode and verify segmentation remains responsive
+    await greedyBtn.click();
+    await expect(greedyBtn).toHaveClass(/bg-chinese-red/);
+
     // Click on the Chinese word "故事" (story) inside the reading pane
     const wordToken = page
       .locator('span')
@@ -99,6 +109,10 @@ test.describe('HanziToAnki Web End-to-End User Stories', () => {
     await expect(page.getByText('Word Definition')).toBeVisible();
     await expect(page.getByText('gù shi')).toBeVisible();
     await expect(page.getByText('story')).toBeVisible();
+
+    // Switch back to Intl Browser mode
+    await intlBtn.click();
+    await expect(intlBtn).toHaveClass(/bg-chinese-red/);
 
     // Click "Add to Session Deck"
     const addBtn = page.getByRole('button', { name: 'Add to Session Deck' });
