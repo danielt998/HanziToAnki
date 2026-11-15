@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper-light: #fbf9f5;
+  --color-paper-card: #ffffff;
+  --color-paper-dark: #181a1d;
+  --color-paper-card-dark: #22262b;
+  --color-paper-border: #e7e3dc;
+  --color-paper-border-dark: #33383f;
+
+  --color-chinese-red: #dc2626;
+  --color-chinese-red-hover: #b91c1c;
+  --color-chinese-gold: #d97706;
+  --color-chinese-jade: #059669;
+  --color-chinese-indigo: #2563eb;
+  --color-chinese-ink: #1f2937;
+
+  --font-hanzi:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC",
+    "Microsoft YaHei", sans-serif;
+  --font-display: "Ma Shan Zheng", "Noto Serif SC", serif;
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}

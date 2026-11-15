@@ -52,18 +52,21 @@ The application consists of a single-page app (SPA) with a top navigation bar, a
    - One-click export to:
      - **Anki TSV** (tab-delimited text ready for `File > Import` in Anki desktop or AnkiMobile).
      - **Anki `.apkg`** (direct binary import with embedded CSS styles).
-     - **Pleco Bookmark List** (tab-delimited for Pleco flashcards).
+     - **Standard Bookmark List** (tab-delimited for flashcards).
 
 ---
 
-### Tab 2: Flashcard Tuner (Deck Curator) + Simple Guide
+### Tab 2: Flashcard Tuner (Filter Existing Decks) + Simple Guide
 *Enables learners to customize giant, unwieldy public decks to their exact proficiency level.*
 
 1. **Input & Deck Ingestion**:
    - Drag & drop existing flashcard decks (`.tsv`, `.txt`, `.csv`, `.apkg`).
-   - Client-side parser extracts the Chinese character column automatically.
-2. **Bandpass HSK Filter Matrix**:
-   - Interactive checkbox matrix with live count statistics:
+   - Client-side parser auto-detects Chinese headwords/phrases and isolates target columns without requiring manual configuration.
+2. **Zero-Data-Loss Field & Media Preservation**:
+   - Preserve all original card columns, custom styling, HTML formatting, and native audio recordings (`[sound:xxx.mp3]`).
+   - For `.apkg` imports, target direct round-trip packaging so audio recordings and media files remain bundled inside the generated `.apkg`—eliminating the need for users to manually copy files into Anki's `collection.media` folder.
+3. **HSK Level Selection Matrix**:
+   - Interactive checkbox chips with live count statistics:
      ```
      [ ] HSK 1 (Beginner)     — 1,420 cards
      [ ] HSK 2 (Elementary)   —   950 cards
@@ -71,27 +74,26 @@ The application consists of a single-page app (SPA) with a top navigation bar, a
      [x] HSK 4 (Target Level) —   510 cards  <-- SELECTED
      [ ] HSK 5 (Advanced)     —   340 cards
      [ ] HSK 6 (Proficiency)  —   220 cards
-     [ ] HSK 7-9 (Advanced)   —   180 cards
-     [ ] Non-HSK / Idioms     —   120 cards
+     [ ] Other / Untiered     —   120 cards
      ```
-   - Real-time counter badge: *"Original: 4,560 cards ➔ Tuned: 510 cards (88.8% reduction)"*.
-3. **Embedded Tuner Guide**:
+   - Real-time counter badge: *"Original: 4,560 cards ➔ Kept: 510 cards (88.8% reduction)"*.
+4. **Embedded Tuner Guide**:
    - A clean, collapsible onboarding guide explaining the **$i+1$ Comprehensible Input Hypothesis**:
      - Why giant 5,000-word decks burn learners out.
      - How to isolate your current target HSK band to study high-yield vocabulary without getting bogged down by basics or paralyzed by rare literary terms.
-4. **Export**:
-   - Export filtered cards while preserving original user tags, note types, and supplementary fields.
+5. **Export**:
+   - Re-export tuned decks as Anki TSV or packaged `.apkg` with all media and formatting intact.
 
 ---
 
-### Tab 3: Interactive Clipboard Reader (Pleco-Style)
+### Tab 3: Interactive Clip Reader
 *A responsive in-browser reading companion for immersion and reading practice.*
 
 1. **Interactive Reading Canvas**:
    - Users paste articles, news stories, social media posts, or song lyrics.
    - The reader automatically tokenizes the text into clickable word chips.
 2. **Word Tooltip & Popover**:
-   - Clicking or hovering over any word opens a rich, informative Pleco-style definition card:
+   - Clicking or hovering over any word opens a rich, informative definition card:
      - **Headwords**: Large Simplified and Traditional glyphs.
      - **Pronunciation**: Pinyin with standard tone marks and tone-colored accents.
      - **HSK Level**: Badge indicating HSK 1–9 tier or 成语 (Idiom) status.
@@ -107,7 +109,7 @@ The application consists of a single-page app (SPA) with a top navigation bar, a
 Accessible from any tab, persisted in `localStorage`:
 
 1. **Tone Color Palette**:
-   - **Pleco Standard** (Default): Tone 1 Red, Tone 2 Green, Tone 3 Blue, Tone 4 Purple, Tone 5 Grey.
+   - **Standard Mandarin** (Default): Tone 1 Red, Tone 2 Green, Tone 3 Blue, Tone 4 Purple, Tone 5 Grey.
    - **Hanping / Trainchinese**: Tone 1 Blue, Tone 2 Green, Tone 3 Orange, Tone 4 Red.
    - **Custom Palette**: User-selectable color picker for each tone.
 2. **Tone Coloring Target**:
@@ -182,7 +184,7 @@ A delightful blend of **modern, high-polish minimalism** with **playful traditio
   - **Full-Screen Reader**: Tap any word to summon a sleek bottom-sheet definition drawer.
 - **Desktop Experience ($\ge 768px$)**:
   - **Top Navigation Bar**: Slim floating header with quick-switch tabs, tone palette selector, and dark mode toggle.
-  - **Split-View Interactive Reader**: Left side for paste/source text; right side for live interactive Pleco-style reader with hovering tooltips and persistent sidebar vocabulary inspector.
+  - **Split-View Interactive Reader**: Left side for paste/source text; right side for live interactive clip reader with hovering tooltips and persistent sidebar vocabulary inspector.
   - **Keyboard Navigation**: Standard Anki shortcuts (`Space` to flip card preview, `1-4` to rate familiarity, `Cmd/Ctrl + Enter` to export).
 
 ### 5.3 Typography & Readability

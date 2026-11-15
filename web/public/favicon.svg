@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="20" fill="#DC2626"/>
+  <rect x="8" y="8" width="84" height="84" rx="14" fill="none" stroke="#FDE047" stroke-width="4"/>
+  <text x="50" y="68" font-family="'Ma Shan Zheng', 'Noto Serif SC', serif" font-size="56" font-weight="bold" fill="#FFFDF9" text-anchor="middle">字</text>
+</svg>
