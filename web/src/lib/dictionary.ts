@@ -1,3 +1,4 @@
+import initJieba, { add_word, cut } from 'jieba-wasm/web';
 import { formatPinyin } from './toneHelper';
 
 export interface DictEntry {
@@ -25,6 +26,8 @@ class DictionaryService {
   private isLoaded: boolean = false;
   private isFullLoaded: boolean = false;
   private isExtendedLoading: boolean = false;
+  private jiebaReady = false;
+  private jiebaWordsSeeded = false;
   private loadPromise: Promise<void> | null = null;
   private fullLoadPromise: Promise<void> | null = null;
   private statusListeners: Set<(status: DictStatus) => void> = new Set();
@@ -60,9 +63,19 @@ class DictionaryService {
     this.loadPromise = (async () => {
       try {
         const baseUrl = import.meta.env.BASE_URL || './';
+        const jiebaPromise = (async () => {
+          try {
+            await initJieba({ module_or_path: `${baseUrl}jieba_rs_wasm_bg.wasm` });
+            this.jiebaReady = true;
+          } catch (err) {
+            console.warn('Failed to initialize jieba-wasm, falling back to DAG segmenter:', err);
+          }
+        })();
+
         const [hskRes, starterRes] = await Promise.all([
           fetch(`${baseUrl}data/hsk_map.json`),
           fetch(`${baseUrl}data/starter_dict.json`),
+          jiebaPromise,
         ]);
 
         if (hskRes.ok) {
@@ -75,6 +88,7 @@ class DictionaryService {
         if (starterRes.ok) {
           const rawStarter: Record<string, RawEntry> = await starterRes.json();
           this.populateEntries(rawStarter);
+          this.seedJiebaWords(rawStarter);
           this.isLoaded = true;
           this.notifyStatus();
         }
@@ -84,6 +98,20 @@ class DictionaryService {
     })();
 
     return this.loadPromise;
+  }
+
+  private seedJiebaWords(rawStarter: Record<string, RawEntry>) {
+    if (!this.jiebaReady || this.jiebaWordsSeeded) return;
+    try {
+      for (const word of Object.keys(rawStarter)) {
+        if (word.length >= 2) {
+          add_word(word);
+        }
+      }
+      this.jiebaWordsSeeded = true;
+    } catch (err) {
+      console.warn('Failed to seed jieba dictionary words:', err);
+    }
   }
 
   /**
@@ -178,17 +206,23 @@ class DictionaryService {
     }
   }
 
-  lookup(word: string): DictEntry | null {
+  /** Synchronous lookup without triggering lazy extended dictionary downloads. */
+  peek(word: string): DictEntry | null {
     if (!word) return null;
     const direct = this.dict.get(word);
     if (direct) return direct;
 
     // Er-hua fallback (e.g. 哪儿 -> 哪)
     if (word.endsWith('儿') && word.length > 1) {
-      const stripped = word.slice(0, -1);
-      const erhuaMatch = this.dict.get(stripped);
-      if (erhuaMatch) return erhuaMatch;
+      return this.dict.get(word.slice(0, -1)) ?? null;
     }
+
+    return null;
+  }
+
+  lookup(word: string): DictEntry | null {
+    const match = this.peek(word);
+    if (match) return match;
 
     // Lazily fetch extended CC-CEDICT if missing word is Chinese and full dictionary is not loaded
     if (!this.isFullLoaded && !this.isExtendedLoading && /[\u4e00-\u9fa5]/.test(word)) {
@@ -196,6 +230,21 @@ class DictionaryService {
     }
 
     return null;
+  }
+
+  cutWithJieba(text: string, hmm = true): string[] | null {
+    if (!this.jiebaReady) return null;
+    if (!text) return [];
+    try {
+      return cut(text, hmm);
+    } catch (err) {
+      console.warn('jieba cut failed:', err);
+      return null;
+    }
+  }
+
+  isJiebaReady(): boolean {
+    return this.jiebaReady;
   }
 
   getHskLevel(word: string): number {
