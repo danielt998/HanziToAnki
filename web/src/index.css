@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-paper-light: #fbf9f5;
   --color-paper-card: #ffffff;
   --color-paper-dark: #181a1d;
   --color-paper-card-dark: #22262b;
+  --color-paper-cardDark: #22262b;
   --color-paper-border: #e7e3dc;
   --color-paper-border-dark: #33383f;
+  --color-paper-borderDark: #33383f;
 
   --color-chinese-red: #dc2626;
   --color-chinese-red-hover: #b91c1c;
+  --color-chinese-redHover: #b91c1c;
   --color-chinese-gold: #d97706;
   --color-chinese-jade: #059669;
   --color-chinese-indigo: #2563eb;
@@ -19,6 +24,17 @@
     -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC",
     "Microsoft YaHei", sans-serif;
   --font-display: "Ma Shan Zheng", "Noto Serif SC", serif;
+
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-seal: 0 0 0 2px #dc2626, inset 0 0 0 1px #dc2626;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 @layer utilities {
