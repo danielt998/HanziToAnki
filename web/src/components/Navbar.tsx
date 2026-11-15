@@ -128,7 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Floating Bottom Dock */}
       <nav
         aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-paper-card/95 dark:bg-paper-cardDark/95 backdrop-blur-lg border-t border-paper-border dark:border-paper-borderDark px-4 py-2 flex justify-around shadow-lg"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-paper-card/95 dark:bg-paper-cardDark/95 backdrop-blur-lg border-t border-paper-border dark:border-paper-borderDark px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] flex justify-around shadow-lg"
       >
         {NAV_TABS.map(({ id, mobileLabel, icon: Icon }) => {
           const isActive = activeTab === id;

@@ -55,7 +55,7 @@ export const App: React.FC = () => {
         openSettings={() => setIsSettingsOpen(true)}
       />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-12">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-12">
         {!dictStatus.isReady ? (
           <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
             <div className="w-12 h-12 border-4 border-chinese-red border-t-transparent rounded-full animate-spin mb-4" />
