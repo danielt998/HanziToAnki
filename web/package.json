@@ -23,6 +23,7 @@
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "fflate": "^0.8.3",
+    "jieba-wasm": "^2.4.0",
     "lucide-react": "^1.70.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

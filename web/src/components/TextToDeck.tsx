@@ -1,10 +1,11 @@
 import confetti from 'canvas-confetti';
 import { Check, Copy, Download, Trash2 } from 'lucide-react';
 import type React from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { downloadFile, generateAnkiTsv, type HanziExportType } from '../lib/ankiExporter';
+import { type DictStatus, dictionaryService } from '../lib/dictionary';
 import { getHskBadgeClasses } from '../lib/hskHelper';
-import { segmentText } from '../lib/segmentation';
+import { type SegmentationMode, segmentText } from '../lib/segmentation';
 import type { TonePalette } from '../lib/toneHelper';
 
 interface TextToDeckProps {
@@ -28,14 +29,25 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
   const [hanziType, setHanziType] = useState<HanziExportType>('SIMP_AND_TRAD');
   const [excludeHskMax, setExcludeHskMax] = useState<number>(1);
   const [deconstructWords, setDeconstructWords] = useState<boolean>(false);
+  const [segmentationMode, setSegmentationMode] = useState<SegmentationMode>('jieba');
+  const [dictStatus, setDictStatus] = useState<DictStatus>(() => dictionaryService.getStatus());
   const [copied, setCopied] = useState<boolean>(false);
+
+  useEffect(() => {
+    return dictionaryService.subscribeStatus(setDictStatus);
+  }, []);
 
   // Segment text and extract vocabulary
   const extractedWords = useMemo(() => {
-    if (!inputText.trim()) return [];
+    if (!inputText.trim() || !dictStatus.isReady) return [];
+    // Re-evaluate when dictionary size or full load status changes
+    void dictStatus.totalEntries;
+    void dictStatus.isFullLoaded;
+
     const segments = segmentText(inputText, {
       deconstructWords,
       excludeHskMax,
+      mode: segmentationMode,
     });
 
     // Deduplicate by simplified word
@@ -48,7 +60,15 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
       }
     }
     return unique;
-  }, [inputText, deconstructWords, excludeHskMax]);
+  }, [
+    inputText,
+    deconstructWords,
+    excludeHskMax,
+    segmentationMode,
+    dictStatus.isReady,
+    dictStatus.totalEntries,
+    dictStatus.isFullLoaded,
+  ]);
 
   const handleExport = () => {
     if (extractedWords.length === 0) return;
@@ -76,11 +96,18 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
       <div className="bg-paper-card dark:bg-paper-cardDark border border-paper-border dark:border-paper-borderDark rounded-2xl p-6 shadow-soft">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-xl font-bold font-display text-chinese-ink dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold font-display text-chinese-ink dark:text-white flex items-center gap-2 flex-wrap">
               <span className="text-chinese-red text-2xl">🏮</span> Text to Anki Deck
+              <span className="font-sans text-[11px] font-semibold px-2 py-0.5 rounded-full bg-chinese-red/10 text-chinese-red border border-chinese-red/20">
+                {segmentationMode === 'jieba' ? 'Jieba (Statistical)' : 'Browser (Intl)'}
+              </span>
             </h2>
             <p className="text-xs text-gray-700 dark:text-gray-400 mt-0.5 font-medium">
-              Paste Chinese articles, dialogues, or sentences. Uses native{' '}
+              Paste Chinese articles, dialogues, or sentences. Uses{' '}
+              <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-chinese-red">
+                Jieba (Statistical)
+              </code>{' '}
+              or{' '}
               <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-chinese-red">
                 Intl.Segmenter
               </code>{' '}
@@ -135,13 +162,36 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
         </div>
 
         {/* Controls Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 pt-4 border-t border-paper-border dark:border-paper-borderDark">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-paper-border dark:border-paper-borderDark">
+          {/* Segmentation Engine */}
+          <div>
+            <label
+              htmlFor="segmentation-engine-select"
+              className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block mb-1.5 font-medium"
+            >
+              Segmentation Engine
+            </label>
+            <select
+              id="segmentation-engine-select"
+              value={segmentationMode}
+              onChange={(e) => setSegmentationMode(e.target.value as SegmentationMode)}
+              className="w-full p-2.5 rounded-xl border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark text-xs font-semibold text-chinese-ink dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-chinese-red"
+            >
+              <option value="jieba">Jieba (Statistical)</option>
+              <option value="intl">Browser (Intl)</option>
+            </select>
+          </div>
+
           {/* HSK Exclusion */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block mb-1.5 font-medium">
+            <label
+              htmlFor="hsk-exclusion-select"
+              className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block mb-1.5 font-medium"
+            >
               Filter Known HSK Words
             </label>
             <select
+              id="hsk-exclusion-select"
               value={excludeHskMax}
               onChange={(e) => setExcludeHskMax(parseInt(e.target.value, 10))}
               className="w-full p-2.5 rounded-xl border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark text-xs font-semibold text-chinese-ink dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-chinese-red"
@@ -157,10 +207,14 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
 
           {/* Character Mode */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block mb-1.5 font-medium">
+            <label
+              htmlFor="output-columns-select"
+              className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-400 block mb-1.5 font-medium"
+            >
               Output Columns
             </label>
             <select
+              id="output-columns-select"
               value={hanziType}
               onChange={(e) => setHanziType(e.target.value as HanziExportType)}
               className="w-full p-2.5 rounded-xl border border-paper-border dark:border-paper-borderDark bg-paper-light dark:bg-paper-dark text-xs font-semibold text-chinese-ink dark:text-white outline-none cursor-pointer focus:ring-1 focus:ring-chinese-red"
