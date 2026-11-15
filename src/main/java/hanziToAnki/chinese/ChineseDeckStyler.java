@@ -2,12 +2,10 @@ package hanziToAnki.chinese;
 
 import hanziToAnki.DeckStyler;
 import hanziToAnki.Word;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ChineseDeckStyler implements DeckStyler {
     private static final String DELIMITER = "\t";
@@ -61,15 +59,18 @@ public class ChineseDeckStyler implements DeckStyler {
     }
 
     public List<String> style(Set<Word> words) {
-        List<String> wordList = words.stream()
-                .map(this::getWordAsDeckLine)
-                .toList();
-        //TODO: consider a different notetype if including both trad and simp
-        return Stream.of(HEADERS, wordList).flatMap(Collection::stream).collect(Collectors.toList());
+        var styledDeck = new ArrayList<String>(HEADERS.size() + words.size());
+        styledDeck.addAll(HEADERS);
+        for (var word : words) {
+            styledDeck.add(getWordAsDeckLine(word));
+        }
+        return styledDeck;
     }
 
     private String getWordAsDeckLine(Word word) {
-        ChineseWord w = (ChineseWord) word;
+        if (!(word instanceof ChineseWord w)) {
+            throw new IllegalArgumentException("Expected ChineseWord, got " + word.getClass().getSimpleName());
+        }
         return switch (hanziType) {
             case SIMP -> String.join(DELIMITER,
                     w.simplified(),

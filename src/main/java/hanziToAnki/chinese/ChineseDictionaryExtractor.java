@@ -29,12 +29,17 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
     @Override
     public void readInDictionary() {
-        InputStream dictionaryStream = getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME);
-        if (dictionaryStream == null) {
-            logger.error("Dictionary file not found: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME);
-            return;
+        try (InputStream dictionaryStream = getClass().getResourceAsStream("/dictionary/" + DEFAULT_DICTIONARY_FILENAME)) {
+            if (dictionaryStream == null) {
+                String errorMsg = "Dictionary resource not found: /dictionary/" + DEFAULT_DICTIONARY_FILENAME;
+                logger.error(errorMsg);
+                throw new IllegalStateException(errorMsg);
+            }
+            readInDictionary(dictionaryStream);
+        } catch (IOException e) {
+            logger.error("Failed to read dictionary file: /dictionary/{}", DEFAULT_DICTIONARY_FILENAME, e);
+            throw new IllegalStateException("Failed to read dictionary resource: /dictionary/" + DEFAULT_DICTIONARY_FILENAME, e);
         }
-        readInDictionary(dictionaryStream);
     }
 
     private void readInDictionary(InputStream stream) {
@@ -65,10 +70,7 @@ public class ChineseDictionaryExtractor implements DictionaryExtractor {
 
         if (mightBeErhua(s)) {
             String stripped = sanitiseErhua(s);
-            word = simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped));
-            if (word != null) {
-                return Optional.of(word);
-            }
+            return Optional.ofNullable(simplifiedMapping.getOrDefault(stripped, traditionalMapping.get(stripped)));
         }
 
         return Optional.empty();

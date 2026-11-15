@@ -42,6 +42,8 @@ public class ChineseGrader implements Grader {
             URI uri = ChineseGrader.class.getClassLoader().getResource(filename).toURI();
             Path path = Path.of(uri);
             return Files.readAllLines(path).stream()
+                    .map(line -> line.replace("\uFEFF", "").trim())
+                    .filter(line -> !line.isEmpty())
                     .map(extractor::getWord)
                     .flatMap(java.util.Optional::stream)
                     .collect(Collectors.toSet());
