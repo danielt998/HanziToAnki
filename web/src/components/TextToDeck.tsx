@@ -318,57 +318,97 @@ export const TextToDeck: React.FC<TextToDeckProps> = ({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto max-h-[500px]">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-paper-light dark:bg-paper-dark text-gray-700 dark:text-gray-400 sticky top-0 uppercase tracking-wider font-bold">
-                <tr>
-                  <th className="py-3 px-4">Hanzi (Simp / Trad)</th>
-                  <th className="py-3 px-4">Pinyin</th>
-                  <th className="py-3 px-4">Definition</th>
-                  <th className="py-3 px-4 text-center">HSK Tier</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-paper-border dark:divide-paper-borderDark font-medium">
-                {extractedWords.map((w, idx) => (
-                  <tr
-                    key={idx}
-                    className="hover:bg-chinese-red/5 dark:hover:bg-chinese-red/10 transition"
-                  >
-                    <td className="py-3 px-4 font-hanzi text-base font-bold text-chinese-ink dark:text-white">
-                      <span>{w.simplified}</span>
+          <>
+            {/* Mobile Stacked Card List */}
+            <div className="sm:hidden divide-y divide-paper-border dark:divide-paper-borderDark max-h-[500px] overflow-y-auto">
+              {extractedWords.map((w, idx) => (
+                <div key={idx} className="p-3.5 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-baseline gap-2 min-w-0">
+                      <span className="font-hanzi text-lg font-bold text-chinese-ink dark:text-white">
+                        {w.simplified}
+                      </span>
                       {w.traditional !== w.simplified && (
-                        <span className="text-xs text-gray-700 dark:text-gray-400 ml-2 font-normal font-medium">
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
                           ({w.traditional})
                         </span>
                       )}
-                    </td>
-                    <td className="py-3 px-4 font-medium text-chinese-ink dark:text-gray-200">
-                      {w.pinyinAccented}
-                    </td>
-                    <td
-                      className="py-3 px-4 text-gray-600 dark:text-gray-300 max-w-md truncate"
-                      title={w.definition}
-                    >
-                      {w.definition}
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      {w.hskLevel > 0 ? (
-                        <span
-                          className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold ${getHskBadgeClasses(w.hskLevel, excludeHskMax > 0 ? excludeHskMax + 1 : 1)}`}
-                        >
-                          HSK {w.hskLevel}
-                        </span>
-                      ) : (
-                        <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500">
-                          Untiered
-                        </span>
-                      )}
-                    </td>
+                      <span className="text-xs font-medium text-chinese-red">
+                        {w.pinyinAccented}
+                      </span>
+                    </div>
+                    {w.hskLevel > 0 ? (
+                      <span
+                        className={`shrink-0 inline-block px-2 py-0.5 rounded text-[11px] font-bold ${getHskBadgeClasses(w.hskLevel, excludeHskMax > 0 ? excludeHskMax + 1 : 1)}`}
+                      >
+                        HSK {w.hskLevel}
+                      </span>
+                    ) : (
+                      <span className="shrink-0 inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                        Untiered
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2">
+                    {w.definition}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="hidden sm:block overflow-x-auto max-h-[500px]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-paper-light dark:bg-paper-dark text-gray-700 dark:text-gray-400 sticky top-0 uppercase tracking-wider font-bold">
+                  <tr>
+                    <th className="py-3 px-4">Hanzi (Simp / Trad)</th>
+                    <th className="py-3 px-4">Pinyin</th>
+                    <th className="py-3 px-4">Definition</th>
+                    <th className="py-3 px-4 text-center">HSK Tier</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-paper-border dark:divide-paper-borderDark font-medium">
+                  {extractedWords.map((w, idx) => (
+                    <tr
+                      key={idx}
+                      className="hover:bg-chinese-red/5 dark:hover:bg-chinese-red/10 transition"
+                    >
+                      <td className="py-3 px-4 font-hanzi text-base font-bold text-chinese-ink dark:text-white">
+                        <span>{w.simplified}</span>
+                        {w.traditional !== w.simplified && (
+                          <span className="text-xs text-gray-700 dark:text-gray-400 ml-2 font-normal font-medium">
+                            ({w.traditional})
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 font-medium text-chinese-ink dark:text-gray-200">
+                        {w.pinyinAccented}
+                      </td>
+                      <td
+                        className="py-3 px-4 text-gray-600 dark:text-gray-300 max-w-md truncate"
+                        title={w.definition}
+                      >
+                        {w.definition}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        {w.hskLevel > 0 ? (
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold ${getHskBadgeClasses(w.hskLevel, excludeHskMax > 0 ? excludeHskMax + 1 : 1)}`}
+                          >
+                            HSK {w.hskLevel}
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500">
+                            Untiered
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>
